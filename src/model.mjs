@@ -3,7 +3,7 @@ export function outline(content) {
   let pos = 0;
   const ancestors = [];
   return (content?.content || []).flatMap((node, index) => {
-    const item = { id: node.attrs?.headingId || null, index, level: node.attrs?.level || 1, text: textOf(node) || '無題の見出し', pos };
+    const item = { id: node.attrs?.headingId || null, index, level: node.attrs?.level ?? 1, text: textOf(node) || '無題の見出し', pos };
     pos += nodeSize(node);
     if (node.type !== 'heading') return [];
     while (ancestors.length && ancestors.at(-1).level >= item.level) ancestors.pop();

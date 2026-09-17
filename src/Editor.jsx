@@ -13,12 +13,22 @@ import TaskList from '@tiptap/extension-task-list';
 import { ScenarioTaskItem } from './ScenarioTaskItem.js';
 import { ListTodo } from 'lucide-react';
 import { taskItemToMarkdown } from './task-markdown.mjs';
+import { Underline } from './Underline.js';
+import { SearchReplace } from './SearchReplace.js';
+import FindBar from './FindBar.jsx';
+import { ScenarioHeading } from './ScenarioHeading.js';
+import { AlignCenter, Heading1 } from 'lucide-react';
+import { Underline as UnderlineIcon, Search } from 'lucide-react';
 const converter = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
+converter.addRule('underline', { filter: ['u'], replacement: content => `<u>${content}</u>` });
+converter.addRule('chapter', { filter: node => node.nodeName === 'H1' && node.hasAttribute('data-chapter'), replacement: content => `\n\n#! ${content}\n\n` });
 converter.addRule('strikethrough', { filter: ['s', 'del'], replacement: content => `~~${content}~~` });
 converter.addRule('gmNote', { filter: node => node.nodeName === 'ASIDE' && node.hasAttribute('data-gm-note'), replacement: gmNoteToMarkdown });
 converter.addRule('taskItem', { filter: node => node.nodeName === 'LI' && node.getAttribute('data-type') === 'taskItem', replacement: taskItemToMarkdown });
 export default function ScenarioEditor({ doc, onChange, onReady }) {
   const imageInput = useRef(), importingImage = useRef(false);
+  const [findOpen, setFindOpen] = useState(false), [findRequest, setFindRequest] = useState(0);
+  function openFind() { setFindOpen(true); setFindRequest(value => value + 1); }
   const [imageError, setImageError] = useState(''), [imageBusy, setImageBusy] = useState(false);
   async function insertImages(files, position) {
     if (!editor || editor.isDestroyed || importingImage.current || !files.length) return;
@@ -36,7 +46,7 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     finally { importingImage.current = false; if (!editor.isDestroyed) { editor.setEditable(true); setImageBusy(false); } }
   }
   const editor = useEditor({
-    extensions: [StarterKit, HeadingIds, GmNote, ScenarioImage, TaskList, ScenarioTaskItem, Placeholder.configure({ placeholder: '物語をつづける…  「## 」で見出し、「> 」で共有情報' })],
+    extensions: [StarterKit.configure({ heading: false }), ScenarioHeading, HeadingIds, GmNote, ScenarioImage, TaskList, ScenarioTaskItem, Underline, SearchReplace, Placeholder.configure({ placeholder: '物語をつづける…  「#! 」で章、「# 」でH1見出し' })],
     content: doc.content || markdown.render(doc.markdown),
     editorProps: { attributes: { 'aria-label': 'シナリオ本文', spellcheck: 'false' },
       handlePaste(view, event) { const files = [...(event.clipboardData?.files || [])]; if (!files.length) return false; insertImages(files, view.state.selection.from); return true; },
@@ -51,11 +61,24 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     }
     return () => onReady(null);
   }, [editor]);
+  useEffect(() => {
+    const keydown = event => {
+      if (!editor || editor.isDestroyed || !editor.view.dom.getClientRects().length || document.querySelector('[role="dialog"]')) return;
+      if (event.key === 'Escape' && findOpen) { event.preventDefault(); setFindOpen(false); editor.commands.focus(); }
+      if ((event.ctrlKey || event.metaKey) && !event.altKey && ['f', 'h'].includes(event.key.toLowerCase())) { event.preventDefault(); openFind(); }
+    };
+    window.addEventListener('keydown', keydown);
+    return () => window.removeEventListener('keydown', keydown);
+  }, [editor, findOpen]);
   if (!editor) return null;
   const controls = [
     [Bold, '太字（Ctrl+B）', () => editor.chain().focus().toggleBold().run(), editor.isActive('bold')],
     [Italic, '斜体（Ctrl+I）', () => editor.chain().focus().toggleItalic().run(), editor.isActive('italic')],
-    [Heading2, '章見出し', () => editor.chain().focus().toggleHeading({ level: 2 }).run(), editor.isActive('heading', { level: 2 })],
+    [UnderlineIcon, '下線（Ctrl+U）', () => editor.chain().focus().toggleUnderline().run(), editor.isActive('underline')],
+    [Search, '検索と置換（Ctrl+F / Ctrl+H）', openFind, findOpen],
+    [AlignCenter, '章（中央揃え・H1の上位）', () => editor.chain().focus().toggleHeading({ level: 0 }).run(), editor.isActive('heading', { level: 0 })],
+    [Heading1, 'H1見出し', () => editor.chain().focus().toggleHeading({ level: 1 }).run(), editor.isActive('heading', { level: 1 })],
+    [Heading2, 'H2見出し', () => editor.chain().focus().toggleHeading({ level: 2 }).run(), editor.isActive('heading', { level: 2 })],
     [Heading3, '小見出し', () => editor.chain().focus().toggleHeading({ level: 3 }).run(), editor.isActive('heading', { level: 3 })],
     [List, '箇条書き', () => editor.chain().focus().toggleBulletList().run(), editor.isActive('bulletList')],
     [ListOrdered, '番号付きリスト', () => editor.chain().focus().toggleOrderedList().run(), editor.isActive('orderedList')],
@@ -68,5 +91,5 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     [Undo2, '元に戻す（Ctrl+Z）', () => editor.chain().focus().undo().run()],
     [Redo2, 'やり直す（Ctrl+Shift+Z）', () => editor.chain().focus().redo().run()]
   ];
-  return <><div className="editor-toolbar"><span className="toolbar-label">本文</span><span className="toolbar-divider"/>{controls.map(([Icon, label, action, active]) => <button key={label} disabled={imageBusy} title={label} aria-label={label} aria-pressed={!!active} className={active ? 'active' : ''} onClick={action}><Icon size={16}/></button>)}<span className="markdown-badge">Markdown</span></div><input className="hidden" ref={imageInput} type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple aria-label="挿入する画像" onChange={event => { const files = [...event.target.files]; event.target.value = ''; insertImages(files); }}/>{imageBusy && <div className="image-status" role="status">画像を読み込み中…</div>}{imageError && <div className="image-error" role="alert">{imageError}<button aria-label="画像エラーを閉じる" onClick={() => setImageError('')}><X size={16}/></button></div>}<div className="editor-scroll" onPaste={e => { if (e.defaultPrevented || e.clipboardData.files.length) return; const text = e.clipboardData.getData('text/plain'); if (!e.clipboardData.getData('text/html') && /^(#{1,6} |```|> |\- )/m.test(text)) { e.preventDefault(); editor.commands.insertContent(markdown.render(text)); } }}><article className="paper"><div className="paper-eyebrow"><span/> SCENARIO MANUSCRIPT</div><EditorContent editor={editor}/><div className="paper-end">◆</div></article></div></>;
+  return <><div className="editor-toolbar"><span className="toolbar-label">本文</span><span className="toolbar-divider"/>{controls.map(([Icon, label, action, active]) => <button key={label} disabled={imageBusy} title={label} aria-label={label} aria-pressed={!!active} className={active ? 'active' : ''} onClick={action}><Icon size={16}/></button>)}<span className="markdown-badge">Markdown</span></div>{findOpen && <FindBar editor={editor} request={findRequest} onClose={() => setFindOpen(false)}/>}<input className="hidden" ref={imageInput} type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple aria-label="挿入する画像" onChange={event => { const files = [...event.target.files]; event.target.value = ''; insertImages(files); }}/>{imageBusy && <div className="image-status" role="status">画像を読み込み中…</div>}{imageError && <div className="image-error" role="alert">{imageError}<button aria-label="画像エラーを閉じる" onClick={() => setImageError('')}><X size={16}/></button></div>}<div className="editor-scroll" onPaste={e => { if (e.defaultPrevented || e.clipboardData.files.length) return; const text = e.clipboardData.getData('text/plain'); if (!e.clipboardData.getData('text/html') && /^(#! |#{1,6} |```|> |\- )/m.test(text)) { e.preventDefault(); editor.commands.insertContent(markdown.render(text)); } }}><article className="paper"><div className="paper-eyebrow"><span/> SCENARIO MANUSCRIPT</div><EditorContent editor={editor}/><div className="paper-end">◆</div></article></div></>;
 }

@@ -5,7 +5,9 @@ import { absolutePosition } from './flow-model.mjs';
 import { outline } from './model.mjs';
 import { gmNotePlugin } from './gm-markdown.mjs';
 import { taskListPlugin } from './task-markdown.mjs';
-export const markdown = new MarkdownIt({ html: false, linkify: true, typographer: false }).use(gmNotePlugin).use(taskListPlugin);
+import { underlinePlugin } from './underline-markdown.mjs';
+import { chapterPlugin } from './chapter-markdown.mjs';
+export const markdown = new MarkdownIt({ html: false, linkify: true, typographer: false }).use(gmNotePlugin).use(taskListPlugin).use(underlinePlugin).use(chapterPlugin);
 export const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function flowSvg(flow, headings = [], theme = 'forest') {
   const c = getTheme(theme).colors;
@@ -44,7 +46,7 @@ export function exportHtml(doc, options = {}) {
   let html = markdown.render(doc.markdown), index = 0;
   const toc = [];
   const headings = outline(doc.content);
-  html = html.replace(/<h([1-6])>([\s\S]*?)<\/h\1>/g, (_, level, title) => { const id = `section-${index++}`; toc.push(`<a href="#${id}" class="level-${level}">${title}</a>`); return `<h${level} id="${id}">${title}</h${level}>`; });
+  html = html.replace(/<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/g, (_, level, attrs, title) => { const id = `section-${index++}`, chapter = attrs.includes('data-chapter'); toc.push(`<a href="#${id}" class="level-${chapter ? 0 : level}">${title}</a>`); return `<h${level}${attrs} id="${id}">${title}</h${level}>`; });
   if (copyButtons) html = html.replace(/<(blockquote|pre)>([\s\S]*?)<\/\1>/g, (_, tag, content) => `<div class="copy-block"><button type="button" class="copy-button">コピー</button><${tag}>${content}</${tag}></div>`);
   const script = copyButtons && interactive ? `<script>document.querySelectorAll('.copy-button').forEach(button=>button.addEventListener('click',async()=>{const text=button.nextElementSibling.innerText;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);}else{const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.select();const ok=document.execCommand('copy');area.remove();if(!ok)throw new Error('copy');}button.textContent='コピーしました';}catch{button.textContent='選択してコピーしてください';const range=document.createRange();range.selectNodeContents(button.nextElementSibling);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);}setTimeout(()=>button.textContent='コピー',2000);}));</script>` : '';
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:"><title>${escapeHtml(doc.title)}</title><style>

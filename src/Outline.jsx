@@ -28,7 +28,7 @@ export default function Outline({ headings, content, activeHeading, onNavigate, 
           <button aria-label={`${item.text}を後へ`} title="節全体を後へ移動" disabled={!content || moveSection(content, item.index, 1) === content} onClick={() => onReorder(item, 1)}><ArrowDown size={13}/></button>
         </div>
       </div>)}
-      {!headings.length && <p className="muted">「## 」で章、「### 」で小見出しを追加できます。</p>}
+      {!headings.length && <p className="muted">「#! 」で章、「# 」でH1見出しを追加できます。</p>}
     </div>
     <div className="outline-hint"><ArrowUp size={13}/><ArrowDown size={13}/><span>本文ごと並べ替え</span></div>
     <button className="outline-flow-button" onClick={onShowFlow}><Layers size={17}/>フローとの対応を見る</button>
