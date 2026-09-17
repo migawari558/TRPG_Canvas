@@ -3,7 +3,7 @@ import { Node, mergeAttributes } from '@tiptap/core';
 export const GmNote = Node.create({
   name: 'gmNote',
   group: 'block',
-  content: '(paragraph | bulletList | orderedList | codeBlock | blockquote | image)+',
+  content: '(paragraph | bulletList | orderedList | taskList | codeBlock | blockquote | image)+',
   defining: true,
   parseHTML() { return [{ tag: 'aside[data-gm-note]' }]; },
   renderHTML({ HTMLAttributes }) {

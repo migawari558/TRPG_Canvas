@@ -9,9 +9,14 @@ import { HeadingIds } from './HeadingIds.js';
 import { GmNote } from './GmNote.js';
 import { gmNoteToMarkdown } from './gm-markdown.mjs';
 import { ScenarioImage, readImageFile } from './ScenarioImage.js';
+import TaskList from '@tiptap/extension-task-list';
+import { ScenarioTaskItem } from './ScenarioTaskItem.js';
+import { ListTodo } from 'lucide-react';
+import { taskItemToMarkdown } from './task-markdown.mjs';
 const converter = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
 converter.addRule('strikethrough', { filter: ['s', 'del'], replacement: content => `~~${content}~~` });
 converter.addRule('gmNote', { filter: node => node.nodeName === 'ASIDE' && node.hasAttribute('data-gm-note'), replacement: gmNoteToMarkdown });
+converter.addRule('taskItem', { filter: node => node.nodeName === 'LI' && node.getAttribute('data-type') === 'taskItem', replacement: taskItemToMarkdown });
 export default function ScenarioEditor({ doc, onChange, onReady }) {
   const imageInput = useRef(), importingImage = useRef(false);
   const [imageError, setImageError] = useState(''), [imageBusy, setImageBusy] = useState(false);
@@ -31,7 +36,7 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     finally { importingImage.current = false; if (!editor.isDestroyed) { editor.setEditable(true); setImageBusy(false); } }
   }
   const editor = useEditor({
-    extensions: [StarterKit, HeadingIds, GmNote, ScenarioImage, Placeholder.configure({ placeholder: '物語をつづける…  「## 」で見出し、「> 」で共有情報' })],
+    extensions: [StarterKit, HeadingIds, GmNote, ScenarioImage, TaskList, ScenarioTaskItem, Placeholder.configure({ placeholder: '物語をつづける…  「## 」で見出し、「> 」で共有情報' })],
     content: doc.content || markdown.render(doc.markdown),
     editorProps: { attributes: { 'aria-label': 'シナリオ本文', spellcheck: 'false' },
       handlePaste(view, event) { const files = [...(event.clipboardData?.files || [])]; if (!files.length) return false; insertImages(files, view.state.selection.from); return true; },
@@ -54,6 +59,7 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     [Heading3, '小見出し', () => editor.chain().focus().toggleHeading({ level: 3 }).run(), editor.isActive('heading', { level: 3 })],
     [List, '箇条書き', () => editor.chain().focus().toggleBulletList().run(), editor.isActive('bulletList')],
     [ListOrdered, '番号付きリスト', () => editor.chain().focus().toggleOrderedList().run(), editor.isActive('orderedList')],
+    [ListTodo, 'チェックリスト', () => editor.chain().focus().toggleTaskList().run(), editor.isActive('taskList')],
     [Quote, '共有情報（HTMLでコピー可能）', () => editor.chain().focus().toggleBlockquote().run(), editor.isActive('blockquote')],
     [StickyNote, 'GMメモ（角丸・網掛け）', () => editor.chain().focus().toggleGmNote().run(), editor.isActive('gmNote')],
     [ImagePlus, '画像を挿入', () => imageInput.current.click()],

@@ -4,7 +4,8 @@ import MarkdownIt from 'markdown-it';
 import { absolutePosition } from './flow-model.mjs';
 import { outline } from './model.mjs';
 import { gmNotePlugin } from './gm-markdown.mjs';
-export const markdown = new MarkdownIt({ html: false, linkify: true, typographer: false }).use(gmNotePlugin);
+import { taskListPlugin } from './task-markdown.mjs';
+export const markdown = new MarkdownIt({ html: false, linkify: true, typographer: false }).use(gmNotePlugin).use(taskListPlugin);
 export const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function flowSvg(flow, headings = [], theme = 'forest') {
   const c = getTheme(theme).colors;

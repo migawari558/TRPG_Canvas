@@ -81,7 +81,7 @@ export default function App() {
   async function exportFile(exportFormat, options) { await persist(); const latest = docRef.current; const content = exportFormat === 'md' ? latest.markdown : exportHtml(latest, options); const path = await api.export(exportFormat, latest.title, content); if (path) { setModal(null); notify(`${exportFormat.toUpperCase()}を書き出しました`); } }
   function onReady(instance) { setEditor(instance); if (instance) setEditorContent(instance.getJSON()); }
   const headings = outline(editorContent || doc?.content);
-  const wordCount = (doc?.markdown || '').replace(/[\s#*>`_\-]/g, '').length;
+  const wordCount = (doc?.markdown || '').replace(/!\[[^\]]*\]\(data:image\/(?:png|jpeg|gif|webp);base64,[A-Za-z0-9+/=\s]+\)/gi, '').replace(/[\s#*>`_\-]/g, '').length;
   const quoteCount = (doc?.markdown.match(/^> /gm) || []).length;
   function navigateHeading(item) {
     if (!editor || editor.isDestroyed) return;
