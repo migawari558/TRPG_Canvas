@@ -45,4 +45,9 @@ async function save(folder, doc, baseRevision) {
   finally { await fs.rm(temp, { force: true }).catch(() => {}); }
   return { doc, revision: revision(text), conflict };
 }
-module.exports = { read, list, save, validate, filePath };
+async function remove(folder, id, baseRevision, trashItem) {
+  const current = await read(folder, id);
+  if (!baseRevision || current.revision !== baseRevision) throw new Error('確認後にシナリオが変更されました。一覧を更新して、もう一度削除してください。');
+  await trashItem(filePath(folder, id));
+}
+module.exports = { read, list, save, remove, validate, filePath };

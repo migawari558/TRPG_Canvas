@@ -1,0 +1,24 @@
+const {app,BrowserWindow}=require('electron');const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
+const output=path.resolve('.test-output/delete-ui');app.setPath('userData',path.join(output,`profile-${Date.now()}`));const delay=ms=>new Promise(r=>setTimeout(r,ms));
+app.whenReady().then(async()=>{let win;try{
+ await fs.mkdir(output,{recursive:true});win=new BrowserWindow({width:1440,height:1000,show:false,webPreferences:{sandbox:true,contextIsolation:true,nodeIntegration:false}});
+ const errors=[];win.webContents.on('console-message',e=>{if(e.level==='error')errors.push(e.message);});
+ const js=async code=>{const value=await win.webContents.executeJavaScript(code,true);await delay(100);return value;};
+ const click=text=>js(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent.trim()===${JSON.stringify(text)}).click()`);
+ const remove=()=>js(`document.querySelector('.scenario-delete').click()`);
+ await win.loadFile(path.resolve('dist/index.html'));await delay(1200);win.show();win.focus();
+ await js(`document.querySelector('[aria-label="ダッシュボードへ"]').click()`);await remove();await delay(200);
+ assert.ok(await js(`document.querySelector('[role="dialog"]').textContent.includes('霧の向こうの灯台')`));
+ await fs.writeFile(path.join(output,'confirmation.png'),(await win.webContents.capturePage()).toPNG());
+ await click('キャンセル');assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),1);
+ await remove();await delay(200);
+ await js(`(()=>{const key='trpg-canvas-documents-v1';const data=JSON.parse(localStorage.getItem(key));Object.values(data)[0].revision='external-change';localStorage.setItem(key,JSON.stringify(data));})()`);
+ await click('削除する');assert.ok(await js(`document.querySelector('.delete-error').textContent.includes('変更されました')`));assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),1);
+ await click('キャンセル');
+ await remove();await delay(150);await click('削除する');await delay(1000);
+ assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),0);
+ assert.equal(await js(`Object.keys(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).length`),0);
+ win.webContents.reload();await delay(1200);assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),0);assert.ok(await js(`!!document.querySelector('.dashboard-empty')`));
+ await js(`document.querySelector('.dashboard-actions .primary-button').click()`);await delay(900);assert.ok(await js(`!!document.querySelector('.tiptap')`));
+ assert.deepEqual(errors,[]);console.log('PASS: confirmation, cancel, stale revision rejection, current/last scenario deletion, no autosave resurrection, empty reload and new creation');app.exit(0);
+}catch(e){console.error(e);win?.destroy();app.exit(1);}});

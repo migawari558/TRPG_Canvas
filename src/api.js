@@ -10,6 +10,12 @@ export const api = window.canvas || {
   info: async () => ({ folder: 'ブラウザ内に保存（デスクトップ版ではフォルダを選択できます）' }),
   list: async () => ({ documents: Object.values(read()).map(x => ({ id: x.doc.id, title: x.doc.title, subtitle: x.doc.subtitle || '', updatedAt: x.doc.updatedAt, characterCount: x.doc.markdown.replace(/[\s#*>`_\-]/g, '').length, sceneCount: x.doc.flow.nodes.length })), errors: [] }),
   load: async id => { const result = read()[id]; if (!result) throw new Error('シナリオが見つかりません'); return result; },
+  remove: async (id, revision) => {
+    const data = read();
+    if (!data[id]) throw new Error('シナリオが見つかりません');
+    if (!revision || data[id].revision !== revision) throw new Error('確認後にシナリオが変更されました。一覧を更新して、もう一度削除してください。');
+    delete data[id]; localStorage.setItem(key, JSON.stringify(data));
+  },
   save: async (doc, revision) => {
     const data = read(); const conflict = (data[doc.id]?.revision || null) !== (revision || null);
     if (conflict) doc = { ...doc, id: newDocument().id, title: `${doc.title}（競合コピー）` };

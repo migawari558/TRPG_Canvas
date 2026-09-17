@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, session } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, session, shell } = require('electron');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const storage = require('./storage.cjs');
@@ -22,6 +22,7 @@ async function start() {
     return { folder };
   });
   ipcMain.handle('document:list', () => storage.list(folder));
+  ipcMain.handle('document:remove', (_event, id, revision) => storage.remove(folder, id, revision, file => shell.trashItem(file)));
   ipcMain.handle('document:preview-pdf', async (_event, content) => (await renderPdf(content)).toString('base64'));
   ipcMain.handle('document:load', (_event, id) => storage.read(folder, id));
   ipcMain.handle('document:save', (_event, doc, revision) => storage.save(folder, doc, revision));
