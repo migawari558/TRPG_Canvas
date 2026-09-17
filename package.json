@@ -1,6 +1,6 @@
 {
   "name": "trpg-canvas",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "TRPGシナリオのためのローカル執筆アプリ",
   "main": "electron/main.cjs",
@@ -14,6 +14,7 @@
     "test:desktop": "electron tests/desktop-smoke.cjs",
     "test:hierarchy": "electron tests/hierarchy-smoke.cjs",
     "test:dashboard": "electron tests/dashboard-smoke.cjs",
+    "test:appearance": "electron tests/appearance-smoke.cjs",
     "dist": "npm run build && electron-builder --win portable"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "@xyflow/react": "^12.4.4",
     "lucide-react": "^0.468.0",
     "markdown-it": "^14.1.0",
+    "pdfjs-dist": "^4.10.38",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "turndown": "^7.2.0"

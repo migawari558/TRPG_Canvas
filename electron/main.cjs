@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog, session } = require('electron');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const storage = require('./storage.cjs');
+const { renderPdf } = require('./pdf.cjs');
 let mainWindow, folder, closeReady = false;
 const dev = process.argv.includes('--dev');
 async function start() {
@@ -21,6 +22,7 @@ async function start() {
     return { folder };
   });
   ipcMain.handle('document:list', () => storage.list(folder));
+  ipcMain.handle('document:preview-pdf', async (_event, content) => (await renderPdf(content)).toString('base64'));
   ipcMain.handle('document:load', (_event, id) => storage.read(folder, id));
   ipcMain.handle('document:save', (_event, doc, revision) => storage.save(folder, doc, revision));
   ipcMain.handle('document:import', async () => {
@@ -35,12 +37,7 @@ async function start() {
     const result = await dialog.showSaveDialog(mainWindow, { defaultPath: `${safeTitle}.${format}`, filters: [{ name: format.toUpperCase(), extensions: [format] }] });
     if (result.canceled) return null;
     if (format === 'pdf') {
-      const printWindow = new BrowserWindow({ show: false, webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false, javascript: false } });
-      try {
-        await printWindow.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(content)}`);
-        const data = await printWindow.webContents.printToPDF({ printBackground: true, pageSize: 'A4', margins: { top: 0.5, bottom: 0.5, left: 0.5, right: 0.5 } });
-        await fs.writeFile(result.filePath, data);
-      } finally { printWindow.destroy(); }
+      await fs.writeFile(result.filePath, await renderPdf(content));
     } else await fs.writeFile(result.filePath, content, 'utf8');
     return result.filePath;
   });

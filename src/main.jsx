@@ -4,3 +4,5 @@ import App from './App.jsx';
 import './style.css';
 import './layout.css';
 createRoot(document.getElementById('root')).render(<App />);
+
+import './appearance.css';
