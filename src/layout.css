@@ -1,4 +1,51 @@
 /* Readable type and a persistent outline to the left of the manuscript. */
+.main { grid-column: 2; grid-row: 1; }
+.sidebar { grid-column: 1; grid-row: 1; }
+.brand { text-align: left; justify-content: flex-start; border-radius: 8px; }
+.brand:hover:not(:disabled) { background: #e7eddf; }
+.breadcrumb-home { padding: 5px 0; color: #7e9071; white-space: nowrap; }
+.editor-toolbar { flex-wrap: wrap; height: auto; min-height: 49px; padding-top: 6px; padding-bottom: 6px; }
+.tiptap .gm-note {
+  position: relative;
+  margin: 26px 0;
+  padding: 39px 25px 21px;
+  border: 1px solid #d6ddca;
+  border-radius: 13px;
+  background-color: #eef1e7;
+  background-image: repeating-linear-gradient(135deg, transparent, transparent 5px, rgba(104,121,83,.04) 5px, rgba(104,121,83,.04) 6px);
+  color: #59684b;
+}
+.tiptap .gm-note::before { content: 'GM MEMO'; position: absolute; top: 12px; left: 25px; color: #859673; font: 11px 'Yu Gothic UI', sans-serif; letter-spacing: 1.7px; pointer-events: none; }
+.tiptap .gm-note > :first-child { margin-top: 0; }
+.tiptap .gm-note > :last-child { margin-bottom: 0; }
+.dashboard { overflow: auto; flex: 1; padding: 44px clamp(25px, 4vw, 65px) 30px; background: #f7f8f1; }
+.dashboard-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.dashboard-heading h1 { font: 600 30px/1.6 'Yu Mincho', serif; color: #3d5835; margin: 14px 0 8px; }
+.dashboard-heading p { color: #98a88a; font-size: 14px; margin: 0; }
+.dashboard-feather { color: #b2c49b; transform: rotate(-12deg); margin-right: 20px; }
+.dashboard-summary { display: flex; align-items: center; gap: 28px; margin: 32px 0; padding-bottom: 28px; border-bottom: 1px solid #dfe7d5; flex-wrap: wrap; }
+.dashboard-summary > span { color: #9aa98b; font-size: 13px; }
+.dashboard-summary strong { color: #5d7c48; font-size: 23px; font-weight: 500; margin-right: 5px; }
+.dashboard-actions { margin-left: auto; display: flex; gap: 12px; }
+.dashboard-actions > button { font-size: 13px; padding: 10px 14px; border-radius: 6px; }
+.dashboard-tools { display: flex; align-items: center; gap: 15px; margin-bottom: 24px; }
+.dashboard-tools .search { margin: 0; width: 340px; max-width: 60%; background: #eff3e7; padding: 11px 13px; }
+.dashboard-tools input { font-size: 14px; }
+.dashboard-tools select { margin-left: auto; padding: 10px 13px; font-size: 13px; color: #78915f; border: 1px solid #dae4ce; border-radius: 5px; background: #fafcf5; }
+.scenario-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr)); gap: 21px; }
+.scenario-card { text-align: left; display: flex; align-items: stretch; justify-content: flex-start; flex-direction: column; gap: 0; background: #fffef9; border: 1px solid #dfe6d5; border-radius: 10px; padding: 23px; min-height: 225px; box-shadow: 0 3px 12px #49663605; }
+.scenario-card:hover:not(:disabled) { background: #f5f9ed; border-color: #b6cba3; }
+.card-top { display: flex; align-items: center; justify-content: space-between; color: #a5b694; }
+.card-top > span { display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 1.5px; }
+.scenario-card h2 { font: 600 21px/1.6 'Yu Mincho', serif; color: #4b653c; margin: 22px 0 8px; overflow-wrap: anywhere; }
+.scenario-card p { margin: 0 0 22px; font-size: 13px; line-height: 1.7; color: #91a37f; overflow-wrap: anywhere; }
+.card-stats { display: flex; gap: 18px; color: #91a77d; font-size: 12px; margin-top: auto; }
+.card-stats > span { display: flex; gap: 5px; align-items: center; }
+.card-date { padding-top: 15px; margin-top: 15px; border-top: 1px solid #edf1e6; font-size: 11px; color: #abb99b; }
+.dashboard-empty { text-align: center; padding: 65px 15px; color: #95a984; }
+.dashboard-empty h2 { font-size: 19px; font-weight: 500; }
+.dashboard-empty p { font-size: 14px; }
+.dashboard-folder { display: flex; gap: 9px; align-items: center; margin-top: 32px; color: #a5b595; font-size: 11px; overflow-wrap: anywhere; }
 .outline-panel {
   width: 280px;
   border-left: 0;
@@ -21,7 +68,7 @@
 .outline-bottom { white-space: normal; line-height: 1.8; font-size: 11px; padding-top: 24px; color: #899a7a; }
 .document-header { padding-top: 22px; padding-bottom: 20px; }
 .document-subline input { width: 245px; }
-.editor-toolbar { height: 49px; padding: 0 20px; }
+.editor-toolbar { height: auto; min-height: 49px; padding: 6px 20px; }
 .editor-toolbar button { width: 32px; height: 32px; }
 .editor-toolbar button svg { width: 18px; height: 18px; }
 .paper { max-width: 950px; padding: 34px 42px; }

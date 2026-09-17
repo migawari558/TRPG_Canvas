@@ -8,7 +8,7 @@ function download(title, text, type) {
 export const isDesktop = !!window.canvas;
 export const api = window.canvas || {
   info: async () => ({ folder: 'ブラウザ内に保存（デスクトップ版ではフォルダを選択できます）' }),
-  list: async () => ({ documents: Object.values(read()).map(x => ({ id: x.doc.id, title: x.doc.title, updatedAt: x.doc.updatedAt })), errors: [] }),
+  list: async () => ({ documents: Object.values(read()).map(x => ({ id: x.doc.id, title: x.doc.title, subtitle: x.doc.subtitle || '', updatedAt: x.doc.updatedAt, characterCount: x.doc.markdown.replace(/[\s#*>`_\-]/g, '').length, sceneCount: x.doc.flow.nodes.length })), errors: [] }),
   load: async id => { const result = read()[id]; if (!result) throw new Error('シナリオが見つかりません'); return result; },
   save: async (doc, revision) => {
     const data = read(); const conflict = (data[doc.id]?.revision || null) !== (revision || null);

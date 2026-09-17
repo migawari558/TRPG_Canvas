@@ -1,6 +1,6 @@
 {
   "name": "trpg-canvas",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "TRPGシナリオのためのローカル執筆アプリ",
   "main": "electron/main.cjs",
@@ -13,6 +13,7 @@
     "test:smoke": "electron tests/smoke.cjs",
     "test:desktop": "electron tests/desktop-smoke.cjs",
     "test:hierarchy": "electron tests/hierarchy-smoke.cjs",
+    "test:dashboard": "electron tests/dashboard-smoke.cjs",
     "dist": "npm run build && electron-builder --win portable"
   },
   "dependencies": {
