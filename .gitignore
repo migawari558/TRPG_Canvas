@@ -1,0 +1,17 @@
+node_modules/
+dist/
+release/
+*.log
+.test-output/
+
+# Local settings and scenario data
+.env
+.env.*
+!.env.example
+*.trpg.json
+*.tmp
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
