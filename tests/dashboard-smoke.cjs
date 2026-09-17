@@ -62,7 +62,7 @@ app.whenReady().then(async () => {
     await win.setSize(1000, 800); await button('サイドバーを切り替え'); await delay(200);
     assert.ok(await js(`document.querySelector('.main').getBoundingClientRect().width >= innerWidth - 1`));
     assert.ok(await js(`document.documentElement.scrollWidth <= innerWidth`));
-    await js(`(()=>{const data=new DataTransfer();data.items.add(new File([${JSON.stringify(doc.markdown)}],'gm-roundtrip.md',{type:'text/markdown'}));const input=document.querySelector('input[type="file"]');input.files=data.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`); await delay(450);
+    await js(`(()=>{const data=new DataTransfer();data.items.add(new File([${JSON.stringify(doc.markdown)}],'gm-roundtrip.md',{type:'text/markdown'}));const input=document.querySelector('input[accept=".md,.markdown,.txt"]');input.files=data.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`); await delay(450);
     assert.ok(await js(`document.querySelector('.gm-note').innerText.includes('GMだけの秘密')`));
     assert.equal(await js(`document.querySelectorAll('.tiptap > h2').length`), 3);
     await js(`(()=>{const el=document.querySelector('.gm-note p');const range=document.createRange();range.selectNodeContents(el);range.collapse(false);const selection=getSelection();selection.removeAllRanges();selection.addRange(range);document.querySelector('.tiptap').focus();})()`);
