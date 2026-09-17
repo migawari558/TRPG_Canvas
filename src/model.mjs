@@ -1,10 +1,17 @@
 export const uid = () => globalThis.crypto.randomUUID();
 export function outline(content) {
   let pos = 0;
+  const ancestors = [];
   return (content?.content || []).flatMap((node, index) => {
-    const item = { index, level: node.attrs?.level || 1, text: textOf(node) || '無題の見出し', pos };
+    const item = { id: node.attrs?.headingId || null, index, level: node.attrs?.level || 1, text: textOf(node) || '無題の見出し', pos };
     pos += nodeSize(node);
-    return node.type === 'heading' ? [item] : [];
+    if (node.type !== 'heading') return [];
+    while (ancestors.length && ancestors.at(-1).level >= item.level) ancestors.pop();
+    item.parentId = ancestors.at(-1)?.id || null;
+    item.ancestorIds = ancestors.map(parent => parent.id);
+    item.depth = ancestors.length;
+    ancestors.push(item);
+    return [item];
   });
 }
 function nodeSize(node) { return node.type === 'text' ? node.text.length : node.content ? 2 + node.content.reduce((n, child) => n + nodeSize(child), 0) : ['paragraph', 'heading', 'blockquote', 'codeBlock'].includes(node.type) ? 2 : 1; }

@@ -5,16 +5,23 @@ import Placeholder from '@tiptap/extension-placeholder';
 import TurndownService from 'turndown';
 import { Bold, Italic, Heading2, Heading3, List, ListOrdered, Quote, Code2, Minus, Undo2, Redo2 } from 'lucide-react';
 import { markdown } from './export.mjs';
+import { HeadingIds } from './HeadingIds.js';
 const converter = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
 converter.addRule('strikethrough', { filter: ['s', 'del'], replacement: content => `~~${content}~~` });
 export default function ScenarioEditor({ doc, onChange, onReady }) {
   const editor = useEditor({
-    extensions: [StarterKit, Placeholder.configure({ placeholder: '物語をつづける…  「## 」で見出し、「> 」で共有情報' })],
+    extensions: [StarterKit, HeadingIds, Placeholder.configure({ placeholder: '物語をつづける…  「## 」で見出し、「> 」で共有情報' })],
     content: doc.content || markdown.render(doc.markdown),
     editorProps: { attributes: { 'aria-label': 'シナリオ本文', spellcheck: 'false' } },
     onUpdate: ({ editor }) => onChange({ content: editor.getJSON(), markdown: converter.turndown(editor.getHTML()) })
   });
-  useEffect(() => { if (editor) onReady(editor); return () => onReady(null); }, [editor]);
+  useEffect(() => {
+    if (editor) {
+      editor.view.dispatch(editor.state.tr.setMeta('initializeHeadingIds', true).setMeta('addToHistory', false));
+      onReady(editor);
+    }
+    return () => onReady(null);
+  }, [editor]);
   if (!editor) return null;
   const controls = [
     [Bold, '太字（Ctrl+B）', () => editor.chain().focus().toggleBold().run(), editor.isActive('bold')],

@@ -1,6 +1,6 @@
 {
   "name": "trpg-canvas",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "TRPGシナリオのためのローカル執筆アプリ",
   "main": "electron/main.cjs",
@@ -12,12 +12,15 @@
     "test": "node --test tests/*.test.cjs",
     "test:smoke": "electron tests/smoke.cjs",
     "test:desktop": "electron tests/desktop-smoke.cjs",
+    "test:hierarchy": "electron tests/hierarchy-smoke.cjs",
     "dist": "npm run build && electron-builder --win portable"
   },
   "dependencies": {
+    "@tiptap/core": "^2.27.3",
+    "@tiptap/extension-placeholder": "^2.11.5",
+    "@tiptap/pm": "^2.27.3",
     "@tiptap/react": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
-    "@tiptap/extension-placeholder": "^2.11.5",
     "@xyflow/react": "^12.4.4",
     "lucide-react": "^0.468.0",
     "markdown-it": "^14.1.0",
@@ -36,8 +39,17 @@
   "build": {
     "appId": "jp.trpgcanvas.app",
     "productName": "TRPG Canvas",
-    "directories": { "output": "release" },
-    "files": ["dist/**/*", "electron/**/*", "package.json"],
-    "win": { "target": "portable", "signAndEditExecutable": false }
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable",
+      "signAndEditExecutable": false
+    }
   }
 }
