@@ -3,22 +3,23 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const storage = require('./storage.cjs');
 const { renderPdf } = require('./pdf.cjs');
+const { prepareFolder, saveSettings, resolveWorkspace } = require('./workspace.cjs');
 let mainWindow, folder, closeReady = false;
 const dev = process.argv.includes('--dev');
 async function start() {
   app.setAppUserModelId('jp.trpgcanvas.app');
-  const configFile = path.join(app.getPath('userData'), 'settings.json');
-  try { folder = JSON.parse(await fs.readFile(configFile, 'utf8')).folder; } catch {}
-  folder ||= path.join(app.getPath('documents'), 'TRPG Canvas');
-  await fs.mkdir(folder, { recursive: true });
+  const workspace = await resolveWorkspace(app, dialog);
+  if (!workspace) { app.quit(); return; }
+  folder = workspace.folder;
+  const { configFile } = workspace;
   session.defaultSession.setPermissionRequestHandler((_wc, _permission, callback) => callback(false));
   ipcMain.handle('workspace:info', () => ({ folder }));
   ipcMain.handle('workspace:choose', async () => {
     const result = await dialog.showOpenDialog(mainWindow, { title: 'シナリオの保存先（同期する場合はDrive / Dropbox内のフォルダ）', properties: ['openDirectory', 'createDirectory'] });
     if (result.canceled) return null;
     const next = result.filePaths[0];
-    await fs.access(next, require('node:fs').constants.W_OK);
-    await fs.writeFile(configFile, JSON.stringify({ folder: next }));
+    await prepareFolder(next);
+    await saveSettings(configFile, next);
     folder = next;
     return { folder };
   });

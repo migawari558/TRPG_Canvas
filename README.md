@@ -4,7 +4,7 @@ TRPGシナリオをローカルで執筆するWindowsデスクトップアプリ
 
 ## 起動
 
-`release/TRPG Canvas 0.11.0.exe` がある場合は、ダブルクリックで起動できます（インストール不要）。
+`release/TRPG Canvas 0.11.1.exe` がある場合は、ダブルクリックで起動できます（インストール不要）。
 
 ソースコードから起動する場合はNode.jsをインストールした環境で実行します。
 
@@ -136,3 +136,5 @@ npm run dist       # Windowsポータブル版作成
 主な実装は `src/App.jsx`（画面・自動保存）、`src/Editor.jsx`（本文）、`src/Flow.jsx`（フロー）、`src/model.mjs`（目次移動）、`src/export.mjs`（HTML）、`electron/storage.cjs`（ファイル・競合検出）、`electron/main.cjs`（デスクトップ連携・PDF）です。
 
 使用したAPIの公式資料：[Tiptap React](https://tiptap.dev/docs/editor/getting-started/install/react)、[Electron printToPDF](https://www.electronjs.org/docs/latest/api/web-contents#contentsprinttopdfoptions)。
+
+保存先のドライブが未接続などで利用できない場合、起動時に保存先を選び直せます。既存のシナリオは移動・削除しません。同期ドライブを使う場合は接続を確認して元のフォルダを選択してください。

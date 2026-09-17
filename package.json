@@ -1,6 +1,6 @@
 {
   "name": "trpg-canvas",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "private": true,
   "description": "TRPGシナリオのためのローカル執筆アプリ",
   "main": "electron/main.cjs",
@@ -25,7 +25,8 @@
     "test:search": "electron tests/search-smoke.cjs",
     "test:chapters": "electron tests/chapters-smoke.cjs",
     "build:icon": "electron scripts/build-icon.cjs",
-    "test:workflow": "electron tests/workflow-smoke.cjs"
+    "test:workflow": "electron tests/workflow-smoke.cjs",
+    "test:startup": "electron tests/startup-recovery.cjs"
   },
   "dependencies": {
     "@tiptap/core": "^2.27.3",
