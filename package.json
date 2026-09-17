@@ -1,6 +1,6 @@
 {
   "name": "trpg-canvas",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "private": true,
   "description": "TRPGシナリオのためのローカル執筆アプリ",
   "main": "electron/main.cjs",
@@ -23,7 +23,9 @@
     "test:images": "electron tests/images-smoke.cjs",
     "test:tasks": "electron tests/tasks-smoke.cjs",
     "test:search": "electron tests/search-smoke.cjs",
-    "test:chapters": "electron tests/chapters-smoke.cjs"
+    "test:chapters": "electron tests/chapters-smoke.cjs",
+    "build:icon": "electron scripts/build-icon.cjs",
+    "test:workflow": "electron tests/workflow-smoke.cjs"
   },
   "dependencies": {
     "@tiptap/core": "^2.27.3",
@@ -60,11 +62,15 @@
     "files": [
       "dist/**/*",
       "electron/**/*",
-      "package.json"
+      "package.json",
+      "assets/icon.ico",
+      "assets/icon.png"
     ],
     "win": {
       "target": "portable",
-      "signAndEditExecutable": false
+      "signAndEditExecutable": true,
+      "icon": "assets/icon.ico",
+      "signExecutable": false
     }
   }
 }

@@ -1,0 +1,35 @@
+const {app,BrowserWindow}=require('electron'),fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
+const output=path.resolve('.test-output/workflow');app.setPath('userData',path.join(output,`profile-${Date.now()}`));const delay=ms=>new Promise(r=>setTimeout(r,ms));
+app.whenReady().then(async()=>{try{
+ await fs.mkdir(output,{recursive:true});const w=new BrowserWindow({width:1440,height:1100,show:false,webPreferences:{sandbox:true,contextIsolation:true}}),errors=[];w.webContents.on('console-message',e=>{if(e.level==='error')errors.push(e.message);});
+ const js=async code=>{try{const result=await w.webContents.executeJavaScript(code,true);await delay(100);return result;}catch(error){console.error(code,errors);throw error;}};
+ const click=text=>js(`[...document.querySelectorAll('button')].find(b=>b.textContent.trim()===${JSON.stringify(text)}).click();undefined`);
+ const key=async(keyCode,modifiers=[])=>{w.webContents.sendInputEvent({type:'keyDown',keyCode,modifiers});w.webContents.sendInputEvent({type:'keyUp',keyCode,modifiers});await delay(100);};
+ const data=()=>js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).find(v=>v.doc.title==='改善テスト').doc`);
+ const source='# 第一幕\n\n## 図書館\n\n前の文章\n\n### 小さな手掛かり\n\n細部\n\n# 第二幕\n\n## 灯台\n\n結末';
+ await w.loadFile(path.resolve('dist/index.html'));await delay(900);w.show();w.focus();
+ await js(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${JSON.stringify(source)}],'改善テスト.md'));const el=document.querySelector('input[accept=".md,.markdown,.txt"]');el.files=dt.files;el.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(300);
+ await click('すべて閉じる');assert.equal(await js(`document.querySelectorAll('.outline-link').length`),2);await click('すべて開く');assert.equal(await js(`document.querySelectorAll('.outline-link').length`),5);
+ await js(`(()=>{const p=document.querySelector('.tiptap p'),r=document.createRange();r.selectNodeContents(p);r.collapse(false);getSelection().removeAllRanges();getSelection().addRange(r);document.querySelector('.tiptap').focus();})()`);
+ for(let i=0;i<3;i++)await key('Enter');await js(`document.execCommand('insertText',false,'後の文章');undefined`);await delay(850);
+ let doc=await data();assert.equal((doc.markdown.match(/<!-- trpg-blank -->/g)||[]).length,2);
+ // Simulate an older file whose JSON retained empty paragraphs but Markdown lost them.
+ await js(`(()=>{const key='trpg-canvas-documents-v1',all=JSON.parse(localStorage.getItem(key));Object.values(all).forEach(v=>{if(v.doc.title==='改善テスト')v.doc.markdown=v.doc.markdown.replace(/<!-- trpg-blank -->/g,'')});localStorage.setItem(key,JSON.stringify(all));})()`);
+ w.webContents.reload();await delay(950);await js(`[...document.querySelectorAll('.document-item')].find(b=>b.textContent.includes('改善テスト')).click();undefined`);await delay(1000);doc=await data();assert.equal((doc.markdown.match(/<!-- trpg-blank -->/g)||[]).length,2);
+ const before=JSON.stringify(doc.content);await js(`document.querySelectorAll('.view-tabs button')[1].click();undefined`);await js(`document.querySelector('.flow-legacy summary').click();undefined`);await click('H1をグループ・H2をシーンに');await delay(600);
+ assert.equal(await js(`document.querySelectorAll('.scene-group').length`),2);assert.equal(await js(`document.querySelectorAll('.scene-node').length`),2);
+ w.webContents.sendInputEvent({type:'keyDown',keyCode:'Control'});
+ for(const label of ['図書館','灯台']){const point=await js(`(()=>{const el=[...document.querySelectorAll('.node-label')].find(e=>e.textContent===${JSON.stringify(label)}),r=el.getBoundingClientRect();return {x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)}})()`);w.webContents.sendInputEvent({type:'mouseDown',...point,button:'left',clickCount:1,modifiers:['control']});w.webContents.sendInputEvent({type:'mouseUp',...point,button:'left',clickCount:1,modifiers:['control']});await delay(150);}
+ w.webContents.sendInputEvent({type:'keyUp',keyCode:'Control'});await delay(100);
+ assert.equal(await js(`document.querySelectorAll('.react-flow__node.selected').length`),2);assert.equal(await js(`document.querySelector('.view-tabs button.active').textContent.includes('フローチャート')`),true);
+ await fs.writeFile(path.join(output,'selection.png'),(await w.webContents.capturePage()).toPNG());await js(`document.querySelector('[aria-label="選択したフローを削除"]').click();undefined`);await delay(850);assert.equal(await js(`document.querySelectorAll('.scene-node').length`),0);doc=await data();assert.equal(JSON.stringify(doc.content),before);
+ const box=await js(`(()=>{const r=document.querySelector('.react-flow__pane').getBoundingClientRect();return {x:Math.round(r.x+5),y:Math.round(r.y+5),right:Math.round(r.right-5),bottom:Math.round(r.bottom-50)}})()`);
+ w.webContents.sendInputEvent({type:'mouseDown',x:box.x,y:box.y,button:'left',clickCount:1});w.webContents.sendInputEvent({type:'mouseMove',x:box.right,y:box.bottom,modifiers:['leftButtonDown']});w.webContents.sendInputEvent({type:'mouseUp',x:box.right,y:box.bottom,button:'left',clickCount:1});await delay(200);
+ assert.equal(await js(`document.querySelectorAll('.react-flow__node.selected').length`),2);await key('Delete');await delay(850);assert.equal((await data()).flow.nodes.length,0);
+ await js(`document.querySelectorAll('.view-tabs button')[0].click();undefined`);
+ await js(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${JSON.stringify(doc.markdown)}],'空行再読込.md'));const el=document.querySelector('input[accept=".md,.markdown,.txt"]');el.files=dt.files;el.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(850);
+ assert.equal(await js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).find(v=>v.doc.title==='空行再読込').doc.content.content.filter(n=>n.type==='paragraph'&&!n.content?.length).length`),2);
+ const {exportHtml}=await import('../src/export.mjs'),{themes}=await import('../src/themes.mjs');
+ for(const theme of themes){const file=path.join(output,theme.id+'.html');await fs.writeFile(file,exportHtml(doc,{theme:theme.id,includeFlow:false}));await w.loadFile(file);assert.equal(await js(`document.querySelectorAll('.export-toc a').length`),4);assert.equal(await js(`document.querySelectorAll('.blank-line').length`),2);assert.ok(await js(`(()=>{const ps=[...document.querySelectorAll('.scenario-body>p')],a=ps.find(p=>p.textContent==='前の文章'),b=ps.find(p=>p.textContent==='後の文章');return b.getBoundingClientRect().top-a.getBoundingClientRect().bottom>parseFloat(getComputedStyle(a).lineHeight)*1.9})()`));await fs.writeFile(path.join(output,theme.id+'.png'),(await w.webContents.capturePage()).toPNG());if(theme.id==='forest')await fs.writeFile(path.join(output,'blank-lines.pdf'),await w.webContents.printToPDF({pageSize:'A4',printBackground:true}));}
+ assert.deepEqual(errors,[]);console.log('PASS: blank line persistence and migration, theme export, H2 contents, collapse all, H1 groups/H2 scenes, Ctrl multiselect and deletion without changing manuscript');app.exit(0);
+}catch(error){console.error(error);app.exit(1)}});

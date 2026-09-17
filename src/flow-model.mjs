@@ -71,7 +71,7 @@ export function ungroupFlow(flow) {
 
 // Existing connections and manually created scenes survive rebuilding the hierarchy.
 // Reuse stable heading IDs; never guess links from a potentially duplicated title.
-export function groupByHeadings(flow, headings) {
+export function groupByHeadings(flow, headings, sceneLevels = false) {
   const linked = new Map();
   for (const node of flow.nodes) {
     if (node.data.headingId && !linked.has(node.data.headingId)) linked.set(node.data.headingId, node);
@@ -90,13 +90,14 @@ export function groupByHeadings(flow, headings) {
   }
   function measure(entry) {
     entry.children.forEach(measure);
-    entry.width = entry.children.length ? Math.max(...entry.children.map(child => child.width)) + 48 : 260;
-    entry.height = entry.children.length ? 90 + entry.children.reduce((height, child) => height + child.height + 30, 0) : 165;
+    const group = entry.children.length || (sceneLevels && entry.heading.level < 2);
+    entry.width = group ? Math.max(272, ...entry.children.map(child => child.width)) + 48 : 260;
+    entry.height = group ? Math.max(180, 90 + entry.children.reduce((height, child) => height + child.height + 30, 0)) : 165;
   }
   roots.forEach(measure);
   const nodes = [];
   function place(entry, x, y, parentId) {
-    const isGroup = entry.children.length > 0;
+    const isGroup = entry.children.length > 0 || (sceneLevels && entry.heading.level < 2);
     nodes.push({ ...entry.node, type: isGroup ? 'sceneGroup' : 'scene', position: { x, y }, ...(parentId ? { parentId, extent: 'parent' } : {}), ...(isGroup ? { style: { width: entry.width, height: entry.height } } : {}) });
     let childY = 90;
     for (const child of entry.children) { place(child, 24, childY, entry.node.id); childY += child.height + 30; }
@@ -112,6 +113,20 @@ export function groupByHeadings(flow, headings) {
   const extraY = roots.length ? y + rowHeight + 100 : 40;
   extras.forEach((node, index) => nodes.push({ ...standalone(node, flow.nodes), position: { x: 40 + (index % 3) * 330, y: extraY + Math.floor(index / 3) * 170 } }));
   return { ...flow, nodes };
+}
+
+export function scenesFromHeadings(flow, headings) {
+  const selected = headings.filter(h => h.level <= 2), ids = new Set(selected.map(h => h.id));
+  return groupByHeadings(flow, selected.map(h => ({ ...h, parentId: [...h.ancestorIds].reverse().find(id => ids.has(id)) || null })), true);
+}
+
+export function removeFlowSelection(flow, nodeIds, edgeIds = []) {
+  const removed = new Set(nodeIds), removedEdges = new Set(edgeIds);
+  return { ...flow, nodes: flow.nodes.filter(n => !removed.has(n.id)).map(node => {
+    if (!removed.has(node.parentId)) return node;
+    const { parentId, extent, expandParent, ...rest } = node;
+    return { ...rest, position: absolutePosition(node, flow.nodes) };
+  }), edges: flow.edges.filter(e => !removedEdges.has(e.id) && !removed.has(e.source) && !removed.has(e.target)) };
 }
 
 export function removeFlowNode(flow, id) {

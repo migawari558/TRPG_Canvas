@@ -18,8 +18,10 @@ import { SearchReplace } from './SearchReplace.js';
 import FindBar from './FindBar.jsx';
 import { ScenarioHeading } from './ScenarioHeading.js';
 import { AlignCenter, Heading1 } from 'lucide-react';
+import { blankMarker } from './blank-markdown.mjs';
 import { Underline as UnderlineIcon, Search } from 'lucide-react';
-const converter = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-' });
+const converter = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', bulletListMarker: '-', blankReplacement: (_content, node) => node.nodeName === 'P' ? `\n\n${blankMarker}\n\n` : node.isBlock ? '\n\n' : '' });
+converter.addRule('emptyParagraph', { filter: node => node.nodeName === 'P' && !node.textContent && [...node.children].every(child => child.tagName === 'BR'), replacement: (_content, node) => `\n\n${Array(node.children.length + 1).fill(blankMarker).join('\n\n')}\n\n` });
 converter.addRule('underline', { filter: ['u'], replacement: content => `<u>${content}</u>` });
 converter.addRule('chapter', { filter: node => node.nodeName === 'H1' && node.hasAttribute('data-chapter'), replacement: content => `\n\n#! ${content}\n\n` });
 converter.addRule('strikethrough', { filter: ['s', 'del'], replacement: content => `~~${content}~~` });
@@ -58,6 +60,8 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     if (editor) {
       editor.view.dispatch(editor.state.tr.setMeta('initializeHeadingIds', true).setMeta('addToHistory', false));
       onReady(editor);
+      const serialized = converter.turndown(editor.getHTML());
+      if (!doc.content || serialized !== doc.markdown) onChange({ content: editor.getJSON(), markdown: serialized });
     }
     return () => onReady(null);
   }, [editor]);

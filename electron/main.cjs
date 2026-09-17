@@ -6,6 +6,7 @@ const { renderPdf } = require('./pdf.cjs');
 let mainWindow, folder, closeReady = false;
 const dev = process.argv.includes('--dev');
 async function start() {
+  app.setAppUserModelId('jp.trpgcanvas.app');
   const configFile = path.join(app.getPath('userData'), 'settings.json');
   try { folder = JSON.parse(await fs.readFile(configFile, 'utf8')).folder; } catch {}
   folder ||= path.join(app.getPath('documents'), 'TRPG Canvas');
@@ -43,7 +44,7 @@ async function start() {
     return result.filePath;
   });
   ipcMain.on('app:close-ready', () => { closeReady = true; mainWindow.close(); });
-  mainWindow = new BrowserWindow({ width: 1440, height: 940, minWidth: 980, minHeight: 700, backgroundColor: '#f7f5ef', title: 'TRPG Canvas', autoHideMenuBar: true, webPreferences: { preload: path.join(__dirname, 'preload.cjs'), sandbox: true, contextIsolation: true, nodeIntegration: false } });
+  mainWindow = new BrowserWindow({ width: 1440, height: 940, minWidth: 980, minHeight: 700, backgroundColor: '#f7f5ef', title: 'TRPG Canvas', icon: path.join(__dirname, '../assets/icon.ico'), autoHideMenuBar: true, webPreferences: { preload: path.join(__dirname, 'preload.cjs'), sandbox: true, contextIsolation: true, nodeIntegration: false } });
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   mainWindow.webContents.on('will-navigate', event => event.preventDefault());
   mainWindow.on('close', event => { if (!closeReady) { event.preventDefault(); mainWindow.webContents.send('app:closing'); } });

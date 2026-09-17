@@ -60,3 +60,5 @@
 
 
 .tiptap h1.chapter-heading{text-align:center;font-size:2.2em;margin:2.5em 0 .7em;letter-spacing:.08em;line-height:1.5}.editor-toolbar{flex-wrap:wrap}
+
+.tiptap h1{color:var(--theme-heading)}.tiptap :is(h2,h3,h4,h5,h6){color:var(--theme-subheading)}.tiptap h1.chapter-heading{color:var(--theme-chapter)}.outline-bulk{display:flex;gap:8px;margin:12px 0}.outline-bulk button{display:flex;gap:4px;align-items:center;font-size:11px;color:var(--theme-muted)}.flow-toolbar{flex-wrap:wrap;gap:10px}.flow-actions{flex-wrap:wrap}.react-flow__edge.selected .react-flow__edge-path{stroke:var(--theme-accent);stroke-width:3}.react-flow__selection{background:#8aaac422;border:1px solid var(--theme-heading)}

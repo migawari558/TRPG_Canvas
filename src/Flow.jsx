@@ -3,7 +3,7 @@ import { ReactFlow, Background, Controls, MiniMap, Handle, Position, NodeResizer
 import '@xyflow/react/dist/style.css';
 import { Plus, GitBranch, Flag, Trash2, X, Pencil, Link2, Layers, Ungroup, FileText } from 'lucide-react';
 import { uid } from './model.mjs';
-import { groupByHeadings, ungroupFlow, removeFlowNode, absolutePosition, canJoinGroup, moveToGroup } from './flow-model.mjs';
+import { scenesFromHeadings, removeFlowSelection, ungroupFlow, removeFlowNode, absolutePosition, canJoinGroup, moveToGroup } from './flow-model.mjs';
 
 const kindNames = { scene: 'シーン', branch: '分岐', ending: 'エンディング' };
 function EditButton({ data }) {
@@ -35,14 +35,15 @@ const nodeTypes = { scene: SceneNode, sceneGroup: SceneGroup };
 
 export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) {
   const [selected, setSelected] = useState(null);
+  const [selection, setSelection] = useState({ nodes: [], edges: [] });
   const [instance, setInstance] = useState(null);
   const byHeading = new Map(headings.map(heading => [heading.id, heading]));
   const nodes = flow.nodes.map(node => ({
     ...node, type: node.type === 'sceneGroup' ? 'sceneGroup' : 'scene',
-    selected: selected?.type === 'node' && selected.id === node.id,
+    selected: selection.nodes.includes(node.id) || (selected?.type === 'node' && selected.id === node.id),
     data: { ...node.data, heading: byHeading.get(node.data.headingId), edit: () => setSelected({ type: 'node', id: node.id }), navigate: onNavigate, write: () => onWrite(node.id) }
   }));
-  const edges = flow.edges.map(edge => ({ ...edge, selected: selected?.type === 'edge' && selected.id === edge.id, markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#799185', strokeWidth: 1.6 } }));
+  const edges = flow.edges.map(edge => ({ ...edge, selected: selection.edges.includes(edge.id) || (selected?.type === 'edge' && selected.id === edge.id), markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: 'var(--theme-muted)', strokeWidth: 1.6 } }));
   const item = selected?.type === 'node' ? flow.nodes.find(node => node.id === selected.id) : flow.edges.find(edge => edge.id === selected?.id);
   function change(patch) { onChange({ ...flow, ...patch }); }
   function updateNode(patch) { change({ nodes: flow.nodes.map(node => node.id === item.id ? { ...node, data: { ...node.data, ...patch } } : node) }); }
@@ -58,15 +59,25 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
     const added = next.nodes.find(node => node.id === id), position = absolutePosition(added, next.nodes);
     setTimeout(() => instance?.setCenter(position.x + 130, position.y + 80, { zoom: 0.9, duration: 250 }), 100);
   }
-  function group() { onChange(groupByHeadings(flow, headings)); setSelected(null); fit(); }
+  function group() { onChange(scenesFromHeadings(flow, headings)); setSelected(null); setSelection({ nodes: [], edges: [] }); fit(); }
+  const selectedNodes = nodes.filter(n => n.selected).map(n => n.id), selectedEdges = edges.filter(e => e.selected).map(e => e.id);
+  const selectionCount = selectedNodes.length + selectedEdges.length;
+  function deleteSelection() { onChange(removeFlowSelection(flow, selectedNodes, selectedEdges)); setSelected(null); setSelection({ nodes: [], edges: [] }); }
+  function selectChanges(changes, kind) {
+    const updates = changes.filter(c => c.type === 'select');
+    if (!updates.length) return;
+    setSelected(null);
+    setSelection(current => { const ids = new Set(current[kind]); updates.forEach(c => c.selected ? ids.add(c.id) : ids.delete(c.id)); return { ...current, [kind]: [...ids] }; });
+  }
   const linkedHeading = item?.data && byHeading.get(item.data.headingId);
 
-  return <div className="flow-view">
+  return <div className="flow-view" onKeyDown={event => { if (['Delete', 'Backspace'].includes(event.key) && !event.target.closest('input,textarea,select,[contenteditable="true"]') && selectionCount) { event.preventDefault(); deleteSelection(); } }}>
     <div className="flow-toolbar">
       <div><strong>流れを組み立てて、シーンを書こう</strong><span>シーンをつなぎ、「本文を書く」から執筆。グループを選んで追加すると、その中に配置します。</span></div>
       <div className="flow-actions">
+        <button disabled={!selectionCount} aria-label="選択したフローを削除" onClick={deleteSelection}><Trash2 size={16}/>選択を削除{selectionCount ? `（${selectionCount}）` : ''}</button>
         <button className="group-action" onClick={() => add('group')}><Layers size={16}/>グループ</button>
-        <details className="flow-legacy"><summary>既存の本文から</summary><button disabled={!headings.some(h => h.id)} onClick={group} title="既存のシーン・接続を保持して、目次の階層に沿って再配置します。">目次でグループ化</button></details>
+        <details className="flow-legacy"><summary>既存の本文から</summary><button disabled={!headings.some(h => h.id && h.level <= 2)} onClick={group} title="章とH1をグループ、H2をシーンにします。既存のシーン・接続は保持します。">H1をグループ・H2をシーンに</button></details>
         {flow.nodes.some(node => node.parentId) && <button aria-label="グループを解除" title="グループを解除（シーンと接続は保持）" onClick={() => { onChange(ungroupFlow(flow)); fit(); }}><Ungroup size={16}/></button>}
         <button onClick={() => add('scene')}><Plus size={16}/>シーン</button>
         <button onClick={() => add('branch')}><GitBranch size={16}/>分岐</button>
@@ -76,6 +87,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
     <div className="flow-canvas">
       <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} onInit={setInstance}
         onNodesChange={changes => {
+          selectChanges(changes, 'nodes');
           const structural = changes.filter(c => c.type !== 'select');
           if (!structural.length) return;
           const next = applyNodeChanges(structural, flow.nodes).map(node => {
@@ -84,11 +96,11 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
           });
           if (JSON.stringify(next) !== JSON.stringify(flow.nodes)) change({ nodes: next });
         }}
-        onEdgesChange={changes => { const structural = changes.filter(c => c.type !== 'select'); if (structural.length) change({ edges: applyEdgeChanges(structural, flow.edges) }); }}
+        onEdgesChange={changes => { selectChanges(changes, 'edges'); const structural = changes.filter(c => c.type !== 'select'); if (structural.length) change({ edges: applyEdgeChanges(structural, flow.edges) }); }}
         onConnect={connection => change({ edges: addEdge({ ...connection, id: uid() }, flow.edges) })}
-        onNodeClick={(_, node) => { const heading = byHeading.get(node.data.headingId); if (heading && node.type !== 'sceneGroup') onNavigate(heading); else setSelected({ type: 'node', id: node.id }); }}
-        onEdgeClick={(_, edge) => setSelected({ type: 'edge', id: edge.id })}
-        onPaneClick={() => setSelected(null)} fitView fitViewOptions={{ padding: 0.18, maxZoom: 1 }} minZoom={0.15} maxZoom={2} deleteKeyCode={null}>
+        onNodeClick={(event, node) => { if (event.ctrlKey || event.metaKey || event.shiftKey) return; const heading = byHeading.get(node.data.headingId); if (heading && node.type !== 'sceneGroup') onNavigate(heading); else setSelected({ type: 'node', id: node.id }); }}
+        onEdgeClick={(event, edge) => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey) setSelected({ type: 'edge', id: edge.id }); }}
+        onPaneClick={() => { setSelected(null); setSelection({ nodes: [], edges: [] }); }} selectionOnDrag selectionKeyCode="Shift" multiSelectionKeyCode={['Control', 'Meta', 'Shift']} panOnDrag={[1,2]} fitView fitViewOptions={{ padding: 0.18, maxZoom: 1 }} minZoom={0.15} maxZoom={2} deleteKeyCode={null}>
         <Background color="#cbd4c9" gap={22} size={1}/><Controls showInteractive={false}/>
         <MiniMap nodeColor={node => node.type === 'sceneGroup' ? '#dbe5d7' : node.data.kind === 'branch' ? '#d9c18f' : '#a6c2b0'} maskColor="rgba(244,246,240,.65)"/>
       </ReactFlow>
@@ -112,7 +124,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
         </>}
         <button className="danger-link" onClick={() => { if (selected.type === 'node') onChange(removeFlowNode(flow, item.id)); else change({ edges: flow.edges.filter(edge => edge.id !== item.id) }); setSelected(null); }}><Trash2 size={15}/>この{selected.type === 'node' ? item.type === 'sceneGroup' ? 'グループ枠' : 'シーン' : 'つながり'}を削除</button>
       </div>}
-      <div className="flow-tip">本文を書く → 見出しを自動作成 · 鉛筆で名前・所属を編集 · 点どうしを結んで接続</div>
+      <div className="flow-tip">Ctrl＋クリック／背景をドラッグで複数選択 · Deleteで選択を削除（本文は保持） · 右ドラッグで画面移動</div>
     </div>
   </div>;
 }

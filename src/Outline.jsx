@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChevronRight, ArrowUp, ArrowDown, Link2, Layers } from 'lucide-react';
+import { ChevronDown, ChevronRight, ArrowUp, ArrowDown, Link2, Layers, ChevronsUp, ChevronsDown } from 'lucide-react';
 import { moveSection } from './model.mjs';
 
 export default function Outline({ headings, content, activeHeading, onNavigate, onReorder, flow, onShowFlow }) {
@@ -18,6 +18,7 @@ export default function Outline({ headings, content, activeHeading, onNavigate, 
   function toggle(id) { setCollapsed(current => { const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next; }); }
   return <aside className="outline-panel" aria-label="シナリオの目次">
     <div className="outline-title"><span>目次</span><span>{headings.length.toString().padStart(2, '0')}</span></div>
+    <div className="outline-bulk"><button disabled={!parents.size} onClick={() => setCollapsed(new Set(parents))}><ChevronsUp size={14}/>すべて閉じる</button><button disabled={!collapsed.size} onClick={() => setCollapsed(new Set())}><ChevronsDown size={14}/>すべて開く</button></div>
     <p className="outline-subtitle">章をひらいて、物語をたどる。</p>
     <div className="outline-list">
       {visible.map(item => <div className={`outline-item ${item.id === activeHeading ? 'active' : ''}`} style={{ '--depth': item.depth }} key={item.id || item.index}>
