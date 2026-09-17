@@ -36,6 +36,9 @@
 .markdown-preview{margin:0;padding:20px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.8}
 .export-settings>.primary-button{position:sticky;bottom:0;box-shadow:0 -8px 16px var(--theme-paper)}
 .range-labels{color:var(--theme-muted)}.appearance-sample aside{background:var(--theme-note);border:1px solid var(--theme-border);border-radius:10px;padding:12px;background-image:repeating-linear-gradient(135deg,transparent,transparent 5px,#8881 5px,#8881 6px)}
+.scene-write{margin-top:12px;padding:7px 10px;border-radius:5px;background:var(--theme-soft);color:var(--theme-accent);font-size:13px;width:100%}
+.flow-legacy{position:relative;font-size:13px;align-self:center;color:var(--theme-muted)}.flow-legacy summary,.existing-link summary{cursor:pointer;padding:8px}.flow-legacy[open]>button{position:absolute;top:100%;right:0;z-index:10;background:var(--theme-paper);padding:14px;width:180px;border:1px solid var(--theme-border);border-radius:6px}
+.existing-link{margin:16px 0;color:var(--theme-muted);font-size:12px}.existing-link label{margin-top:10px}.scene-node{min-height:155px}.flow-inspector{z-index:6}
 .pdf-preview{display:flex;flex-direction:column;flex:1;min-height:0}.pdf-navigation{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:10px;gap:8px}.pdf-navigation button{padding:6px}.pdf-pages{overflow:auto;flex:1;min-height:0;text-align:center;background:var(--theme-soft);padding:16px 0}.pdf-pages canvas{display:block;margin:auto;box-shadow:0 2px 8px #0003}.pdf-pages canvas[hidden]{display:none}
 @media(max-width:800px){.export-layout{grid-template-columns:1fr;height:auto}.export-preview{height:65vh}.export-settings{overflow:visible}.export-modal{max-height:94vh}.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 

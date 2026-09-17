@@ -1,0 +1,45 @@
+const { app, BrowserWindow } = require('electron');
+const fs = require('node:fs/promises'), path = require('node:path'), assert = require('node:assert/strict');
+const output = path.resolve(__dirname, '../.test-output/flow-first');
+app.setPath('userData', path.join(output, `profile-${Date.now()}`));
+const delay = ms => new Promise(r => setTimeout(r, ms));
+app.whenReady().then(async () => {
+ let win;
+ try {
+  await fs.mkdir(output,{recursive:true});
+  win=new BrowserWindow({width:1440,height:1000,show:false,webPreferences:{sandbox:true,contextIsolation:true,nodeIntegration:false}});
+  const errors=[];win.webContents.on('console-message',e=>{if(e.level==='error')errors.push(e.message);});
+  const js=async code=>{try{const result=await win.webContents.executeJavaScript(code,true);await delay(90);return result;}catch(e){console.error(code,errors);throw e;}};
+  const click=text=>js(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent.trim()===${JSON.stringify(text)}).click()`);
+  const rename=value=>js(`(()=>{const e=document.querySelector('.flow-inspector input');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+  const flow=()=>js(`document.querySelectorAll('.view-tabs button')[1].click()`);
+  const data=()=>js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1')))[0].doc`);
+  await win.loadFile(path.resolve(__dirname,'../dist/index.html'));await delay(1200);win.show();win.focus();
+  const count=await js(`document.querySelectorAll('.tiptap h2').length`);
+  await flow();await click('グループ');await rename('探索エリア');await delay(500);
+  const handle=await js(`(()=>{const r=document.querySelector('.react-flow__resize-control.bottom.right.handle').getBoundingClientRect();return {x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)};})()`);
+  win.webContents.sendInputEvent({type:'mouseDown',...handle,button:'left',clickCount:1});
+  win.webContents.sendInputEvent({type:'mouseMove',x:handle.x+70,y:handle.y+50,modifiers:['leftButtonDown']});
+  win.webContents.sendInputEvent({type:'mouseUp',x:handle.x+70,y:handle.y+50,button:'left',clickCount:1});await delay(900);
+  assert.ok((await data()).flow.nodes.find(n=>n.data.label==='探索エリア').style.width>400);
+  await click('シーン');await rename('図書館');await delay(900);
+  let doc=await data(), scene=doc.flow.nodes.find(n=>n.data.label==='図書館'), group=doc.flow.nodes.find(n=>n.data.label==='探索エリア');
+  assert.equal(scene.parentId,group.id);assert.ok(!scene.data.headingId);
+  await js(`document.querySelector('[aria-label="編集を閉じる"]').click()`);
+  await js(`Array.from(document.querySelectorAll('.scene-node')).find(n=>n.querySelector('.node-label').textContent==='図書館').querySelector('.scene-write').click()`);await delay(200);
+  assert.equal(await js(`document.querySelector('.tiptap h2:last-of-type').textContent`),'図書館');
+  assert.equal(await js(`document.querySelectorAll('.tiptap h2').length`),count+1);
+  await js(`document.execCommand('insertText',false,'書架の奥に古い地図がある。')`);await delay(900);
+  doc=await data();scene=doc.flow.nodes.find(n=>n.data.label==='図書館');assert.ok(scene.data.headingId);assert.ok(doc.markdown.includes('書架の奥に古い地図'));
+  const length=doc.content.content.length;
+  await flow();await js(`Array.from(document.querySelectorAll('.scene-node')).find(n=>n.querySelector('.node-label').textContent==='図書館').querySelector('.scene-write').click()`);await delay(900);
+  assert.equal((await data()).content.content.length,length);
+  await flow();await delay(300);await fs.writeFile(path.join(output,'flow-first.png'),(await win.webContents.capturePage()).toPNG());
+  await delay(800);win.webContents.reload();await delay(1200);await flow();await delay(250);
+  assert.ok(await js(`Array.from(document.querySelectorAll('.scene-node')).find(n=>n.querySelector('.node-label').textContent==='図書館').textContent.includes('本文を開く')`));
+  await js(`document.querySelector('button[aria-label="図書館を編集"]').click()`);
+  await js(`(()=>{const e=document.querySelector('[aria-label="所属グループ"]');e.value='';e.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(850);
+  assert.ok(!(await data()).flow.nodes.find(n=>n.data.label==='図書館').parentId);
+  assert.deepEqual(errors,[]);console.log('PASS: manual groups, add inside group, create linked manuscript, typing, no duplicate sections, persistence, release from group');app.exit(0);
+ }catch(e){console.error(e);win?.destroy();app.exit(1);}
+});

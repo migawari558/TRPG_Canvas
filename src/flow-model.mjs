@@ -1,4 +1,51 @@
 import { uid } from './model.mjs';
+import { outline } from './model.mjs';
+
+// Flow groups organize planning independently of manuscript heading levels.
+export function writeFlowScene(content, flow, nodeId) {
+  const node = flow.nodes.find(item => item.id === nodeId);
+  if (!node || node.type === 'sceneGroup') return null;
+  const existing = outline(content).find(heading => heading.id && heading.id === node.data.headingId);
+  if (existing) return { content, flow, headingId: existing.id, created: false };
+  const headingId = uid();
+  return {
+    content: { type: 'doc', ...content, content: [...(content?.content || []), { type: 'heading', attrs: { level: 2, headingId }, content: [{ type: 'text', text: node.data.label.trim() || '新しいシーン' }] }, { type: 'paragraph' }] },
+    flow: { ...flow, nodes: flow.nodes.map(item => item.id === nodeId ? { ...item, data: { ...item.data, headingId } } : item) },
+    headingId, created: true
+  };
+}
+
+export function canJoinGroup(flow, nodeId, groupId) {
+  if (!groupId) return true;
+  const byId = new Map(flow.nodes.map(node => [node.id, node]));
+  let parent = byId.get(groupId);
+  if (parent?.type !== 'sceneGroup') return false;
+  const seen = new Set([nodeId]);
+  while (parent) {
+    if (seen.has(parent.id)) return false;
+    seen.add(parent.id); parent = byId.get(parent.parentId);
+  }
+  return true;
+}
+
+export function moveToGroup(flow, nodeId, groupId) {
+  if (!canJoinGroup(flow, nodeId, groupId)) return flow;
+  const node = flow.nodes.find(item => item.id === nodeId), parent = flow.nodes.find(item => item.id === groupId);
+  if (!node) return flow;
+  const position = absolutePosition(node, flow.nodes);
+  const { parentId, extent, expandParent, ...rest } = node;
+  const moved = parent ? { ...rest, parentId: parent.id, expandParent: true, position: { x: 30, y: Math.max(90, ...flow.nodes.filter(item => item.parentId === groupId && item.id !== nodeId).map(item => item.position.y + (item.style?.height || item.measured?.height || 150) + 30)) } } : { ...rest, position };
+  const nodes = flow.nodes.map(item => item.id === nodeId ? moved : item.id === groupId ? { ...item } : item);
+  if (parent) {
+    const p = nodes.find(item => item.id === parent.id);
+    p.style = { ...p.style, width: Math.max(p.style?.width || 400, moved.position.x + (moved.style?.width || 260) + 30), height: Math.max(p.style?.height || 300, moved.position.y + (moved.style?.height || 150) + 30) };
+  }
+  // React Flow requires every parent before its descendants.
+  const sorted = [], visited = new Set();
+  function visit(item) { if (visited.has(item.id)) return; visited.add(item.id); const parent = nodes.find(n => n.id === item.parentId); if (parent) visit(parent); sorted.push(item); }
+  nodes.forEach(visit);
+  return { ...flow, nodes: sorted };
+}
 
 export function absolutePosition(node, nodes) {
   const byId = new Map(nodes.map(item => [item.id, item]));
@@ -44,7 +91,7 @@ export function groupByHeadings(flow, headings) {
   function measure(entry) {
     entry.children.forEach(measure);
     entry.width = entry.children.length ? Math.max(...entry.children.map(child => child.width)) + 48 : 260;
-    entry.height = entry.children.length ? 90 + entry.children.reduce((height, child) => height + child.height + 30, 0) : 110;
+    entry.height = entry.children.length ? 90 + entry.children.reduce((height, child) => height + child.height + 30, 0) : 165;
   }
   roots.forEach(measure);
   const nodes = [];

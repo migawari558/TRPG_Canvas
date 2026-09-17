@@ -1,0 +1,19 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+test('flow-first writing preserves manuscript and reuses IDs, including duplicate scene names',async()=>{
+ const {writeFlowScene}=await import('../src/flow-model.mjs');
+ const flow={nodes:['a','b'].map(id=>({id,type:'scene',position:{x:0,y:0},data:{label:'同じ名前'}})),edges:[]};
+ const content={type:'doc',content:[{type:'paragraph',content:[{type:'text',text:'既存本文'}]}]};
+ const first=writeFlowScene(content,flow,'a');assert.deepEqual(first.content.content[0],content.content[0]);assert.equal(first.content.content.length,3);
+ const again=writeFlowScene(first.content,first.flow,'a');assert.equal(again.created,false);assert.equal(again.content,first.content);
+ const second=writeFlowScene(first.content,first.flow,'b');assert.notEqual(first.headingId,second.headingId);assert.equal(second.content.content.length,5);
+ const restored=writeFlowScene(content,first.flow,'a');assert.equal(restored.created,true);assert.notEqual(restored.headingId,first.headingId);
+});
+test('manual groups prevent cycles, preserve edges and release scenes without data loss',async()=>{
+ const {moveToGroup,canJoinGroup,removeFlowNode,absolutePosition}=await import('../src/flow-model.mjs');
+ const flow={nodes:[{id:'s',type:'scene',position:{x:500,y:100},data:{label:'scene',headingId:'h'}},{id:'g',type:'sceneGroup',position:{x:100,y:100},style:{width:400,height:300},data:{label:'group'}},{id:'nested',type:'sceneGroup',position:{x:800,y:100},style:{width:400,height:300},data:{label:'nested'}}],edges:[{id:'edge',source:'s',target:'nested'}]};
+ const original=JSON.stringify(flow);const grouped=moveToGroup(moveToGroup(flow,'nested','g'),'s','nested');
+ assert.equal(JSON.stringify(flow),original);assert.equal(canJoinGroup(grouped,'g','nested'),false);assert.equal(canJoinGroup(grouped,'g','g'),false);
+ assert.ok(grouped.nodes.findIndex(n=>n.id==='g')<grouped.nodes.findIndex(n=>n.id==='nested'));assert.equal(grouped.nodes.find(n=>n.id==='s').data.headingId,'h');
+ const pos=absolutePosition(grouped.nodes.find(n=>n.id==='s'),grouped.nodes);const released=moveToGroup(grouped,'s','');assert.deepEqual(released.nodes.find(n=>n.id==='s').position,pos);assert.deepEqual(released.edges,flow.edges);
+ assert.deepEqual(removeFlowNode(grouped,'nested').nodes.find(n=>n.id==='s').position,pos);
+});
