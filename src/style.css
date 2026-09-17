@@ -1,4 +1,4 @@
-:root{font-family:'Yu Gothic UI','Meiryo',sans-serif;color:var(--theme-text, #34463d);background:var(--theme-panel, #f6f5f0);font-synthesis:none;font-size:calc(16px * var(--ui-scale, 1));font-weight:400;--green:#3f6652;--muted:#8c958c;--line:#e4e7df;--paper:#fffefa}
+:root{font-family:'Yu Gothic UI','Meiryo',sans-serif;color:var(--theme-text, #34463d);background:var(--theme-panel, #f6f5f0);font-synthesis:style;font-size:calc(16px * var(--ui-scale, 1));font-weight:400;--green:#3f6652;--muted:#8c958c;--line:#e4e7df;--paper:#fffefa}
 *{box-sizing:border-box}
 body{margin:0}
 button,input,select{font:inherit}
@@ -86,16 +86,16 @@ button svg{flex-shrink:0}
 .tiptap h2{font-size:calc(24px * var(--ui-scale, 1));margin:34px 0 17px;padding-bottom:11px;border-bottom:1px solid var(--theme-border, #e5eadd);font-weight:600;letter-spacing:.6px}
 .tiptap>:first-child{margin-top:0}
 .tiptap h3{font-size:calc(18px * var(--ui-scale, 1));margin:28px 0 12px;font-weight:600}
-.tiptap p{margin:12px 0}
+.tiptap p{margin:0}
 .tiptap strong{font-weight:600;color:var(--theme-text, #465c3f)}
 .tiptap blockquote{position:relative;margin:24px 0;padding:26px 25px 17px;background:var(--theme-soft, #f0f4e9);border-left:3px solid var(--theme-border, #a0b18b);border-radius:0 4px 4px 0;font-family:'Yu Mincho','YuMincho',serif;color:var(--theme-text, #6a795b);line-height:2.1}
 .tiptap blockquote:before{content:'SHARED INFORMATION';position:absolute;top:9px;left:25px;font:calc(10px * var(--ui-scale, 1)) 'Yu Gothic UI',sans-serif;letter-spacing:1.6px;color:var(--theme-muted, #a3b090)}
-.tiptap blockquote p{margin:7px 0}
+.tiptap blockquote p{margin:0}
 .tiptap code{font-family:Consolas,monospace;background:var(--theme-soft, #eef1e8);padding:2px 5px;border-radius:3px}
 .tiptap pre{background:var(--theme-soft, #ecf0e6);padding:18px;border-radius:5px;white-space:pre-wrap}
 .tiptap pre code{padding:0;background:none}
 .tiptap ul,.tiptap ol{padding-left:24px}
-.tiptap li p{margin:4px 0}
+.tiptap li p{margin:0}
 .tiptap hr{border:0;border-top:1px solid var(--theme-border, #dfe5d6);margin:35px 0}
 .tiptap p.is-editor-empty:first-child:before{color:var(--theme-muted, #a9b59e);content:attr(data-placeholder);float:left;height:0;pointer-events:none}
 .paper-end{font-size:calc(11px * var(--ui-scale, 1));color:var(--theme-muted, #b8c4aa);text-align:center;margin-top:42px}
