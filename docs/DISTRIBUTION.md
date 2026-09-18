@@ -1,5 +1,17 @@
 # GitHubから配布する
 
+## このプロジェクトの配布先
+
+リポジトリは [migawari558/TRPG_Canvas](https://github.com/migawari558/TRPG_Canvas) です。Privateのまま運用し、招待した人だけに配布します。
+
+1. リポジトリの **Settings → Collaborators → Add people** から、配布する相手のGitHubアカウントを招待します。
+2. 相手に招待を承諾してもらいます。
+3. [Releases](https://github.com/migawari558/TRPG_Canvas/releases) のURLを渡します。相手は招待されたアカウントでログインして、端末に合うファイルをダウンロードします。
+
+下書きのReleaseは通常のダウンロード案内には使えません。ビルド結果を確認し、Publish releaseでリポジトリ内に公開してから案内してください。Privateリポジトリのままなら、Releaseを公開しても誰でもアクセスできる状態にはなりません。
+
+個人アカウントのPrivateリポジトリでは、共同編集者の招待にソースコードの閲覧・変更権限も含まれます。アプリのダウンロードだけに権限を限定する仕組みではありません。
+
 ## 初回の準備
 
 1. GitHubでリポジトリを作成します。誰でもReleasesから取得できるようにする場合はPublicにします。PublicではソースコードとGit履歴も公開されます。PrivateのReleasesはアクセス権を持つ人だけが利用できます。
