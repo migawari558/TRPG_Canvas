@@ -1,10 +1,11 @@
-import { Node, mergeAttributes } from '@tiptap/core';
+import { Node, mergeAttributes, wrappingInputRule } from '@tiptap/core';
 
 export const GmNote = Node.create({
   name: 'gmNote',
   group: 'block',
   content: '(paragraph | bulletList | orderedList | taskList | codeBlock | blockquote | image)+',
   defining: true,
+  addInputRules() { return [wrappingInputRule({ find: /^(?:!!!|:::gm)\s$/, type: this.type })]; },
   parseHTML() { return [{ tag: 'aside[data-gm-note]' }]; },
   renderHTML({ HTMLAttributes }) {
     return ['aside', mergeAttributes(HTMLAttributes, { 'data-gm-note': 'true', class: 'gm-note' }), 0];

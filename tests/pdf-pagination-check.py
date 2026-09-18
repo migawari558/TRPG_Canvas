@@ -25,6 +25,7 @@ for kind in ['GM', 'QUOTE']:
     assert {p[f'{kind}_{i}'] for i in range(6)} == {(0, 1)}
     # Oversized blocks remain complete and are allowed to span columns/pages.
     assert len({p[f'LONG_{kind}_{i:02d}'] for i in range(36)}) > 1
+    assert p[f'LONG_{kind}_00'] == (0, 1), 'Oversized information must start in the current column'
     assert f'END_{kind}' in p
 
 print('PASS: first heading exception, subsequent column/page breaks, intact short blocks, complete oversized blocks')

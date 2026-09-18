@@ -1,5 +1,17 @@
 // A Markdown blockquote marker preserves note styling through .md round trips.
 export function gmNotePlugin(md) {
+  md.block.ruler.before('fence', 'gm_fence', (state, start, end, silent) => {
+    const line = n => state.src.slice(state.bMarks[n] + state.tShift[n], state.eMarks[n]);
+    const match = /^(\:{3,})gm\s*$/i.exec(line(start));
+    if (!match || state.sCount[start] - state.blkIndent >= 4) return false;
+    if (silent) return true;
+    let stop = start + 1;
+    while (stop < end && line(stop).trim() !== match[1]) stop++;
+    const open = state.push('gm_open', 'aside', 1); open.attrSet('data-gm-note', 'true'); open.attrSet('class', 'gm-note');
+    const oldParent = state.parentType; state.parentType = 'gm_note';
+    state.md.block.tokenize(state, start + 1, stop); state.parentType = oldParent;
+    state.push('gm_close', 'aside', -1); state.line = Math.min(stop + 1, end); return true;
+  }, { alt: ['paragraph', 'blockquote'] });
   md.core.ruler.after('inline', 'gm_note', state => {
     const tokens = state.tokens;
     for (let index = 0; index < tokens.length; index++) {
@@ -21,5 +33,6 @@ export function gmNotePlugin(md) {
 
 export function gmNoteToMarkdown(content) {
   const body = content.trim();
-  return `\n\n> [!GM]\n>${body ? `\n> ${body.replace(/\n/g, '\n> ')}` : ''}\n\n`;
+  const fence = ':'.repeat(Math.max(3, ...[...body.matchAll(/^(:+)\s*$/gm)].map(match => match[1].length + 1)));
+  return `\n\n${fence}gm\n${body}\n${fence}\n\n`;
 }

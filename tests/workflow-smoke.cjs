@@ -15,7 +15,7 @@ app.whenReady().then(async()=>{try{
  let doc=await data();assert.equal((doc.markdown.match(/<!-- trpg-blank -->/g)||[]).length,2);
  // Simulate an older file whose JSON retained empty paragraphs but Markdown lost them.
  await js(`(()=>{const key='trpg-canvas-documents-v1',all=JSON.parse(localStorage.getItem(key));Object.values(all).forEach(v=>{if(v.doc.title==='改善テスト')v.doc.markdown=v.doc.markdown.replace(/<!-- trpg-blank -->/g,'')});localStorage.setItem(key,JSON.stringify(all));})()`);
- w.webContents.reload();await delay(950);await js(`[...document.querySelectorAll('.document-item')].find(b=>b.textContent.includes('改善テスト')).click();undefined`);await delay(1000);doc=await data();assert.equal((doc.markdown.match(/<!-- trpg-blank -->/g)||[]).length,2);
+ w.webContents.reload();await delay(950);await js(`document.querySelector('[aria-label="ダッシュボードへ"]').click();undefined`);await delay(300);await js(`[...document.querySelectorAll('.scenario-card')].find(b=>b.textContent.includes('改善テスト')).click();undefined`);await delay(1000);doc=await data();assert.equal((doc.markdown.match(/<!-- trpg-blank -->/g)||[]).length,2);
  const before=JSON.stringify(doc.content);await js(`document.querySelectorAll('.view-tabs button')[1].click();undefined`);await js(`document.querySelector('.flow-legacy summary').click();undefined`);await click('H1をグループ・H2をシーンに');await delay(600);
  assert.equal(await js(`document.querySelectorAll('.scene-group').length`),2);assert.equal(await js(`document.querySelectorAll('.scene-node').length`),2);
  w.webContents.sendInputEvent({type:'keyDown',keyCode:'Control'});

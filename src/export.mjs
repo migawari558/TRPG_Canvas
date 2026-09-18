@@ -1,3 +1,4 @@
+import { contentHtml } from './content-html.mjs';
 import { exportStyle } from './export-style.mjs';
 import { getTheme } from './themes.mjs';
 import MarkdownIt from 'markdown-it';
@@ -44,7 +45,7 @@ export function flowSvg(flow, headings = [], theme = 'forest') {
 
 export function exportHtml(doc, options = {}) {
   const { copyButtons = true, includeFlow = true, interactive = true, theme = 'forest' } = options;
-  let html = markdown.render(doc.markdown), index = 0;
+  let html = (doc.content ? contentHtml(doc.content) : markdown.render(doc.markdown)), index = 0;
   const toc = [];
   const headings = outline(doc.content);
   html = html.replace(/<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/g, (_, level, attrs, title) => { const id = `section-${index++}`, chapter = attrs.includes('data-chapter'); if (Number(level) <= 2) toc.push(`<a href="#${id}" class="level-${chapter ? 0 : level}"><span>${title}</span></a>`); return `<h${level}${attrs} id="${id}">${title}</h${level}>`; });
