@@ -1,0 +1,104 @@
+name: Build desktop release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: desktop-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            arch: x64
+            platform: windows
+          - os: macos-15
+            arch: arm64
+            platform: mac
+          - os: macos-15-intel
+            arch: x64
+            platform: mac
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Check release version
+        run: node scripts/check-release.cjs
+      - run: npm test
+      - run: npm run build
+      - run: npm run test:startup
+      - run: npm run test:desktop
+      - name: Build Windows portable app
+        if: runner.os == 'Windows'
+        run: npx --no-install electron-builder --win portable --x64 --publish never
+      - name: Build macOS disk image and zip
+        if: runner.os == 'macOS'
+        env:
+          RELEASE_ARCH: ${{ matrix.arch }}
+          CSC_LINK: ${{ secrets.MAC_CERTIFICATE }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: node scripts/build-mac.cjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-${{ matrix.platform }}-${{ matrix.arch }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: desktop-*
+          path: release-assets
+          merge-multiple: true
+      - name: Prepare checksums and tag
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if git show-ref --verify --quiet "refs/tags/v$VERSION"; then
+            test "$(git rev-parse "v$VERSION^{commit}")" = "$GITHUB_SHA" || { echo "Version tag points to a different commit"; exit 1; }
+          fi
+          echo "RELEASE_TAG=v$VERSION" >> "$GITHUB_ENV"
+          cd release-assets
+          sha256sum *.exe *.dmg *.zip > SHA256SUMS.txt
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh release view "$RELEASE_TAG" --json isDraft >/dev/null 2>&1; then
+            DRAFT=$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)
+            if [ "$DRAFT" != true ]; then
+              echo "This version is already published. Bump package.json before releasing again."
+              exit 1
+            fi
+          else
+            gh release create "$RELEASE_TAG" --draft --target "$GITHUB_SHA" --title "TRPG Canvas $RELEASE_TAG" --notes-file docs/RELEASE-NOTES.md
+          fi
+          gh release upload "$RELEASE_TAG" release-assets/* --clobber

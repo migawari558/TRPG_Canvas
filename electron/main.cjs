@@ -7,7 +7,7 @@ const { prepareFolder, saveSettings, resolveWorkspace } = require('./workspace.c
 let mainWindow, folder, closeReady = false;
 const dev = process.argv.includes('--dev');
 async function start() {
-  app.setAppUserModelId('jp.trpgcanvas.app');
+  if (process.platform === 'win32') app.setAppUserModelId('jp.trpgcanvas.app');
   const workspace = await resolveWorkspace(app, dialog);
   if (!workspace) { app.quit(); return; }
   folder = workspace.folder;
@@ -45,7 +45,7 @@ async function start() {
     return result.filePath;
   });
   ipcMain.on('app:close-ready', () => { closeReady = true; mainWindow.close(); });
-  mainWindow = new BrowserWindow({ width: 1440, height: 940, minWidth: 980, minHeight: 700, backgroundColor: '#f7f5ef', title: 'TRPG Canvas', icon: path.join(__dirname, '../assets/icon.ico'), autoHideMenuBar: true, webPreferences: { preload: path.join(__dirname, 'preload.cjs'), sandbox: true, contextIsolation: true, nodeIntegration: false } });
+  mainWindow = new BrowserWindow({ width: 1440, height: 940, minWidth: 980, minHeight: 700, backgroundColor: '#f7f5ef', title: 'TRPG Canvas', icon: path.join(__dirname, process.platform === 'win32' ? '../assets/icon.ico' : '../assets/icon.png'), autoHideMenuBar: true, webPreferences: { preload: path.join(__dirname, 'preload.cjs'), sandbox: true, contextIsolation: true, nodeIntegration: false } });
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   mainWindow.webContents.on('will-navigate', event => event.preventDefault());
   mainWindow.on('close', event => { if (!closeReady) { event.preventDefault(); mainWindow.webContents.send('app:closing'); } });

@@ -29,7 +29,9 @@
     "test:startup": "electron tests/startup-recovery.cjs",
     "test:pdf-pagination": "electron tests/pdf-pagination.cjs",
     "test:writer": "electron tests/writer-smoke.cjs",
-    "test:pdf-writer": "electron tests/pdf-writer.cjs"
+    "test:pdf-writer": "electron tests/pdf-writer.cjs",
+    "dist:win": "npm run build && electron-builder --win portable --x64 --publish never",
+    "dist:mac": "npm run build && node scripts/build-mac.cjs"
   },
   "dependencies": {
     "@tiptap/core": "^2.27.3",
@@ -69,13 +71,42 @@
       "electron/**/*",
       "package.json",
       "assets/icon.ico",
-      "assets/icon.png"
+      "assets/icon.png",
+      "assets/icon.icns"
     ],
     "win": {
       "target": "portable",
       "signAndEditExecutable": true,
       "icon": "assets/icon.ico",
-      "signExecutable": false
+      "signExecutable": false,
+      "artifactName": "TRPG-Canvas-${version}-windows-${arch}.${ext}"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "assets/icon.icns",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "artifactName": "TRPG-Canvas-${version}-mac-${arch}.${ext}",
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "dmg": {
+      "title": "TRPG Canvas ${version}",
+      "contents": [
+        {
+          "x": 140,
+          "y": 180
+        },
+        {
+          "x": 420,
+          "y": 180,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
     }
   }
 }

@@ -1,6 +1,10 @@
 # TRPG Canvas
 
-TRPGシナリオをローカルで執筆するWindowsデスクトップアプリです。React / Tiptap / React Flow / Electronで構築しています。
+TRPGシナリオをローカルで執筆するデスクトップアプリです。React / Tiptap / React Flow / Electronで構築しています。
+
+配布版は[GitHub Releases](https://github.com/migawari558/TRPG_Canvas/releases)に掲載します。Windows用exe、Apple Silicon Mac用dmg、Intel Mac用dmgを用意する構成です。Mac版はGitHub Actionsでビルド・検証します。公開前の版はReleasesの下書きとなります。
+
+配布者向けの設定と署名の手順は[配布ガイド](docs/DISTRIBUTION.md)を参照してください。
 
 ## 起動
 
