@@ -7,10 +7,11 @@ export const themes = [
 export const getTheme = id => themes.find(theme => theme.id === id) || themes[0];
 export const defaultAppearance = { theme: 'forest', fontSize: 17, uiScale: 100 };
 export function normalizeDesign(value = {}) {
-  return { theme: getTheme(value?.theme).id, fontSize: Math.max(12, Math.min(28, Math.round(Number(value?.fontSize) || 17))) };
+  return { theme: getTheme(value?.theme).id, fontSize: Math.max(10, Math.min(28, Math.round(Number(value?.fontSize) || 17))) };
 }
 export function normalizeAppearance(value = {}) {
-  return { ...normalizeDesign(value), uiScale: Math.max(90, Math.min(125, Math.round(Number(value?.uiScale) || 100))) };
+  const design = normalizeDesign(value);
+  return { ...design, fontSize: Math.max(12, design.fontSize), uiScale: Math.max(90, Math.min(125, Math.round(Number(value?.uiScale) || 100))) };
 }
 export function themeVariables(id) {
   const theme = getTheme(id);
