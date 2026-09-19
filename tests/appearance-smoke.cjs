@@ -66,7 +66,30 @@ app.whenReady().then(async () => {
   await click('表示設定');await label('テーマ：モノクロ');await label('閉じる');win.setSize(1000,800);await delay(200);
   assert.ok(await js(`document.documentElement.scrollWidth<=innerWidth`));
   fs.writeFileSync(path.join(output,'small-editor.png'),(await win.webContents.capturePage()).toPNG());
+  win.setSize(1440,1000);await click('表示設定');await click('このテーマをもとに作る');
+  const color=async(name,value)=>js(`(()=>{const el=document.querySelector('[aria-label=${JSON.stringify(name)}]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,${JSON.stringify(value)});el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+  await color('背景（本文）','#202a35');await color('アクセント','#5ec5a2');await color('見出し文字','#9ec6f4');
+  assert.ok(await js(`document.querySelector('.theme-live-preview').textContent.includes('見出しのサンプル')`));
+  await delay(300);
+  fs.writeFileSync(path.join(output,'custom-theme-editor.png'),(await win.webContents.capturePage()).toPNG());
+  await click('テーマを保存');await delay(150);
+  const customId=await js(`document.querySelector('.app').dataset.theme`);assert.ok(customId.startsWith('custom-'),customId);
+  assert.equal(await js(`document.querySelector('.app').style.colorScheme`),'dark');
+  assert.ok(await js(`JSON.parse(localStorage.getItem('trpg-custom-themes-v1')).some(theme=>theme.id===${JSON.stringify(customId)})`));
+  await label('閉じる');win.webContents.reload();await delay(1300);
+  assert.equal(await js(`document.querySelector('.app').dataset.theme`),customId);
+  await click('書き出す');await label('書き出しテーマ：モノクロカスタム');await delay(150);
+  assert.ok(await js(`document.querySelector('iframe').srcdoc.includes('background:#202a35')`));
+  await click('このテーマを編集');await color('見出し文字','#e3a6dc');await click('テーマを保存');await delay(150);
+  assert.ok(await js(`document.querySelector('iframe').srcdoc.includes('#e3a6dc')`));
+  fs.writeFileSync(path.join(output,'custom-theme-export.png'),(await win.webContents.capturePage()).toPNG());
+  await click('PDF');
+  for(let i=0;i<100;i++){await delay(150);if(await js(`!!document.querySelector('.pdf-pages canvas:not([hidden])') && document.querySelector('.pdf-pages canvas').width>0`))break;}
+  assert.ok(await js(`document.querySelector('.pdf-pages canvas:not([hidden])')?.width>0`),'自作テーマのPDFプレビューを描画できません');
+  await click('HTML');
+  await click('このテーマを編集');await click('このテーマを削除');await delay(150);
+  assert.equal(await js(`document.querySelector('.app').dataset.theme`),'mono');
   assert.deepEqual(errors,[]);
-  console.log('PASS: display size/theme persistence, independent HTML export design, actual PDF rendering and page navigation, native exports, narrow window. '+output);app.exit(0);
+  console.log('PASS: display and custom theme persistence, editing/deletion, HTML/PDF previews and native exports, narrow window. '+output);app.exit(0);
  }catch(e){console.error(e);app.exit(1);}
 });

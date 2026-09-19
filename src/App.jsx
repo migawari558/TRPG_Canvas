@@ -1,7 +1,7 @@
 import Appearance from './Appearance.jsx';
 import { writeFlowScene } from './flow-model.mjs';
 import ExportDialog from './ExportDialog.jsx';
-import { defaultAppearance, normalizeAppearance, normalizeDesign, readPreference, themeVariables } from './themes.mjs';
+import { defaultAppearance, normalizeAppearance, normalizeDesign, readPreference, themeVariables, isDarkTheme } from './themes.mjs';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BookOpen, Plus, Search, FileText, Network, Download, Settings2, ChevronDown, ChevronUp, ArrowUp, ArrowDown, CircleHelp, X, Check, FolderOpen, Upload, RefreshCw, Cloud, HardDrive, Copy, Quote, Feather, PanelLeftClose, PanelLeftOpen, LoaderCircle, AlertCircle } from 'lucide-react';
 import ScenarioEditor from './Editor.jsx';
@@ -26,6 +26,15 @@ export default function App() {
   const [editor, setEditor] = useState(null), [editorContent, setEditorContent] = useState(null), [activeHeading, setActiveHeading] = useState(0), [loadGeneration, setLoadGeneration] = useState(0);
   const [appearance, setAppearance] = useState(() => normalizeAppearance(readPreference('trpg-appearance', defaultAppearance)));
   const [exportDesign, setExportDesign] = useState(() => { const stored = readPreference('trpg-export-design', null); return stored ? normalizeDesign(stored) : null; });
+  useEffect(() => {
+    const refresh = event => {
+      const replace = current => current?.theme === event.detail?.removedId ? { ...current, theme: event.detail.baseId } : current;
+      setAppearance(current => normalizeAppearance(replace(current)));
+      setExportDesign(current => current ? normalizeDesign(replace(current)) : null);
+    };
+    window.addEventListener('trpg-custom-themes-change', refresh);
+    return () => window.removeEventListener('trpg-custom-themes-change', refresh);
+  }, []);
   useEffect(() => { try { localStorage.setItem('trpg-appearance', JSON.stringify(appearance)); } catch { setError('表示設定を保存できませんでした'); } }, [appearance]);
   useEffect(() => { if (exportDesign) try { localStorage.setItem('trpg-export-design', JSON.stringify(exportDesign)); } catch { setError('書き出し設定を保存できませんでした'); } }, [exportDesign]);
   const docRef = useRef(null), revisions = useRef({}), saved = useRef(''), queue = useRef(Promise.resolve()), fileInput = useRef(null);
@@ -115,7 +124,7 @@ export default function App() {
       if (!editor.isDestroyed) editor.chain().focus().setTextSelection(heading.pos + editor.state.doc.child(heading.index).nodeSize + 1).run();
     });
   }
-  return <div className={`app ${sidebar ? '' : 'sidebar-hidden'}`} data-theme={appearance.theme} style={{ ...themeVariables(appearance.theme), '--editor-font-size': `${appearance.fontSize}px`, '--ui-scale': appearance.uiScale / 100 }}>
+  return <div className={`app ${sidebar ? '' : 'sidebar-hidden'}`} data-theme={appearance.theme} style={{ ...themeVariables(appearance.theme), colorScheme: isDarkTheme(appearance.theme) ? 'dark' : 'light', '--editor-font-size': `${appearance.fontSize}px`, '--ui-scale': appearance.uiScale / 100 }}>
     <aside className="sidebar"><button className="brand" aria-label="ダッシュボードへ" title="シナリオ一覧を開く" disabled={busy} onClick={() => run(showDashboard)}><div className="brand-mark"><BookOpen size={22}/></div><div>TRPG<span>CANVAS</span></div><span className="brand-dot">β</span></button><div className="workspace-label">YOUR CREATIVE SPACE</div><button className="sidebar-action" onClick={() => run(showDashboard)}><BookOpen size={16}/>シナリオ一覧へ</button>{screen === 'document' && doc && <Outline key={doc.id} headings={headings} content={editorContent} activeHeading={activeHeading} onNavigate={navigateHeading} onReorder={reorder} flow={doc.flow} onShowFlow={() => setView('flow')}/>} <button className="sidebar-action" disabled={busy} onClick={() => run(importFile)}><Upload size={15}/>Markdownを読み込む</button><div className="sidebar-bottom"><div className="local-badge"><span className="status-dot"/><span>{isDesktop ? 'ローカルワークスペース' : 'ブラウザプレビュー'}<small>{isDesktop ? 'あなたの物語は、あなたの手元に。' : 'このブラウザ内にデータを保存'}</small></span><HardDrive size={16}/></div><div className="sidebar-footer"><button onClick={() => setModal('settings')}><Settings2 size={16}/>保存・同期</button><button onClick={() => setModal('help')} aria-label="使い方"><CircleHelp size={17}/></button></div></div></aside>
     <main className="main"><header className="topbar"><div className="breadcrumb"><button className="icon-button" title="サイドバーを切り替え" aria-label="サイドバーを切り替え" aria-expanded={sidebar} onClick={() => setSidebar(!sidebar)}>{sidebar ? <PanelLeftClose size={18}/> : <PanelLeftOpen size={18}/>}</button><button className="breadcrumb-home" disabled={busy} onClick={() => run(showDashboard)}>マイシナリオ</button><span className="crumb-slash">/</span><strong>{screen === 'dashboard' ? 'ダッシュボード' : doc?.title || '読み込み中…'}</strong></div><div className="topbar-actions"><button className="appearance-button" onClick={() => setModal('appearance')}><Settings2 size={16}/>表示設定</button><span className={`save-state ${saveState}`}>{saveState === 'saving' ? <LoaderCircle size={13} className="spin"/> : saveState === 'error' ? <AlertCircle size={13}/> : <span className="status-dot"/>}{({ saved: '保存済み', saving: '保存中…', dirty: '未保存', error: '保存エラー' })[saveState]}</span>{screen !== 'dashboard' && <button className="export-button" disabled={!doc || busy} onClick={() => setModal('export')}><Download size={15}/>書き出す<ChevronDown size={13}/></button>}</div></header>
     {error && <div className="error-banner" role="alert"><AlertCircle size={17}/><span>{error}</span><button className="icon-button" aria-label="エラーを閉じる" onClick={() => setError('')}><X size={16}/></button></div>}
