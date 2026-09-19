@@ -27,9 +27,9 @@ app.whenReady().then(async () => {
   await delay(800);win.webContents.reload();await delay(1300);
   assert.equal(await js(`getComputedStyle(document.querySelector('.tiptap')).fontSize`),'23px');
   await click('書き出す');await label('書き出しテーマ：羊皮紙');
-  assert.equal(await js(`document.querySelector('[aria-label="書き出しの文字サイズ"]').min`),'10');
-  await range('書き出しの文字サイズ',10);await delay(100);
-  assert.ok(await js(`document.querySelector('iframe').srcdoc.includes('font-size:10px')`));
+  assert.equal(await js(`document.querySelector('[aria-label="書き出しの文字サイズ"]').min`),'7');
+  await range('書き出しの文字サイズ',7);await delay(100);
+  assert.ok(await js(`document.querySelector('iframe').srcdoc.includes('font-size:7px')`));
   await range('書き出しの文字サイズ',20);await delay(250);
   assert.ok(await js(`document.querySelector('iframe').srcdoc.includes('font-size:20px') && document.querySelector('iframe').srcdoc.includes('background:#fff6e5')`));
   assert.equal(await js(`document.querySelector('iframe').sandbox.length`),1);

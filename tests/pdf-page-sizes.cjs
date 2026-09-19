@@ -18,7 +18,7 @@ app.whenReady().then(async () => {
     const doc = sampleDocument();
     assert.ok(exportHtml(doc, { printPreview: true, pdfPageSize: 'B5' }).includes('@page{size:182mm 257mm'));
     for (const [size, expected] of Object.entries(sizes)) {
-      const data = await renderPdf(exportHtml(doc, { pdfPageSize: size, columns: 2, includeFlow: false }), size);
+      const data = await renderPdf(exportHtml(doc, { pdfPageSize: size, columns: 2, includeFlow: false, fontSize: size === 'A5' ? 7 : 17 }), size);
       await fs.writeFile(path.join(output, `${size}.pdf`), data);
       const pdf = await PDFDocument.load(data);
       const page = pdf.getPages()[0];
@@ -26,7 +26,7 @@ app.whenReady().then(async () => {
       assert.ok(Math.abs(page.getHeight() - expected[1]) < 1, `${size} height: ${page.getHeight()}`);
     }
     assert.throws(() => renderPdf('<p>test</p>', 'A0'), /未対応/);
-    console.log('PASS: A4, A5, B5, Letter PDF page dimensions and invalid-size rejection');
+    console.log('PASS: A4, A5 (7px), B5, Letter PDF page dimensions and invalid-size rejection');
     app.exit(0);
   } catch (error) { console.error(error); app.exit(1); }
 });

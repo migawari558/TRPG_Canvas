@@ -7,7 +7,7 @@ export const themes = [
 export const getTheme = id => themes.find(theme => theme.id === id) || themes[0];
 export const defaultAppearance = { theme: 'forest', fontSize: 17, uiScale: 100 };
 export function normalizeDesign(value = {}) {
-  return { theme: getTheme(value?.theme).id, fontSize: Math.max(10, Math.min(28, Math.round(Number(value?.fontSize) || 17))) };
+  return { theme: getTheme(value?.theme).id, fontSize: Math.max(7, Math.min(28, Math.round(Number(value?.fontSize) || 17))) };
 }
 export function normalizeAppearance(value = {}) {
   const design = normalizeDesign(value);
