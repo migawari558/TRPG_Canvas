@@ -4,7 +4,7 @@ import { InputRule } from '@tiptap/core';
 export const ScenarioTaskItem = TaskItem.extend({
   addInputRules() {
     return [new InputRule({
-      find: /^\s*(?:-\s)?\[([ xX])\]\s$/,
+      find: /^\s*(?:-\s)?\[([ xX]?)\]\s$/,
       handler: ({ state, range, match, chain }) => {
         const { $from } = state.selection;
         const parentItem = $from.depth >= 2 ? $from.node($from.depth - 1).type.name : null;

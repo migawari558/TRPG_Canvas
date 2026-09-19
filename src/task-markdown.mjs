@@ -1,5 +1,20 @@
 // Split mixed Markdown lists into normal/task runs so unmarked items stay normal.
+export function normalizeTaskShorthand(source) {
+  let fence = null;
+  return source.split('\n').map(line => {
+    const marker = /^ {0,3}(`{3,}|~{3,})/.exec(line);
+    if (fence) {
+      if (new RegExp(`^ {0,3}${fence.character}{${fence.length},}[ \\t]*$`).test(line)) fence = null;
+      return line;
+    }
+    if (marker) { fence = { character: marker[1][0], length: marker[1].length }; return line; }
+    if (/^(?: {4}|\t)/.test(line)) return line;
+    return line.replace(/^( {0,3})\[([ xX]?)\](?=[ \t]|$)/, (_all, indent, checked) => `${indent}- [${checked || ' '}]`);
+  }).join('\n');
+}
+
 export function taskListPlugin(md) {
+  md.core.ruler.before('block', 'scenario_task_shorthand', state => { state.src = normalizeTaskShorthand(state.src); });
   md.core.ruler.after('gm_note', 'scenario_tasks', state => {
     const token = (type, tag, nesting, content = '') => { const t = new state.Token(type, tag, nesting); t.content = content; return t; };
     function closing(tokens, start) {

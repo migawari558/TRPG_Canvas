@@ -20,11 +20,12 @@ app.whenReady().then(async()=>{try{
  await js(`(()=>{const root=document.querySelector('.tiptap');root.focus();const r=document.createRange();r.selectNodeContents(root);r.collapse(false);getSelection().removeAllRanges();getSelection().addRange(r);})()`);
  w.webContents.sendInputEvent({type:'keyDown',keyCode:'End',modifiers:['control']});w.webContents.sendInputEvent({type:'keyUp',keyCode:'End',modifiers:['control']});
  w.webContents.sendInputEvent({type:'keyDown',keyCode:'Enter'});w.webContents.sendInputEvent({type:'keyUp',keyCode:'Enter'});await delay(100);
- for(const keyCode of '- [ ] '){w.webContents.sendInputEvent({type:'char',keyCode});await delay(40);}
+ for(const keyCode of '[] '){w.webContents.sendInputEvent({type:'char',keyCode});await delay(40);}
  assert.equal(await js(`document.querySelectorAll('.tiptap input[type=checkbox]').length`),1,await js(`document.querySelector('.tiptap').innerHTML`));
+ await delay(850);const typedDoc=await data();assert.ok(typedDoc.markdown.includes('- [ ]'),typedDoc.markdown);
  for(const keyCode of 'one'){w.webContents.sendInputEvent({type:'char',keyCode});await delay(30);}
  for(let i=0;i<2;i++){w.webContents.sendInputEvent({type:'keyDown',keyCode:'Enter'});w.webContents.sendInputEvent({type:'keyUp',keyCode:'Enter'});await delay(80);}
- for(const keyCode of '- [x] '){w.webContents.sendInputEvent({type:'char',keyCode});await delay(40);}
+ for(const keyCode of '[x] '){w.webContents.sendInputEvent({type:'char',keyCode});await delay(40);}
  assert.equal(await js(`document.querySelectorAll('.tiptap input:checked').length`),1);
  await delay(850);
  const {exportHtml}=await import('../src/export.mjs');const file=path.join(output,'tasks.html');await fs.writeFile(file,exportHtml(doc,{columns:2}));await w.loadFile(file);assert.equal(await js(`document.querySelectorAll('input:checked').length`),2);await js(`document.querySelector('input[type=checkbox]').click()`);assert.equal(await js(`document.querySelector('input[type=checkbox]').checked`),true);
