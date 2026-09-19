@@ -14,8 +14,9 @@ app.whenReady().then(async () => {
     const { exportHtml } = await import('../src/export.mjs');
     const { sampleDocument } = await import('../src/model.mjs');
     await fs.mkdir(output, { recursive: true });
-    const sizes = { A4: [595.3, 841.9], A5: [419.5, 595.3], B5: [498.9, 708.7], Letter: [612, 792] };
+    const sizes = { A4: [595.3, 841.9], A5: [419.5, 595.3], B5: [516, 728.5], Letter: [612, 792] };
     const doc = sampleDocument();
+    assert.ok(exportHtml(doc, { printPreview: true, pdfPageSize: 'B5' }).includes('@page{size:182mm 257mm'));
     for (const [size, expected] of Object.entries(sizes)) {
       const data = await renderPdf(exportHtml(doc, { pdfPageSize: size, columns: 2, includeFlow: false }), size);
       await fs.writeFile(path.join(output, `${size}.pdf`), data);

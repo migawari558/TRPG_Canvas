@@ -4,7 +4,7 @@ function preparePdfLayout(pageSize = 'A4') {
   if (!body) return { background: '#ffffff' };
   const background = getComputedStyle(document.body).backgroundColor;
   const columns = Number(getComputedStyle(body).columnCount) || 1;
-  const paper = { A4: [210, 297], A5: [148, 210], B5: [176, 250], Letter: [215.9, 279.4] }[pageSize] || [210, 297];
+  const paper = { A4: [210, 297], A5: [148, 210], B5: [182, 257], Letter: [215.9, 279.4] }[pageSize] || [210, 297];
   const printableWidth = (paper[0] - 25.4) * 96 / 25.4;
   const printableHeight = (paper[1] - 25.4) * 96 / 25.4;
   const gap = parseFloat(getComputedStyle(body).columnGap) || 0;

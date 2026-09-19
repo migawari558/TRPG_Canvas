@@ -15,7 +15,7 @@ function renderPdf(content, requestedPageSize) {
       const evaluation = await window.webContents.debugger.sendCommand('Runtime.evaluate', { expression: `(${preparePdfLayout.toString()})(${JSON.stringify(pageSize)})`, returnByValue: true });
       if (evaluation.exceptionDetails) throw new Error(evaluation.exceptionDetails.exception?.description || 'PDFレイアウトの調整に失敗しました');
       const layout = evaluation.result.value;
-      const electronPageSize = pageSize === 'B5' ? { width: 176 / 25.4, height: 250 / 25.4 } : pageSize;
+      const electronPageSize = pageSize === 'B5' ? { width: 182 / 25.4, height: 257 / 25.4 } : pageSize;
       const bytes = await window.webContents.printToPDF({ printBackground: true, pageSize: electronPageSize, margins: { top: .5, bottom: .5, left: .5, right: .5 } });
       const output = await PDFDocument.load(bytes);
       const channels = (layout.background.match(/[\d.]+/g) || ['255','255','255']).slice(0,3).map(Number);
