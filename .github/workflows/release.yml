@@ -40,6 +40,7 @@ jobs:
       - run: npm run build
       - run: npm run test:startup
       - run: npm run test:desktop
+      - run: npm run test:pdf-page-sizes
       - name: Build Windows portable app
         if: runner.os == 'Windows'
         run: npx --no-install electron-builder --win portable --x64 --publish never

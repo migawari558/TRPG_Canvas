@@ -2,6 +2,7 @@ const { app, BrowserWindow, dialog } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
+const { PDFDocument } = require('pdf-lib');
 const output = path.resolve(__dirname, `../.test-output/appearance-${Date.now()}`);
 fs.mkdirSync(output, { recursive: true });
 app.setPath('userData', path.join(output, 'profile')); app.setPath('documents', output);
@@ -39,8 +40,9 @@ app.whenReady().then(async () => {
   const htmlFile=fs.readdirSync(output).find(f=>f.endsWith('.html'));assert.ok(htmlFile);
   assert.ok(fs.readFileSync(path.join(output,htmlFile),'utf8').includes('font-size:20px'));
   await click('書き出す');await click('PDF');
-  await delay(100);await click('2段組み');await delay(100);
+  await delay(100);await click('2段組み');await click('A5');await delay(100);
   assert.equal(await js(`localStorage.getItem('trpg-pdf-columns')`),'2');
+  assert.equal(await js(`localStorage.getItem('trpg-pdf-page-size')`),'"A5"');
   for(let i=0;i<100;i++){await delay(150);if(await js(`!!document.querySelector('.pdf-pages canvas:not([hidden])') && document.querySelector('.pdf-pages canvas').width>0`))break;}
   assert.ok(await js(`document.querySelector('.pdf-pages canvas').width>0`),await js(`document.querySelector('.export-preview').textContent`));
   await delay(600);
@@ -50,8 +52,11 @@ app.whenReady().then(async () => {
   await click('PDFを書き出す');
   for(let i=0;i<100;i++){await delay(200);if(fs.readdirSync(output).some(f=>f.endsWith('.pdf')))break;}
   const pdfFile=fs.readdirSync(output).find(f=>f.endsWith('.pdf'));assert.equal(fs.readFileSync(path.join(output,pdfFile)).subarray(0,4).toString(),'%PDF');
+  const page=(await PDFDocument.load(fs.readFileSync(path.join(output,pdfFile)))).getPages()[0];
+  assert.ok(Math.abs(page.getWidth()-419.5)<1 && Math.abs(page.getHeight()-595.3)<1, `A5 PDF: ${page.getWidth()} × ${page.getHeight()} pt`);
   await click('書き出す');await click('PDF');await delay(100);
   assert.ok(await js(`Array.from(document.querySelectorAll('.pdf-columns button')).find(b=>b.textContent==='2段組み').getAttribute('aria-pressed')==='true'`));
+  assert.ok(await js(`Array.from(document.querySelectorAll('.pdf-page-sizes button')).find(b=>b.textContent==='A5').getAttribute('aria-pressed')==='true'`));
   await click('HTML');assert.equal(await js(`document.querySelector('.pdf-columns')`),null);
   assert.ok(await js(`!document.querySelector('iframe').srcdoc.includes('column-count:2')`));await label('閉じる');
   await click('表示設定');await label('テーマ：モノクロ');await label('閉じる');win.setSize(1000,800);await delay(200);

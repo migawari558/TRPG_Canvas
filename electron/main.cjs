@@ -25,7 +25,7 @@ async function start() {
   });
   ipcMain.handle('document:list', () => storage.list(folder));
   ipcMain.handle('document:remove', (_event, id, revision) => storage.remove(folder, id, revision, file => shell.trashItem(file)));
-  ipcMain.handle('document:preview-pdf', async (_event, content) => (await renderPdf(content)).toString('base64'));
+  ipcMain.handle('document:preview-pdf', async (_event, content, pageSize) => (await renderPdf(content, pageSize)).toString('base64'));
   ipcMain.handle('document:load', (_event, id) => storage.read(folder, id));
   ipcMain.handle('document:save', (_event, doc, revision) => storage.save(folder, doc, revision));
   ipcMain.handle('document:import', async () => {
@@ -34,13 +34,13 @@ async function start() {
     const file = result.filePaths[0];
     return { title: path.basename(file, path.extname(file)), markdown: await fs.readFile(file, 'utf8') };
   });
-  ipcMain.handle('document:export', async (_event, format, title, content) => {
+  ipcMain.handle('document:export', async (_event, format, title, content, pageSize) => {
     if (!['html', 'pdf', 'md'].includes(format) || typeof content !== 'string') throw new Error('不正な書き出し形式');
     const safeTitle = String(title).replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').slice(0, 100) || 'scenario';
     const result = await dialog.showSaveDialog(mainWindow, { defaultPath: `${safeTitle}.${format}`, filters: [{ name: format.toUpperCase(), extensions: [format] }] });
     if (result.canceled) return null;
     if (format === 'pdf') {
-      await fs.writeFile(result.filePath, await renderPdf(content));
+      await fs.writeFile(result.filePath, await renderPdf(content, pageSize));
     } else await fs.writeFile(result.filePath, content, 'utf8');
     return result.filePath;
   });

@@ -7,8 +7,8 @@ contextBridge.exposeInMainWorld('canvas', {
   remove: (id, revision) => ipcRenderer.invoke('document:remove', id, revision),
   save: (doc, revision) => ipcRenderer.invoke('document:save', doc, revision),
   importMarkdown: () => ipcRenderer.invoke('document:import'),
-  export: (format, title, content) => ipcRenderer.invoke('document:export', format, title, content),
-  previewPdf: content => ipcRenderer.invoke('document:preview-pdf', content),
+  export: (format, title, content, pageSize) => ipcRenderer.invoke('document:export', format, title, content, pageSize),
+  previewPdf: (content, pageSize) => ipcRenderer.invoke('document:preview-pdf', content, pageSize),
   onClose: callback => { const listener = () => callback(); ipcRenderer.on('app:closing', listener); return () => ipcRenderer.removeListener('app:closing', listener); },
   finishClose: () => ipcRenderer.send('app:close-ready')
 });

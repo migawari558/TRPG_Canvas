@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist/build/pdf.mjs';
 import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 GlobalWorkerOptions.workerSrc = workerUrl;
-export default function PdfPreview({ html }) {
+export default function PdfPreview({ html, pageSize }) {
   const [pdf, setPdf] = useState(null), [page, setPage] = useState(1), [status, setStatus] = useState('PDFを生成中…'), [error, setError] = useState('');
   const canvas = useRef(), container = useRef();
   useEffect(() => {
@@ -10,7 +10,7 @@ export default function PdfPreview({ html }) {
     setPdf(null); setError(''); setStatus('PDFを生成中…'); setPage(1);
     const timer = setTimeout(async () => {
       try {
-        const encoded = await window.canvas.previewPdf(html);
+        const encoded = await window.canvas.previewPdf(html, pageSize);
         if (canceled) return;
         task = getDocument({ data: Uint8Array.from(atob(encoded), c => c.charCodeAt(0)), isEvalSupported: false });
         const loaded = await task.promise;
@@ -18,7 +18,7 @@ export default function PdfPreview({ html }) {
       } catch (e) { if (!canceled) { setStatus(''); setError(`PDFを表示できませんでした: ${e.message}`); } }
     }, 450);
     return () => { canceled = true; clearTimeout(timer); task?.destroy(); };
-  }, [html]);
+  }, [html, pageSize]);
   useEffect(() => {
     if (!pdf) return;
     let canceled = false, renderTask, sequence = Promise.resolve();
