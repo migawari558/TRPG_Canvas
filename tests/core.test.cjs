@@ -28,6 +28,8 @@ test('storage roundtrip, conflict preservation, list and path validation', async
   try {
     const { newDocument } = await import('../src/model.mjs');
     const doc = newDocument('Test');
+    doc.content = { type: 'doc', content: [paragraph('本文'), { type: 'image', attrs: { src: `data:image/png;base64,${'A'.repeat(100000)}`, alt: 'large' } }] };
+    doc.markdown = `本文\n\n![large](data:image/png;base64,${'A'.repeat(100000)})`;
     const initial = await storage.save(folder, doc, null);
     assert.deepEqual((await storage.read(folder, doc.id)).doc, doc);
     const external = await storage.save(folder, { ...doc, title: 'Remote' }, initial.revision);
@@ -36,7 +38,9 @@ test('storage roundtrip, conflict preservation, list and path validation', async
     assert.notEqual(conflict.doc.id, doc.id);
     assert.equal((await storage.read(folder, doc.id)).doc.title, 'Remote');
     assert.equal((await storage.read(folder, conflict.doc.id)).doc.title, 'Local（競合コピー）');
-    assert.equal((await storage.list(folder)).documents.length, 2);
+    const listed = (await storage.list(folder)).documents;
+    assert.equal(listed.length, 2);
+    assert.ok(listed.every(item => item.characterCount === 2), 'character count must not scan or count embedded image data');
     assert.throws(() => storage.filePath(folder, '../escape'));
     assert.throws(() => storage.validate({ ...doc, flow: { nodes: [{ id: 'bad', position: { x: '<script>', y: 0 }, data: { label: 'bad' } }], edges: [] } }));
     await fs.writeFile(path.join(folder, 'broken.trpg.json'), '{');

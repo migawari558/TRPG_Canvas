@@ -32,6 +32,7 @@ converter.addRule('embeddedImage', { filter: node => node.nodeName === 'IMG' && 
   const alt = (node.getAttribute('alt') || '画像').replace(/([\\\[\]])/g, '\\$1'), src = node.getAttribute('src'), width = normalizeImageWidth(node.getAttribute('data-image-width'));
   return `![${alt}](${src}${width < 100 ? ` "width=${width}"` : ''})`;
 } });
+export const serializeEditorMarkdown = editor => converter.turndown(editor.getHTML());
 export default function ScenarioEditor({ doc, onChange, onReady }) {
   const imageInput = useRef(), importingImage = useRef(false);
   const [findOpen, setFindOpen] = useState(false), [findRequest, setFindRequest] = useState(0);
@@ -60,16 +61,17 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
       handleDrop(view, event, _slice, moved) { const files = [...(event.dataTransfer?.files || [])]; if (moved || !files.length) return false; event.preventDefault(); insertImages(files, view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? view.state.selection.from); return true; }
     },
     onSelectionUpdate: ({ editor }) => setSelectedImageWidth(editor.isActive('image') ? normalizeImageWidth(editor.getAttributes('image').width) : null),
-    onUpdate: ({ editor }) => onChange({ content: editor.getJSON(), markdown: converter.turndown(editor.getHTML()) })
+    // Embedded images can be several megabytes. Keep keystrokes cheap and build
+    // Markdown once when the document is autosaved instead of on every change.
+    onUpdate: ({ editor }) => onChange({ content: editor.getJSON() })
   });
   useEffect(() => {
     if (editor) {
       editor.view.dispatch(editor.state.tr.setMeta('initializeHeadingIds', true).setMeta('addToHistory', false));
-      onReady(editor);
-      const serialized = converter.turndown(editor.getHTML());
-      if (!doc.content || serialized !== doc.markdown) onChange({ content: editor.getJSON(), markdown: serialized });
+      onReady(editor, () => serializeEditorMarkdown(editor));
+      if (!doc.content) onChange({ content: editor.getJSON(), markdown: serializeEditorMarkdown(editor) });
     }
-    return () => onReady(null);
+    return () => onReady(null, null);
   }, [editor]);
   useEffect(() => {
     const keydown = event => {

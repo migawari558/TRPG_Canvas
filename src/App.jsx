@@ -9,7 +9,7 @@ import Flow from './Flow.jsx';
 import Outline from './Outline.jsx';
 import Dashboard from './Dashboard.jsx';
 import { api, isDesktop } from './api.js';
-import { newDocument, sampleDocument, outline, moveSection } from './model.mjs';
+import { newDocument, sampleDocument, outline, moveSection, textOf } from './model.mjs';
 import { exportHtml } from './export.mjs';
 function Modal({ title, eyebrow, onClose, children, className = '' }) {
   const ref = useRef();
@@ -37,15 +37,24 @@ export default function App() {
   }, []);
   useEffect(() => { try { localStorage.setItem('trpg-appearance', JSON.stringify(appearance)); } catch { setError('表示設定を保存できませんでした'); } }, [appearance]);
   useEffect(() => { if (exportDesign) try { localStorage.setItem('trpg-export-design', JSON.stringify(exportDesign)); } catch { setError('書き出し設定を保存できませんでした'); } }, [exportDesign]);
-  const docRef = useRef(null), revisions = useRef({}), saved = useRef(''), queue = useRef(Promise.resolve()), fileInput = useRef(null);
+  const docRef = useRef(null), revisions = useRef({}), changeVersion = useRef(0), savedVersion = useRef(0), queue = useRef(Promise.resolve()), fileInput = useRef(null), editorRef = useRef(null), serializeMarkdown = useRef(null);
   const notify = text => setToast(text);
   const refreshList = useCallback(async () => { const result = await api.list(); setDocuments(result.documents); if (result.errors.length) setError(`読み込めないファイル: ${result.errors.join('、')}。元ファイルは保持しています。`); return result.documents; }, []);
-  const install = useCallback(result => { docRef.current = result.doc; revisions.current[result.doc.id] = result.revision; saved.current = JSON.stringify(result.doc); setDoc(result.doc); setEditorContent(result.doc.content || null); setLoadGeneration(value => value + 1); setSaveState('saved'); }, []);
-  const updateDoc = useCallback(patch => { if (!docRef.current) return; const next = { ...docRef.current, ...patch, updatedAt: new Date().toISOString() }; docRef.current = next; setDoc(next); setSaveState('dirty'); if (patch.content) setEditorContent(patch.content); }, []);
+  const install = useCallback(result => { docRef.current = result.doc; revisions.current[result.doc.id] = result.revision; changeVersion.current++; savedVersion.current = changeVersion.current; setDoc(result.doc); setEditorContent(result.doc.content || null); setLoadGeneration(value => value + 1); setSaveState('saved'); }, []);
+  const updateDoc = useCallback(patch => { if (!docRef.current) return; const next = { ...docRef.current, ...patch, updatedAt: new Date().toISOString() }; docRef.current = next; changeVersion.current++; setDoc(next); setSaveState('dirty'); if (patch.content) setEditorContent(patch.content); }, []);
   const persist = useCallback(() => {
     const next = queue.current.catch(() => {}).then(async () => {
-      const snapshot = docRef.current;
-      if (!snapshot || JSON.stringify(snapshot) === saved.current) return;
+      let snapshot = docRef.current;
+      if (!snapshot || changeVersion.current === savedVersion.current) return;
+      const activeEditor = editorRef.current;
+      if (activeEditor && !activeEditor.isDestroyed && serializeMarkdown.current) {
+        const content = activeEditor.getJSON(), markdown = serializeMarkdown.current();
+        if (snapshot.content !== content || snapshot.markdown !== markdown) {
+          snapshot = { ...snapshot, content, markdown };
+          docRef.current = snapshot; setDoc(snapshot); setEditorContent(content);
+        }
+      }
+      const savingVersion = changeVersion.current;
       setSaveState('saving');
       try {
         const result = await api.save(snapshot, revisions.current[snapshot.id]);
@@ -54,8 +63,8 @@ export default function App() {
           const current = { ...docRef.current, id: result.doc.id, title: result.doc.title };
           docRef.current = current; setDoc(current); setError('別の変更を検知しました。編集内容は「競合コピー」として保存しました。元のシナリオと比較してください。');
         }
-        saved.current = JSON.stringify(result.doc);
-        setSaveState(JSON.stringify(docRef.current) === saved.current ? 'saved' : 'dirty');
+        savedVersion.current = savingVersion;
+        setSaveState(changeVersion.current === savingVersion ? 'saved' : 'dirty');
         await refreshList();
       } catch (e) { setSaveState('error'); setError(`保存できませんでした: ${e.message}`); throw e; }
     });
@@ -64,7 +73,7 @@ export default function App() {
   useEffect(() => { (async () => { try { setWorkspace((await api.info()).folder); const list = await refreshList(); if (list.length) install(await api.load(list[0].id)); else if (!localStorage.getItem('trpg-library-initialized')) { const first = sampleDocument(); install(await api.save(first, null)); await refreshList(); } else setScreen('dashboard'); localStorage.setItem('trpg-library-initialized', 'true'); } catch (e) { setError(e.message); } })(); }, []);
   useEffect(() => { if (!doc) return; const timer = setTimeout(() => persist().catch(() => {}), 650); return () => clearTimeout(timer); }, [doc, persist]);
   useEffect(() => { if (!toast) return; const timer = setTimeout(() => setToast(null), 3500); return () => clearTimeout(timer); }, [toast]);
-  useEffect(() => { const listener = e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); persist().then(() => notify('保存しました')).catch(() => {}); } }; window.addEventListener('keydown', listener); const beforeUnload = e => { if (JSON.stringify(docRef.current) !== saved.current && docRef.current) { e.preventDefault(); e.returnValue = ''; } }; window.addEventListener('beforeunload', beforeUnload); const remove = window.canvas?.onClose(async () => { try { await persist(); window.canvas.finishClose(); } catch {} }); return () => { window.removeEventListener('keydown', listener); window.removeEventListener('beforeunload', beforeUnload); remove?.(); }; }, [persist]);
+  useEffect(() => { const listener = e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); persist().then(() => notify('保存しました')).catch(() => {}); } }; window.addEventListener('keydown', listener); const beforeUnload = e => { if (changeVersion.current !== savedVersion.current && docRef.current) { e.preventDefault(); e.returnValue = ''; } }; window.addEventListener('beforeunload', beforeUnload); const remove = window.canvas?.onClose(async () => { try { await persist(); window.canvas.finishClose(); } catch {} }); return () => { window.removeEventListener('keydown', listener); window.removeEventListener('beforeunload', beforeUnload); remove?.(); }; }, [persist]);
   async function run(action) { setBusy(true); try { await action(); } catch (e) { setError(e.message); } finally { setBusy(false); } }
   async function openDocument(id) { await persist(); install(await api.load(id)); setActiveHeading(0); setScreen('document'); }
   async function createDocument(title, body) { await persist(); const created = newDocument(title, body); install(await api.save(created, null)); await refreshList(); setView('editor'); setScreen('document'); }
@@ -81,17 +90,16 @@ export default function App() {
     await persist();
     await api.remove(deleteTarget.id, deleteTarget.revision);
     if (docRef.current?.id === deleteTarget.id) {
-      docRef.current = null; saved.current = ''; setDoc(null); setEditorContent(null); setEditor(null); setSaveState('saved');
+      docRef.current = null; changeVersion.current++; savedVersion.current = changeVersion.current; setDoc(null); setEditorContent(null); setEditor(null); setSaveState('saved');
     }
     delete revisions.current[deleteTarget.id];
     setScreen('dashboard'); setModal(null); setDeleteTarget(null);
     await refreshList(); notify(isDesktop ? 'シナリオをゴミ箱へ移しました' : 'シナリオを削除しました');
   }
   async function exportFile(exportFormat, options) { await persist(); const latest = docRef.current; const content = exportFormat === 'md' ? latest.markdown : exportHtml(latest, { ...options, printPreview: exportFormat === 'pdf' && !window.canvas }); const path = await api.export(exportFormat, latest.title, content, exportFormat === 'pdf' ? options.pdfPageSize : undefined); if (path) { setModal(null); notify(`${exportFormat.toUpperCase()}を書き出しました`); } }
-  function onReady(instance) { setEditor(instance); if (instance) setEditorContent(instance.getJSON()); }
+  function onReady(instance, serializer) { editorRef.current = instance; serializeMarkdown.current = serializer; setEditor(instance); if (instance) setEditorContent(instance.getJSON()); }
   const headings = outline(editorContent || doc?.content);
-  const wordCount = (doc?.markdown || '').replace(/!\[[^\]]*\]\(data:image\/(?:png|jpeg|gif|webp);base64,[A-Za-z0-9+/=\s]+\)/gi, '').replace(/[\s#*>`_\-]/g, '').length;
-  const quoteCount = (doc?.markdown.match(/^> /gm) || []).length;
+  const wordCount = doc?.content ? textOf(doc.content).replace(/\s/g, '').length : (doc?.markdown || '').replace(/[\s#*>`_\-]/g, '').length;
   function navigateHeading(item) {
     if (!editor || editor.isDestroyed) return;
     const current = outline(editor.getJSON()).find(heading => item.id ? heading.id === item.id : heading.index === item.index);

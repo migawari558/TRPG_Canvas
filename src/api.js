@@ -1,6 +1,7 @@
-import { newDocument } from './model.mjs';
+import { newDocument, textOf } from './model.mjs';
 const key = 'trpg-canvas-documents-v1';
 const read = () => JSON.parse(localStorage.getItem(key) || '{}');
+const characterCount = doc => doc.content ? textOf(doc.content).replace(/\s/g, '').length : doc.markdown.replace(/[\s#*>`_\-]/g, '').length;
 function download(title, text, type) {
   const url = URL.createObjectURL(new Blob([text], { type }));
   const a = document.createElement('a'); a.href = url; a.download = title; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -8,7 +9,7 @@ function download(title, text, type) {
 export const isDesktop = !!window.canvas;
 export const api = window.canvas || {
   info: async () => ({ folder: 'ブラウザ内に保存（デスクトップ版ではフォルダを選択できます）' }),
-  list: async () => ({ documents: Object.values(read()).map(x => ({ id: x.doc.id, title: x.doc.title, subtitle: x.doc.subtitle || '', updatedAt: x.doc.updatedAt, characterCount: x.doc.markdown.replace(/!\[[^\]]*\]\(data:image\/(?:png|jpeg|gif|webp);base64,[A-Za-z0-9+/=\s]+\)/gi, '').replace(/[\s#*>`_\-]/g, '').length, sceneCount: x.doc.flow.nodes.length })), errors: [] }),
+  list: async () => ({ documents: Object.values(read()).map(x => ({ id: x.doc.id, title: x.doc.title, subtitle: x.doc.subtitle || '', updatedAt: x.doc.updatedAt, characterCount: characterCount(x.doc), sceneCount: x.doc.flow.nodes.length })), errors: [] }),
   load: async id => { const result = read()[id]; if (!result) throw new Error('シナリオが見つかりません'); return result; },
   remove: async (id, revision) => {
     const data = read();

@@ -2,6 +2,12 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const { createHash, randomUUID } = require('node:crypto');
 const revision = text => createHash('sha256').update(text).digest('hex');
+function characterCount(doc) {
+  if (!doc.content) return doc.markdown.replace(/[\s#*>`_\-]/g, '').length;
+  let text = '';
+  (function visit(node) { if (typeof node?.text === 'string') text += node.text; for (const child of node?.content || []) visit(child); })(doc.content);
+  return text.replace(/\s/g, '').length;
+}
 function filePath(folder, id) {
   if (!/^[a-zA-Z0-9-]{1,80}$/.test(id)) throw new Error('不正なシナリオIDです');
   return path.join(folder, `${id}.trpg.json`);
@@ -23,7 +29,7 @@ async function list(folder) {
   for (const name of names.filter(n => n.endsWith('.trpg.json'))) {
     try {
       const result = await read(folder, name.slice(0, -10));
-      documents.push({ id: result.doc.id, title: result.doc.title, subtitle: result.doc.subtitle || '', updatedAt: result.doc.updatedAt, characterCount: result.doc.markdown.replace(/!\[[^\]]*\]\(data:image\/(?:png|jpeg|gif|webp);base64,[A-Za-z0-9+/=\s]+\)/gi, '').replace(/[\s#*>`_\-]/g, '').length, sceneCount: result.doc.flow.nodes.length });
+      documents.push({ id: result.doc.id, title: result.doc.title, subtitle: result.doc.subtitle || '', updatedAt: result.doc.updatedAt, characterCount: characterCount(result.doc), sceneCount: result.doc.flow.nodes.length });
     } catch { errors.push(name); }
   }
   return { documents: documents.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')), errors };

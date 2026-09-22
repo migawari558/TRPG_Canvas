@@ -32,8 +32,8 @@ app.whenReady().then(async () => {
     await delay(1000);
     await win.webContents.reload(); await delay(800);
     assert.ok(await js('document.querySelector(".tiptap").innerText.includes("検証用の追記")'));
-    await js(`(()=>{const key='trpg-canvas-documents-v1';const data=JSON.parse(localStorage.getItem(key));const item=Object.values(data)[0];item.doc.markdown+='\\n\\n外部端末の編集';delete item.doc.content;item.revision='external-revision';localStorage.setItem(key,JSON.stringify(data));document.querySelector('button[aria-label="再読込"]').click();})()`);
-    await delay(700);
+    await js(`(()=>{const key='trpg-canvas-documents-v1';const data=JSON.parse(localStorage.getItem(key));const item=Object.values(data)[0];item.doc.markdown+='\\n\\n外部端末の編集';delete item.doc.content;item.revision='external-revision';localStorage.setItem(key,JSON.stringify(data));document.querySelector('[aria-label="ダッシュボードへ"]').click();})()`);
+    await delay(500);await js(`document.querySelector('.scenario-card').click()`);await delay(500);
     assert.ok(await js('document.querySelector(".tiptap").innerText.includes("外部端末の編集")'));
     await js(`Array.from(document.querySelectorAll('.view-tabs button')).find(b=>b.textContent.includes('フローチャート')).click()`); await delay(500);
     assert.equal(await js('document.querySelectorAll(".scene-node").length'), 6);
