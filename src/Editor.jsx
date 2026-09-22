@@ -8,7 +8,8 @@ import { markdown } from './export.mjs';
 import { HeadingIds } from './HeadingIds.js';
 import { GmNote } from './GmNote.js';
 import { gmNoteToMarkdown } from './gm-markdown.mjs';
-import { ScenarioImage, readImageFile } from './ScenarioImage.js';
+import { ScenarioImage, isEmbeddedImage, readImageFile } from './ScenarioImage.js';
+import { imageWidths, normalizeImageWidth } from './image-size.mjs';
 import TaskList from '@tiptap/extension-task-list';
 import { ScenarioTaskItem } from './ScenarioTaskItem.js';
 import { ListTodo } from 'lucide-react';
@@ -27,11 +28,15 @@ converter.addRule('chapter', { filter: node => node.nodeName === 'H1' && node.ha
 converter.addRule('strikethrough', { filter: ['s', 'del'], replacement: content => `~~${content}~~` });
 converter.addRule('gmNote', { filter: node => node.nodeName === 'ASIDE' && node.hasAttribute('data-gm-note'), replacement: gmNoteToMarkdown });
 converter.addRule('taskItem', { filter: node => node.nodeName === 'LI' && node.getAttribute('data-type') === 'taskItem', replacement: taskItemToMarkdown });
+converter.addRule('embeddedImage', { filter: node => node.nodeName === 'IMG' && isEmbeddedImage(node.getAttribute('src')), replacement: (_content, node) => {
+  const alt = (node.getAttribute('alt') || '画像').replace(/([\\\[\]])/g, '\\$1'), src = node.getAttribute('src'), width = normalizeImageWidth(node.getAttribute('data-image-width'));
+  return `![${alt}](${src}${width < 100 ? ` "width=${width}"` : ''})`;
+} });
 export default function ScenarioEditor({ doc, onChange, onReady }) {
   const imageInput = useRef(), importingImage = useRef(false);
   const [findOpen, setFindOpen] = useState(false), [findRequest, setFindRequest] = useState(0);
   function openFind() { setFindOpen(true); setFindRequest(value => value + 1); }
-  const [imageError, setImageError] = useState(''), [imageBusy, setImageBusy] = useState(false);
+  const [imageError, setImageError] = useState(''), [imageBusy, setImageBusy] = useState(false), [selectedImageWidth, setSelectedImageWidth] = useState(null);
   async function insertImages(files, position) {
     if (!editor || editor.isDestroyed || importingImage.current || !files.length) return;
     importingImage.current = true; setImageBusy(true); setImageError(''); editor.setEditable(false);
@@ -54,6 +59,7 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
       handlePaste(view, event) { const files = [...(event.clipboardData?.files || [])]; if (!files.length) return false; insertImages(files, view.state.selection.from); return true; },
       handleDrop(view, event, _slice, moved) { const files = [...(event.dataTransfer?.files || [])]; if (moved || !files.length) return false; event.preventDefault(); insertImages(files, view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? view.state.selection.from); return true; }
     },
+    onSelectionUpdate: ({ editor }) => setSelectedImageWidth(editor.isActive('image') ? normalizeImageWidth(editor.getAttributes('image').width) : null),
     onUpdate: ({ editor }) => onChange({ content: editor.getJSON(), markdown: converter.turndown(editor.getHTML()) })
   });
   useEffect(() => {
@@ -96,5 +102,5 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     [Undo2, '元に戻す（Ctrl+Z）', () => editor.chain().focus().undo().run()],
     [Redo2, 'やり直す（Ctrl+Shift+Z）', () => editor.chain().focus().redo().run()]
   ];
-  return <><div className="editor-toolbar"><span className="toolbar-label">本文</span><span className="toolbar-divider"/>{controls.map(([Icon, label, action, active], index) => <button key={label} disabled={imageBusy} title={`${label}\n記法: ${syntax[index]}`} aria-label={label} aria-pressed={!!active} className={active ? 'active' : ''} onClick={action}><Icon size={16}/></button>)}<span className="markdown-badge">Markdown</span></div>{findOpen && <FindBar editor={editor} request={findRequest} onClose={() => setFindOpen(false)}/>}<input className="hidden" ref={imageInput} type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple aria-label="挿入する画像" onChange={event => { const files = [...event.target.files]; event.target.value = ''; insertImages(files); }}/>{imageBusy && <div className="image-status" role="status">画像を読み込み中…</div>}{imageError && <div className="image-error" role="alert">{imageError}<button aria-label="画像エラーを閉じる" onClick={() => setImageError('')}><X size={16}/></button></div>}<div className="editor-scroll" onPaste={e => { if (e.defaultPrevented || e.clipboardData.files.length) return; const text = e.clipboardData.getData('text/plain'); if (!e.clipboardData.getData('text/html') && /^(:::gm|#! |#{1,6} |```|> |\- |\[\] |\[[ xX]\] )/m.test(text)) { e.preventDefault(); editor.commands.insertContent(markdown.render(text)); } }}><article className="paper"><div className="paper-eyebrow"><span/> SCENARIO MANUSCRIPT</div><EditorContent editor={editor}/><div className="paper-end">◆</div></article></div></>;
+  return <><div className="editor-toolbar"><span className="toolbar-label">本文</span><span className="toolbar-divider"/>{controls.map(([Icon, label, action, active], index) => <button key={label} disabled={imageBusy} title={`${label}\n記法: ${syntax[index]}`} aria-label={label} aria-pressed={!!active} className={active ? 'active' : ''} onClick={action}><Icon size={16}/></button>)}<span className="markdown-badge">Markdown</span></div>{selectedImageWidth && <div className="image-size-toolbar" role="toolbar" aria-label="画像サイズ"><strong>画像サイズ</strong>{imageWidths.map(width => <button key={width} type="button" aria-label={`画像サイズ${width}%`} aria-pressed={selectedImageWidth === width} onMouseDown={event => event.preventDefault()} onClick={() => { if (editor.commands.updateAttributes('image', { width })) setSelectedImageWidth(width); editor.commands.focus(); }}>{({25:'小',50:'中',75:'大',100:'本文幅'})[width]} <span>{width}%</span></button>)}</div>}{findOpen && <FindBar editor={editor} request={findRequest} onClose={() => setFindOpen(false)}/>}<input className="hidden" ref={imageInput} type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple aria-label="挿入する画像" onChange={event => { const files = [...event.target.files]; event.target.value = ''; insertImages(files); }}/>{imageBusy && <div className="image-status" role="status">画像を読み込み中…</div>}{imageError && <div className="image-error" role="alert">{imageError}<button aria-label="画像エラーを閉じる" onClick={() => setImageError('')}><X size={16}/></button></div>}<div className="editor-scroll" onPaste={e => { if (e.defaultPrevented || e.clipboardData.files.length) return; const text = e.clipboardData.getData('text/plain'); if (!e.clipboardData.getData('text/html') && /^(:::gm|#! |#{1,6} |```|> |\- |\[\] |\[[ xX]\] )/m.test(text)) { e.preventDefault(); editor.commands.insertContent(markdown.render(text)); } }}><article className="paper"><div className="paper-eyebrow"><span/> SCENARIO MANUSCRIPT</div><EditorContent editor={editor}/><div className="paper-end">◆</div></article></div></>;
 }

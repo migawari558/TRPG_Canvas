@@ -1,3 +1,4 @@
+import { normalizeImageWidth } from './image-size.mjs';
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function contentHtml(node) {
   const body = () => (node.content || []).map(contentHtml).join('');
@@ -16,6 +17,6 @@ export function contentHtml(node) {
   if (node.type === 'codeBlock') return `<pre><code>${body()}</code></pre>`;
   if (node.type === 'taskList') return `<ul data-type="taskList">${body()}</ul>`;
   if (node.type === 'taskItem') return `<li data-type="taskItem" data-checked="${!!node.attrs?.checked}"><label><input type="checkbox" ${node.attrs?.checked?'checked':''}></label><div>${body()}</div></li>`;
-  if (node.type === 'image') return /^data:image\/(png|jpeg|gif|webp);base64,/i.test(node.attrs?.src||'') ? `<img src="${esc(node.attrs.src)}" alt="${esc(node.attrs.alt)}">` : '';
+  if (node.type === 'image') { const width=normalizeImageWidth(node.attrs?.width); return /^data:image\/(png|jpeg|gif|webp);base64,/i.test(node.attrs?.src||'') ? `<img src="${esc(node.attrs.src)}" alt="${esc(node.attrs.alt)}" data-image-width="${width}" style="width:${width}%">` : ''; }
   return body();
 }

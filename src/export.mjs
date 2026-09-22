@@ -9,7 +9,8 @@ import { taskListPlugin } from './task-markdown.mjs';
 import { underlinePlugin } from './underline-markdown.mjs';
 import { chapterPlugin } from './chapter-markdown.mjs';
 import { blankLinePlugin } from './blank-markdown.mjs';
-export const markdown = new MarkdownIt({ html: false, linkify: true, typographer: false }).use(gmNotePlugin).use(taskListPlugin).use(underlinePlugin).use(chapterPlugin).use(blankLinePlugin);
+import { imageSizePlugin } from './image-size.mjs';
+export const markdown = new MarkdownIt({ html: false, linkify: true, typographer: false }).use(gmNotePlugin).use(taskListPlugin).use(underlinePlugin).use(chapterPlugin).use(blankLinePlugin).use(imageSizePlugin);
 export const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function flowSvg(flow, headings = [], theme = 'forest') {
   const c = getTheme(theme).colors;
