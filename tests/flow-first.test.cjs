@@ -17,3 +17,19 @@ test('manual groups prevent cycles, preserve edges and release scenes without da
  const pos=absolutePosition(grouped.nodes.find(n=>n.id==='s'),grouped.nodes);const released=moveToGroup(grouped,'s','');assert.deepEqual(released.nodes.find(n=>n.id==='s').position,pos);assert.deepEqual(released.edges,flow.edges);
  assert.deepEqual(removeFlowNode(grouped,'nested').nodes.find(n=>n.id==='s').position,pos);
 });
+test('dropping a scene into nested groups chooses the deepest group and preserves its canvas position',async()=>{
+ const {dropIntoGroup,absolutePosition}=await import('../src/flow-model.mjs');
+ const flow={nodes:[
+  {id:'outer',type:'sceneGroup',position:{x:100,y:80},style:{width:600,height:500},data:{label:'outer'}},
+  {id:'inner',type:'sceneGroup',parentId:'outer',position:{x:180,y:120},style:{width:320,height:260},data:{label:'inner'}},
+  {id:'scene',type:'scene',position:{x:340,y:250},data:{label:'scene'}}
+ ],edges:[]};
+ const dropped=dropIntoGroup(flow,'scene'),scene=dropped.nodes.find(node=>node.id==='scene');
+ assert.equal(scene.parentId,'inner');
+ assert.deepEqual(scene.position,{x:60,y:50});
+ assert.deepEqual(absolutePosition(scene,dropped.nodes),{x:340,y:250});
+ assert.ok(dropped.nodes.indexOf(dropped.nodes.find(node=>node.id==='inner'))<dropped.nodes.indexOf(scene));
+ assert.equal(dropIntoGroup(dropped,'outer'),dropped,'a group cannot be dropped into its descendant');
+ const outside={...flow,nodes:flow.nodes.map(node=>node.id==='scene'?{...node,position:{x:800,y:700}}:node)};
+ assert.equal(dropIntoGroup(outside,'scene'),outside,'dropping outside a group does not change membership');
+});

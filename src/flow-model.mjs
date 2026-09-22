@@ -47,6 +47,45 @@ export function moveToGroup(flow, nodeId, groupId) {
   return { ...flow, nodes: sorted };
 }
 
+function nodeSize(node) {
+  return {
+    width: node.style?.width || node.measured?.width || node.width || (node.type === 'sceneGroup' ? 400 : 260),
+    height: node.style?.height || node.measured?.height || node.height || (node.type === 'sceneGroup' ? 300 : 155)
+  };
+}
+
+function groupDepth(node, nodes) {
+  const byId = new Map(nodes.map(item => [item.id, item]));
+  let depth = 0, parent = byId.get(node.parentId), seen = new Set([node.id]);
+  while (parent && !seen.has(parent.id)) { seen.add(parent.id); depth++; parent = byId.get(parent.parentId); }
+  return depth;
+}
+
+// Attach a dragged node to the deepest group under its center without moving it
+// away from the place where the user dropped it.
+export function dropIntoGroup(flow, nodeId) {
+  const node = flow.nodes.find(item => item.id === nodeId);
+  if (!node) return flow;
+  const absolute = absolutePosition(node, flow.nodes), size = nodeSize(node);
+  const center = { x: absolute.x + size.width / 2, y: absolute.y + size.height / 2 };
+  const candidates = flow.nodes.filter(group => {
+    if (group.type !== 'sceneGroup' || !canJoinGroup(flow, nodeId, group.id)) return false;
+    const position = absolutePosition(group, flow.nodes), groupSize = nodeSize(group);
+    return center.x >= position.x && center.x <= position.x + groupSize.width && center.y >= position.y && center.y <= position.y + groupSize.height;
+  }).sort((a, b) => groupDepth(b, flow.nodes) - groupDepth(a, flow.nodes) || nodeSize(a).width * nodeSize(a).height - nodeSize(b).width * nodeSize(b).height);
+  const parent = candidates[0];
+  if (!parent || parent.id === node.parentId) return flow;
+  const parentPosition = absolutePosition(parent, flow.nodes);
+  const { parentId, extent, ...rest } = node;
+  const moved = { ...rest, parentId: parent.id, expandParent: true, position: { x: absolute.x - parentPosition.x, y: absolute.y - parentPosition.y } };
+  const nodes = flow.nodes.map(item => item.id === nodeId ? moved : item);
+  // React Flow requires every parent before its descendants.
+  const sorted = [], visited = new Set();
+  function visit(item) { if (visited.has(item.id)) return; visited.add(item.id); const ancestor = nodes.find(candidate => candidate.id === item.parentId); if (ancestor) visit(ancestor); sorted.push(item); }
+  nodes.forEach(visit);
+  return { ...flow, nodes: sorted };
+}
+
 export function absolutePosition(node, nodes) {
   const byId = new Map(nodes.map(item => [item.id, item]));
   const position = { ...node.position }, seen = new Set([node.id]);

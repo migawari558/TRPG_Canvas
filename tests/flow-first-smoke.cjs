@@ -40,6 +40,12 @@ app.whenReady().then(async () => {
   await js(`document.querySelector('button[aria-label="図書館を編集"]').click()`);
   await js(`(()=>{const e=document.querySelector('[aria-label="所属グループ"]');e.value='';e.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(850);
   assert.ok(!(await data()).flow.nodes.find(n=>n.data.label==='図書館').parentId);
-  assert.deepEqual(errors,[]);console.log('PASS: manual groups, add inside group, create linked manuscript, typing, no duplicate sections, persistence, release from group');app.exit(0);
+  await js(`document.querySelector('[aria-label="編集を閉じる"]').click()`);
+  const drag=await js(`(()=>{const node=Array.from(document.querySelectorAll('.react-flow__node')).find(n=>n.querySelector('.node-label')?.textContent==='図書館').getBoundingClientRect(),group=Array.from(document.querySelectorAll('.react-flow__node')).find(n=>n.querySelector('.group-jump')?.textContent==='探索エリア').getBoundingClientRect();return {from:{x:Math.round(node.x+node.width/2),y:Math.round(node.y+45)},to:{x:Math.round(group.x+group.width/2),y:Math.round(group.y+group.height/2)}};})()`);
+  win.webContents.sendInputEvent({type:'mouseDown',...drag.from,button:'left',clickCount:1});
+  win.webContents.sendInputEvent({type:'mouseMove',x:drag.to.x,y:drag.to.y,modifiers:['leftButtonDown']});
+  win.webContents.sendInputEvent({type:'mouseUp',...drag.to,button:'left',clickCount:1});await delay(900);
+  doc=await data();scene=doc.flow.nodes.find(n=>n.data.label==='図書館');group=doc.flow.nodes.find(n=>n.data.label==='探索エリア');assert.equal(scene.parentId,group.id);
+  assert.deepEqual(errors,[]);console.log('PASS: manual groups, drag scene into group, create linked manuscript, typing, no duplicate sections, persistence, release from group');app.exit(0);
  }catch(e){console.error(e);win?.destroy();app.exit(1);}
 });

@@ -3,7 +3,7 @@ import { ReactFlow, Background, Controls, MiniMap, Handle, Position, NodeResizer
 import '@xyflow/react/dist/style.css';
 import { Plus, GitBranch, Flag, Trash2, X, Pencil, Link2, Layers, Ungroup, FileText } from 'lucide-react';
 import { uid } from './model.mjs';
-import { scenesFromHeadings, removeFlowSelection, ungroupFlow, removeFlowNode, absolutePosition, canJoinGroup, moveToGroup } from './flow-model.mjs';
+import { scenesFromHeadings, removeFlowSelection, ungroupFlow, removeFlowNode, absolutePosition, canJoinGroup, moveToGroup, dropIntoGroup } from './flow-model.mjs';
 
 const kindNames = { scene: 'シーン', branch: '分岐', ending: 'エンディング' };
 function EditButton({ data }) {
@@ -96,6 +96,11 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
           });
           if (JSON.stringify(next) !== JSON.stringify(flow.nodes)) change({ nodes: next });
         }}
+        onNodeDragStop={(_event, dragged) => {
+          const positioned = { ...flow, nodes: flow.nodes.map(node => node.id === dragged.id ? { ...node, position: dragged.position } : node) };
+          const next = dropIntoGroup(positioned, dragged.id);
+          if (JSON.stringify(next.nodes) !== JSON.stringify(positioned.nodes)) onChange(next);
+        }}
         onEdgesChange={changes => { selectChanges(changes, 'edges'); const structural = changes.filter(c => c.type !== 'select'); if (structural.length) change({ edges: applyEdgeChanges(structural, flow.edges) }); }}
         onConnect={connection => change({ edges: addEdge({ ...connection, id: uid() }, flow.edges) })}
         onNodeClick={(event, node) => { if (event.ctrlKey || event.metaKey || event.shiftKey) return; const heading = byHeading.get(node.data.headingId); if (heading && node.type !== 'sceneGroup') onNavigate(heading); else setSelected({ type: 'node', id: node.id }); }}
@@ -124,7 +129,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
         </>}
         <button className="danger-link" onClick={() => { if (selected.type === 'node') onChange(removeFlowNode(flow, item.id)); else change({ edges: flow.edges.filter(edge => edge.id !== item.id) }); setSelected(null); }}><Trash2 size={15}/>この{selected.type === 'node' ? item.type === 'sceneGroup' ? 'グループ枠' : 'シーン' : 'つながり'}を削除</button>
       </div>}
-      <div className="flow-tip">Ctrl＋クリック／背景をドラッグで複数選択 · Deleteで選択を削除（本文は保持） · 右ドラッグで画面移動</div>
+      <div className="flow-tip">シーンをグループ枠へドロップして所属 · Ctrl＋クリック／背景をドラッグで複数選択 · Deleteで選択を削除（本文は保持） · 右ドラッグで画面移動</div>
     </div>
   </div>;
 }
