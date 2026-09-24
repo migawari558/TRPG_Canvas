@@ -26,7 +26,7 @@ test('nested groups reuse links and preserve manual scenes and edges when regene
   assert.equal(grouped.nodes.filter(n => n.type === 'sceneGroup').length, 2);
   assert.deepEqual(grouped.edges, flow.edges);
   const leaf = grouped.nodes.find(n => n.id === 'linked');
-  assert.equal(leaf.data.kind, 'branch');
+  assert.ok(!Object.hasOwn(leaf.data, 'kind'));
   assert.equal(leaf.data.label, 'カスタム名');
   assert.ok(leaf.parentId);
   const parent = grouped.nodes.find(n => n.id === leaf.parentId);
@@ -51,9 +51,11 @@ test('grouped HTML uses absolute child coordinates and links to the heading afte
   doc.content = { type: 'doc', content: [heading('a', '親', 2), heading('b', '子', 3)] };
   doc.flow = groupByHeadings(doc.flow, outline(doc.content));
   const child = doc.flow.nodes.find(n => n.data.headingId === 'b');
+  child.data.memo = 'PRIVATE_FLOW_MEMO';
   const position = absolutePosition(child, doc.flow.nodes);
   const html = exportHtml(doc);
   assert.ok(html.includes(`translate(${position.x},${position.y})`));
   assert.ok(html.includes('<a href="#section-1"><text'));
   assert.ok(html.includes('id="section-1"'));
+  assert.ok(!html.includes('PRIVATE_FLOW_MEMO'));
 });

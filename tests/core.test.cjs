@@ -53,7 +53,7 @@ test('storage roundtrip, conflict preservation, list and path validation', async
 test('character count treats image nodes and markdown images as zero characters', async () => {
   const { characterCount } = await import('../src/model.mjs');
   const image = { type: 'image', attrs: { src: `data:image/png;base64,${'A'.repeat(100000)}`, alt: '数えない代替文字' } };
-  assert.equal(characterCount({ content: { type: 'doc', content: [paragraph('本文'), image] } }), 2);
+  assert.equal(characterCount({ content: { type: 'doc', content: [paragraph('本文'), image] }, flow: { nodes: [{ data: { label: '場面', memo: '本文外のシーンメモ' } }], edges: [] } }), 2);
   assert.equal(characterCount({ markdown: `本文\n\n![数えない代替文字](data:image/png;base64,${'A'.repeat(100000)} "width=50")` }), 2);
   assert.equal(characterCount({ markdown: `本文\n<img alt="数えない" src="data:image/png;base64,${'A'.repeat(100000)}">` }), 2);
 });

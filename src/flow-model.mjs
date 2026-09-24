@@ -53,6 +53,16 @@ export function moveNodesToGroup(flow, nodeIds, groupId) {
   return ids.reduce((next, id) => moveToGroup(next, id, groupId), flow);
 }
 
+export function normalizeFlowScenes(flow) {
+  let changed = false;
+  const nodes = flow.nodes.map(node => {
+    if (node.type === 'sceneGroup' || !Object.hasOwn(node.data, 'kind')) return node;
+    const { kind: _legacyKind, ...data } = node.data; changed = true;
+    return { ...node, data };
+  });
+  return changed ? { ...flow, nodes } : flow;
+}
+
 function nodeSize(node) {
   return {
     width: node.style?.width || node.measured?.width || node.width || (node.type === 'sceneGroup' ? 400 : 260),
@@ -125,7 +135,7 @@ export function groupByHeadings(flow, headings, sceneLevels = false) {
     const existing = linked.get(heading.id);
     return [heading.id, {
       heading, children: [],
-      node: { ...(existing ? standalone(existing, flow.nodes) : { id: uid(), position: { x: 0, y: 0 }, data: { label: heading.text, kind: 'scene' } }), data: { ...(existing?.data || { label: heading.text, kind: 'scene' }), headingId: heading.id } }
+      node: { ...(existing ? standalone(existing, flow.nodes) : { id: uid(), position: { x: 0, y: 0 }, data: { label: heading.text } }), data: { ...(existing?.data || { label: heading.text }), headingId: heading.id } }
     }];
   }));
   const roots = [];
@@ -157,7 +167,7 @@ export function groupByHeadings(flow, headings, sceneLevels = false) {
   const extras = flow.nodes.filter(node => !used.has(node.id));
   const extraY = roots.length ? y + rowHeight + 100 : 40;
   extras.forEach((node, index) => nodes.push({ ...standalone(node, flow.nodes), position: { x: 40 + (index % 3) * 330, y: extraY + Math.floor(index / 3) * 170 } }));
-  return { ...flow, nodes };
+  return normalizeFlowScenes({ ...flow, nodes });
 }
 
 export function scenesFromHeadings(flow, headings) {

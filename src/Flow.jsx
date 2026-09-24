@@ -1,28 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ReactFlow, Background, Controls, MiniMap, Handle, Position, NodeResizer, addEdge, applyNodeChanges, applyEdgeChanges, MarkerType } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Plus, GitBranch, Flag, Trash2, X, Pencil, Link2, Layers, Ungroup, FileText, Check } from 'lucide-react';
+import { Plus, Trash2, X, Pencil, Link2, Layers, Ungroup, FileText, Check, StickyNote } from 'lucide-react';
 import { uid } from './model.mjs';
-import { scenesFromHeadings, removeFlowSelection, ungroupFlow, removeFlowNode, absolutePosition, canJoinGroup, moveToGroup, moveNodesToGroup, dropIntoGroup } from './flow-model.mjs';
+import { scenesFromHeadings, removeFlowSelection, ungroupFlow, removeFlowNode, absolutePosition, canJoinGroup, moveToGroup, moveNodesToGroup, dropIntoGroup, normalizeFlowScenes } from './flow-model.mjs';
 
-const kindNames = { scene: 'シーン', branch: '分岐', ending: 'エンディング' };
 function EditButton({ data }) {
   return <button className="node-edit nodrag nopan" aria-label={`${data.label}を編集`} title="カード上で編集" onClick={event => { event.stopPropagation(); data.startInline(); }}><Pencil size={15}/></button>;
 }
 function InlineEditor({ data, group = false }) {
+  const [label, setLabel] = useState(data.label), [memo, setMemo] = useState(data.memo || '');
+  const composing = useRef(false);
+  useEffect(() => { if (!composing.current) setLabel(data.label); }, [data.label]);
+  useEffect(() => { if (!composing.current) setMemo(data.memo || ''); }, [data.memo]);
+  function change(field, setter, event) {
+    const value = event.target.value; setter(value);
+    if (!composing.current && !event.nativeEvent.isComposing) data.update({ [field]: value });
+  }
+  function finish(action) { data.update(group ? { label } : { label, memo }); action(); }
+  const composition = field => ({ onCompositionStart: () => { composing.current = true; }, onCompositionEnd: event => { composing.current = false; const value = event.currentTarget.value; (field === 'label' ? setLabel : setMemo)(value); data.update({ [field]: value }); } });
   return <div className="node-inline-editor nodrag nopan" onClick={event => event.stopPropagation()}>
-    <label>{group ? 'グループ名' : 'シーン名'}<input autoFocus maxLength={100} aria-label={`${group ? 'グループ名' : 'シーン名'}をカードで編集`} value={data.label} onChange={event => data.update({ label: event.target.value })}/></label>
-    {!group && <label>種類<select aria-label="種類をカードで編集" value={data.kind || 'scene'} onChange={event => data.update({ kind: event.target.value })}>{Object.entries(kindNames).map(([key, value]) => <option key={key} value={key}>{value}</option>)}</select></label>}
-    <label>所属グループ<select aria-label="所属グループをカードで編集" value={data.parentId || ''} onChange={event => data.changeGroup(event.target.value)}><option value="">グループの外</option>{data.groupOptions.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
-    <div className="node-inline-actions"><button type="button" onClick={data.openDetails}>詳細設定</button><button type="button" className="inline-done" aria-label="カードの編集を完了" onClick={data.finishInline}><Check size={14}/>完了</button></div>
+    <label>{group ? 'グループ名' : 'シーン名'}<input autoFocus maxLength={100} aria-label={`${group ? 'グループ名' : 'シーン名'}をカードで編集`} value={label} onChange={event => change('label', setLabel, event)} onBlur={() => data.update({ label })} {...composition('label')}/></label>
+    {!group && <label>シーンメモ<textarea rows={2} maxLength={500} aria-label="シーンメモをカードで編集" placeholder="この場面で行うこと、出したい情報など（本文・書き出しには含まれません）" value={memo} onChange={event => change('memo', setMemo, event)} onBlur={() => data.update({ memo })} {...composition('memo')}/></label>}
+    <label>所属グループ<select aria-label="所属グループをカードで編集" value={data.parentId || ''} onChange={event => data.changeGroup(event.target.value, group ? { label } : { label, memo })}><option value="">グループの外</option>{data.groupOptions.map(option => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+    <div className="node-inline-actions"><button type="button" onClick={() => finish(data.openDetails)}>詳細設定</button><button type="button" className="inline-done" aria-label="カードの編集を完了" onClick={() => finish(data.finishInline)}><Check size={14}/>完了</button></div>
   </div>;
 }
 function SceneNode({ data, selected }) {
-  return <div className={`scene-node ${data.kind || 'scene'} ${selected ? 'selected' : ''} ${data.heading ? 'linked' : ''}`}>
+  return <div className={`scene-node scene ${selected ? 'selected' : ''} ${data.heading ? 'linked' : ''}`}>
     <Handle type="target" position={Position.Top}/>
     {data.inlineEditing ? <InlineEditor data={data}/> : <>
-      <small>{kindNames[data.kind] || 'シーン'}</small><EditButton data={data}/>
+      <small>シーン</small><EditButton data={data}/>
       <div className="node-label" onDoubleClick={event => { event.stopPropagation(); data.startInline(); }}>{data.label}</div>
+      {data.memo && <div className="node-memo"><StickyNote size={12}/><span>{data.memo}</span></div>}
       <span className={`node-link ${data.headingId && !data.heading ? 'broken' : ''}`}>
         {data.heading ? <><Link2 size={12}/>{data.heading.text}</> : data.headingId ? 'リンク先なし · 本文を作り直せます' : '本文はまだありません'}
       </span>
@@ -48,6 +58,8 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
   const [selection, setSelection] = useState({ nodes: [], edges: [] });
   const [editingNodeId, setEditingNodeId] = useState(null);
   const [instance, setInstance] = useState(null);
+  const normalizationChecked = useRef(false);
+  useEffect(() => { if (normalizationChecked.current) return; normalizationChecked.current = true; const normalized = normalizeFlowScenes(flow); if (normalized !== flow) onChange(normalized); }, [flow, onChange]);
   const byHeading = new Map(headings.map(heading => [heading.id, heading]));
   function updateNodeById(id, patch) { onChange({ ...flow, nodes: flow.nodes.map(node => node.id === id ? { ...node, data: { ...node.data, ...patch } } : node) }); }
   const nodes = flow.nodes.map(node => ({
@@ -57,7 +69,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
       groupOptions: editingNodeId === node.id ? flow.nodes.filter(group => group.type === 'sceneGroup' && canJoinGroup(flow, node.id, group.id)).map(group => ({ id: group.id, label: group.data.label })) : [],
       startInline: () => { setEditingNodeId(node.id); setSelected(null); }, finishInline: () => setEditingNodeId(null),
       openDetails: () => { setEditingNodeId(null); setSelected({ type: 'node', id: node.id }); },
-      update: patch => updateNodeById(node.id, patch), changeGroup: groupId => onChange(moveToGroup(flow, node.id, groupId)), navigate: onNavigate, write: () => onWrite(node.id) }
+      update: patch => updateNodeById(node.id, patch), changeGroup: (groupId, patch = {}) => { const updated = { ...flow, nodes: flow.nodes.map(item => item.id === node.id ? { ...item, data: { ...item.data, ...patch } } : item) }; onChange(moveToGroup(updated, node.id, groupId)); }, navigate: onNavigate, write: () => onWrite(node.id) }
   }));
   const edges = flow.edges.map(edge => ({ ...edge, selected: selection.edges.includes(edge.id) || (selected?.type === 'edge' && selected.id === edge.id), markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: 'var(--theme-muted)', strokeWidth: 1.6 } }));
   const item = selected?.type === 'node' ? flow.nodes.find(node => node.id === selected.id) : flow.edges.find(edge => edge.id === selected?.id);
@@ -67,7 +79,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
   function add(kind) {
     const id = uid();
     const y = flow.nodes.length ? Math.max(...flow.nodes.map(node => absolutePosition(node, flow.nodes).y + (node.style?.height || node.measured?.height || 165))) + 70 : 60;
-    const created = { id, type: kind === 'group' ? 'sceneGroup' : 'scene', position: { x: 60, y }, ...(kind === 'group' ? { style: { width: 400, height: 300 } } : {}), data: { label: kind === 'group' ? '新しいグループ' : kind === 'branch' ? '新しい分岐' : kind === 'ending' ? '新しい結末' : '新しいシーン', kind: kind === 'group' ? 'scene' : kind } };
+    const created = { id, type: kind === 'group' ? 'sceneGroup' : 'scene', position: { x: 60, y }, ...(kind === 'group' ? { style: { width: 400, height: 300 } } : {}), data: { label: kind === 'group' ? '新しいグループ' : '新しいシーン', ...(kind === 'group' ? {} : { memo: '' }) } };
     let next = { ...flow, nodes: [...flow.nodes, created] };
     const selectedGroup = item?.type === 'sceneGroup' ? item : selection.nodes.length === 1 ? flow.nodes.find(node => node.id === selection.nodes[0] && node.type === 'sceneGroup') : null;
     if (selectedGroup) next = moveToGroup(next, id, selectedGroup.id);
@@ -103,8 +115,6 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
         <details className="flow-legacy"><summary>既存の本文から</summary><button disabled={!headings.some(h => h.id && h.level <= 2)} onClick={group} title="章とH1をグループ、H2をシーンにします。既存のシーン・接続は保持します。">H1をグループ・H2をシーンに</button></details>
         {flow.nodes.some(node => node.parentId) && <button aria-label="グループを解除" title="グループを解除（シーンと接続は保持）" onClick={() => { onChange(ungroupFlow(flow)); fit(); }}><Ungroup size={16}/></button>}
         <button onClick={() => add('scene')}><Plus size={16}/>シーン</button>
-        <button onClick={() => add('branch')}><GitBranch size={16}/>分岐</button>
-        <button onClick={() => add('ending')}><Flag size={16}/>結末</button>
       </div>
     </div>
     <div className="flow-canvas">
@@ -130,14 +140,15 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
         onEdgeClick={(event, edge) => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey) setSelected({ type: 'edge', id: edge.id }); }}
         onPaneClick={() => { setSelected(null); setEditingNodeId(null); setSelection({ nodes: [], edges: [] }); }} selectionOnDrag selectionKeyCode="Shift" multiSelectionKeyCode={['Control', 'Meta', 'Shift']} panOnDrag={[1,2]} fitView fitViewOptions={{ padding: 0.18, maxZoom: 1 }} minZoom={0.15} maxZoom={2} deleteKeyCode={null}>
         <Background color="#cbd4c9" gap={22} size={1}/><Controls showInteractive={false}/>
-        <MiniMap nodeColor={node => node.type === 'sceneGroup' ? '#dbe5d7' : node.data.kind === 'branch' ? '#d9c18f' : '#a6c2b0'} maskColor="rgba(244,246,240,.65)"/>
+        <MiniMap nodeColor={node => node.type === 'sceneGroup' ? '#dbe5d7' : '#a6c2b0'} maskColor="rgba(244,246,240,.65)"/>
       </ReactFlow>
-      {!nodes.length && <div className="flow-empty"><Layers size={36}/><h3>まずは、物語の流れから</h3><p>シーンや分岐を追加して、点どうしをつないでみましょう。<br/>本文は、流れが決まってから書き始められます。</p></div>}
+      {!nodes.length && <div className="flow-empty"><Layers size={36}/><h3>まずは、物語の流れから</h3><p>シーンを追加して、点どうしをつないでみましょう。<br/>本文は、流れが決まってから書き始められます。</p></div>}
       {item && <div className="flow-inspector">
         <div className="inspector-heading"><strong>{selected.type === 'node' ? 'シーンの編集' : 'つながりの編集'}</strong><button className="icon-button" aria-label="編集を閉じる" onClick={() => setSelected(null)}><X size={17}/></button></div>
         <label>{selected.type === 'node' ? 'シーン名' : '条件・ラベル'}<input maxLength={100} value={selected.type === 'node' ? item.data.label : item.label || ''} onChange={event => selected.type === 'node' ? updateNode({ label: event.target.value }) : change({ edges: flow.edges.map(edge => edge.id === item.id ? { ...edge, label: event.target.value } : edge) })}/></label>
         {selected.type === 'node' && <>
           <label>所属グループ<select aria-label="所属グループ" value={item.parentId || ''} onChange={event => onChange(moveToGroup(flow, item.id, event.target.value))}><option value="">グループの外</option>{flow.nodes.filter(node => node.type === 'sceneGroup' && canJoinGroup(flow, item.id, node.id)).map(node => <option key={node.id} value={node.id}>{node.data.label}</option>)}</select></label>
+          {item.type !== 'sceneGroup' && <label>シーンメモ<textarea rows={4} maxLength={500} aria-label="シーンメモ" value={item.data.memo || ''} onChange={event => updateNode({ memo: event.target.value })} placeholder="本文・書き出しには含まれません"/></label>}
           {item.type !== 'sceneGroup' && <button className="primary-button full-width" onClick={() => onWrite(item.id)}><FileText size={16}/>{linkedHeading ? '本文を開く' : '本文を書く'}</button>}
           <details className="existing-link"><summary>既存の本文と紐づける</summary>
           <label>対応する目次<select aria-label="対応する目次" value={item.data.headingId || ''} onChange={event => updateNode({ headingId: event.target.value || null })}>
@@ -147,7 +158,6 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
           </select></label>
           {linkedHeading && <button className="jump-button" onClick={() => onNavigate(linkedHeading)}><FileText size={16}/>対応する本文へ</button>}
           </details>
-          {item.type !== 'sceneGroup' && <label>種類<select value={item.data.kind || 'scene'} onChange={event => updateNode({ kind: event.target.value })}>{Object.entries(kindNames).map(([key, value]) => <option key={key} value={key}>{value}</option>)}</select></label>}
           {item.type === 'sceneGroup' && <p className="muted small">選択中に「シーン」を追加するとこの中に配置します。枠の角でサイズ変更、ドラッグでまとめて移動できます。所属の変更は本文の順序・見出しを変更しません。</p>}
         </>}
         <button className="danger-link" onClick={() => { if (selected.type === 'node') onChange(removeFlowNode(flow, item.id)); else change({ edges: flow.edges.filter(edge => edge.id !== item.id) }); setSelected(null); }}><Trash2 size={15}/>この{selected.type === 'node' ? item.type === 'sceneGroup' ? 'グループ枠' : 'シーン' : 'つながり'}を削除</button>

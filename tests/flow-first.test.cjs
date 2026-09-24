@@ -33,6 +33,19 @@ test('multiple selected cards move to one group together without creating cycles
  assert.ok(['a','b'].every(id=>!released.nodes.find(node=>node.id===id).parentId));
  assert.equal(moveNodesToGroup(grouped,['target','a'],'a'),grouped,'invalid bulk moves are atomic');
 });
+test('legacy branch and ending kinds normalize to plain scenes without losing notes',async()=>{
+ const {normalizeFlowScenes}=await import('../src/flow-model.mjs');
+ const flow={nodes:[
+  {id:'branch',type:'scene',position:{x:0,y:0},data:{label:'分岐だった場面',kind:'branch',memo:'判定を行う'}},
+  {id:'ending',type:'scene',position:{x:0,y:200},data:{label:'結末だった場面',kind:'ending'}},
+  {id:'group',type:'sceneGroup',position:{x:0,y:400},data:{label:'グループ',kind:'legacy-group-value'}}
+ ],edges:[]};
+ const normalized=normalizeFlowScenes(flow);
+ assert.ok(normalized.nodes.filter(node=>node.type!=='sceneGroup').every(node=>!Object.hasOwn(node.data,'kind')));
+ assert.equal(normalized.nodes.find(node=>node.id==='branch').data.memo,'判定を行う');
+ assert.equal(normalized.nodes.find(node=>node.id==='group').data.kind,'legacy-group-value');
+ assert.equal(normalizeFlowScenes(normalized),normalized);
+});
 test('dropping a scene into nested groups chooses the deepest group and preserves its canvas position',async()=>{
  const {dropIntoGroup,absolutePosition}=await import('../src/flow-model.mjs');
  const flow={nodes:[

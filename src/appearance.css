@@ -12,7 +12,6 @@
 .tiptap blockquote{background:var(--theme-quote);color:var(--theme-text);border-color:var(--theme-accent)}
 .tiptap .gm-note{background-color:var(--theme-note);color:var(--theme-text)}
 .tiptap strong{color:inherit}.tiptap a{color:var(--theme-accent)}
-.scene-node.branch{background:var(--theme-branch);color:var(--theme-text)}.scene-node.ending{background:var(--theme-ending);color:var(--theme-text)}
 .scene-group{background:color-mix(in srgb,var(--theme-panel) 65%,transparent)}.group-heading{background:var(--theme-soft)}
 .node-edit,.react-flow__controls-button{background:var(--theme-paper);color:var(--theme-text);fill:var(--theme-text)}
 .topbar{height:auto;min-height:64px;padding-top:10px;padding-bottom:10px;flex-wrap:wrap}.topbar-actions{gap:12px;margin-left:auto}

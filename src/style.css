@@ -182,10 +182,6 @@ button svg{flex-shrink:0}
 .scene-node{width:200px;background:var(--theme-paper, #fffef9);border:1px solid var(--theme-border, #c6d5bd);border-radius:8px;padding:14px 17px;box-shadow:0 3px 9px #3d573010;min-height:70px;color:var(--theme-text, #506841)}
 .scene-node small{font-size:calc(11px * var(--ui-scale, 1));color:var(--theme-muted, #96ab83);display:block;margin-bottom:7px}
 .scene-node>div{font-size:calc(15px * var(--ui-scale, 1));line-height:1.6;overflow-wrap:anywhere}
-.scene-node.branch{background:var(--theme-panel, #fcf8e9);border-color:var(--theme-border, #dacdaa);color:var(--theme-text, #877543)}
-.scene-node.branch small{color:var(--theme-muted, #b9a76c)}
-.scene-node.ending{background:var(--theme-panel, #f4f0f8);border-color:var(--theme-border, #d7cce2);color:var(--theme-muted, #826c92)}
-.scene-node.ending small{color:var(--theme-muted, #ae9dbc)}
 .scene-node.selected{outline:2px solid #839c69;outline-offset:3px}
 .scene-node .react-flow__handle{background:var(--theme-soft, #94aa7d);border:2px solid var(--theme-border, #fffef8);width:10px;height:10px}
 .react-flow__edge-text{font-size:calc(13px * var(--ui-scale, 1));fill:var(--theme-muted, #7b8d69)}
@@ -198,7 +194,8 @@ button svg{flex-shrink:0}
 .flow-inspector{position:absolute;top:18px;right:18px;background:var(--theme-paper, #fffef8);border:1px solid var(--theme-border, #dce5d1);box-shadow:0 5px 25px #526a3d11;border-radius:8px;padding:16px;width:230px}
 .inspector-heading{display:flex;align-items:center;justify-content:space-between;font-size:calc(14px * var(--ui-scale, 1));color:var(--theme-text, #768e60);margin-bottom:13px}
 .flow-inspector label{display:block;font-size:calc(12px * var(--ui-scale, 1));color:var(--theme-muted, #9aab88);margin-bottom:13px}
-.flow-inspector input,.flow-inspector select{display:block;width:100%;margin-top:6px;border:1px solid var(--theme-border, #dfe7d5);background:var(--theme-panel, #f7f9f1);border-radius:4px;padding:8px;color:var(--theme-text, #718960);font-size:calc(14px * var(--ui-scale, 1))}
+.flow-inspector input,.flow-inspector textarea,.flow-inspector select{display:block;width:100%;margin-top:6px;border:1px solid var(--theme-border, #dfe7d5);background:var(--theme-panel, #f7f9f1);border-radius:4px;padding:8px;color:var(--theme-text, #718960);font-size:calc(14px * var(--ui-scale, 1))}
+.flow-inspector textarea{resize:vertical;line-height:1.6;font-family:inherit}
 .danger-link{color:#b37f67;font-size:calc(13px * var(--ui-scale, 1));padding:6px 0}
 .flow-empty{position:absolute;left:50%;top:35%;transform:translate(-50%,-50%);text-align:center;color:var(--theme-muted, #9eb58b);pointer-events:none;width:100%}
 .flow-empty h3{font-family:'Yu Mincho',serif;font-size:calc(24px * var(--ui-scale, 1));font-weight:400}

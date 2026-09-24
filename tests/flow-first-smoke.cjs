@@ -11,7 +11,9 @@ app.whenReady().then(async () => {
   const errors = []; win.webContents.on('console-message', event => { if (event.level === 'error') errors.push(event.message); });
   const js = async code => { try { const result = await win.webContents.executeJavaScript(code, true); await delay(90); return result; } catch (error) { console.error(code, errors); throw error; } };
   const click = text => js(`Array.from(document.querySelectorAll('button')).find(button=>button.textContent.trim()===${JSON.stringify(text)}).click()`);
-  const setField = (label, value) => js(`(()=>{const element=document.querySelector('[aria-label=${JSON.stringify(label)}]');const setter=Object.getOwnPropertyDescriptor(element.tagName==='SELECT'?HTMLSelectElement.prototype:HTMLInputElement.prototype,'value').set;setter.call(element,${JSON.stringify(value)});element.dispatchEvent(new Event(element.tagName==='SELECT'?'change':'input',{bubbles:true}));})()`);
+  const setField = (label, value) => js(`(()=>{const element=document.querySelector('[aria-label=${JSON.stringify(label)}]'),prototype=element.tagName==='SELECT'?HTMLSelectElement.prototype:element.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype;Object.getOwnPropertyDescriptor(prototype,'value').set.call(element,${JSON.stringify(value)});element.dispatchEvent(new Event(element.tagName==='SELECT'?'change':'input',{bubbles:true}));})()`);
+  const composeStart = (label, value) => js(`(()=>{const element=document.querySelector('[aria-label=${JSON.stringify(label)}]'),prototype=element.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype;element.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true,data:''}));Object.getOwnPropertyDescriptor(prototype,'value').set.call(element,${JSON.stringify(value)});element.dispatchEvent(new InputEvent('input',{bubbles:true,data:${JSON.stringify(value)},isComposing:true,inputType:'insertCompositionText'}));return element.value;})()`);
+  const composeEnd = (label, value) => js(`(()=>{const element=document.querySelector('[aria-label=${JSON.stringify(label)}]'),prototype=element.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype;Object.getOwnPropertyDescriptor(prototype,'value').set.call(element,${JSON.stringify(value)});element.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:${JSON.stringify(value)}}));element.dispatchEvent(new InputEvent('input',{bubbles:true,data:${JSON.stringify(value)},isComposing:false,inputType:'insertText'}));})()`);
   const flow = () => js(`document.querySelectorAll('.view-tabs button')[1].click()`);
   const data = () => js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1')))[0].doc`);
   const edit = label => js(`document.querySelector('button[aria-label=${JSON.stringify(`${label}を編集`)}]').click()`);
@@ -26,13 +28,17 @@ app.whenReady().then(async () => {
   win.webContents.sendInputEvent({ type: 'mouseUp', x: handle.x + 70, y: handle.y + 50, button: 'left', clickCount: 1 }); await delay(900);
   assert.ok((await data()).flow.nodes.find(node => node.data.label === '探索エリア').style.width > 400);
   await click('シーン'); assert.ok(await js(`!!document.querySelector('[aria-label="シーン名をカードで編集"]')`));
-  await setField('シーン名をカードで編集', '図書館'); await setField('種類をカードで編集', 'branch');
-  assert.ok(await js(`document.querySelector('[aria-label="シーン名をカードで編集"]').closest('.scene-node').classList.contains('branch')`));
-  await delay(750);
-  assert.equal((await data()).flow.nodes.find(node => node.data.label === '図書館').data.kind, 'branch');
-  await setField('種類をカードで編集', 'scene'); await click('完了'); await delay(900);
+  assert.equal(await composeStart('シーン名をカードで編集', 'としょかん'), 'としょかん');
+  assert.equal(await js(`document.querySelector('[aria-label="シーン名をカードで編集"]').value`), 'としょかん');
+  await composeEnd('シーン名をカードで編集', '図書館');
+  assert.equal(await composeStart('シーンメモをカードで編集', 'しりょうをしらべる'), 'しりょうをしらべる');
+  await composeEnd('シーンメモをカードで編集', '古い資料を調べ、地図を見つける');
+  assert.ok(!(await js(`Array.from(document.querySelectorAll('.flow-actions button')).some(button=>['分岐','結末'].includes(button.textContent.trim()))`)));
+  assert.ok(!(await js(`!!document.querySelector('[aria-label="種類をカードで編集"]')`)));
+  await click('完了'); await delay(900);
   let doc = await data(), scene = doc.flow.nodes.find(node => node.data.label === '図書館'), group = doc.flow.nodes.find(node => node.data.label === '探索エリア');
-  assert.equal(scene.parentId, group.id); assert.ok(!scene.data.headingId);
+  assert.equal(scene.parentId, group.id); assert.equal(scene.data.memo, '古い資料を調べ、地図を見つける'); assert.ok(!Object.hasOwn(scene.data, 'kind')); assert.ok(!scene.data.headingId);
+  assert.ok(await js(`Array.from(document.querySelectorAll('.node-memo')).some(element=>element.textContent.includes('古い資料を調べ'))`));
   await js(`Array.from(document.querySelectorAll('.scene-node')).find(node=>node.querySelector('.node-label').textContent==='図書館').querySelector('.scene-write').click()`); await delay(200);
   assert.equal(await js(`document.querySelector('.tiptap h2:last-of-type').textContent`), '図書館');
   assert.equal(await js(`document.querySelectorAll('.tiptap h2').length`), count + 1);
@@ -49,7 +55,7 @@ app.whenReady().then(async () => {
   assert.ok(!(await data()).flow.nodes.find(node => node.data.label === '図書館').parentId);
   await click('詳細設定'); assert.ok(await js(`!!document.querySelector('.flow-inspector select[aria-label="対応する目次"]')`));
   await js(`document.querySelector('[aria-label="編集を閉じる"]').click()`);
-  const drag = await js(`(()=>{const node=Array.from(document.querySelectorAll('.react-flow__node')).find(item=>item.querySelector('.node-label')?.textContent==='図書館').getBoundingClientRect(),group=Array.from(document.querySelectorAll('.react-flow__node')).find(item=>item.querySelector('.group-jump')?.textContent==='探索エリア').getBoundingClientRect();return {from:{x:Math.round(node.x+node.width/2),y:Math.round(node.y+45)},to:{x:Math.round(group.x+group.width/2),y:Math.round(group.y+group.height/2)}};})()`);
+  const drag = await js(`(()=>{const node=Array.from(document.querySelectorAll('.react-flow__node')).find(item=>item.querySelector('.node-label')?.textContent==='図書館').getBoundingClientRect(),group=Array.from(document.querySelectorAll('.react-flow__node')).find(item=>item.querySelector('.group-jump')?.textContent==='探索エリア').getBoundingClientRect();return {from:{x:Math.round(node.x+node.width/2),y:Math.round(node.y+node.height/2)},to:{x:Math.round(group.x+group.width/2),y:Math.round(group.y+group.height/2)}};})()`);
   win.webContents.sendInputEvent({ type: 'mouseDown', ...drag.from, button: 'left', clickCount: 1 });
   win.webContents.sendInputEvent({ type: 'mouseMove', x: drag.to.x, y: drag.to.y, modifiers: ['leftButtonDown'] });
   win.webContents.sendInputEvent({ type: 'mouseUp', ...drag.to, button: 'left', clickCount: 1 }); await delay(900);
@@ -72,6 +78,6 @@ app.whenReady().then(async () => {
   await setField('選択したカードをグループへ移動', group.id); await delay(850);
   doc = await data(); assert.ok(['図書館', '地下室'].every(label => doc.flow.nodes.find(node => node.data.label === label).parentId === group.id));
   await edit('図書館'); await fs.writeFile(path.join(output, 'flow-first.png'), (await win.webContents.capturePage()).toPNG());
-  assert.deepEqual(errors, []); console.log('PASS: inline card editing, detailed settings, group drag/drop, bulk grouping, linked manuscript and persistence'); app.exit(0);
+  assert.deepEqual(errors, []); console.log('PASS: IME-safe inline editing, private scene notes, unified scene types, detailed settings, group drag/drop, bulk grouping, linked manuscript and persistence'); app.exit(0);
  } catch (error) { console.error(error); win?.destroy(); app.exit(1); }
 });

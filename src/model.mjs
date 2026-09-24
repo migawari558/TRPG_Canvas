@@ -104,12 +104,12 @@ export function sampleDocument() {
 `);
   doc.subtitle = 'モダンホラー / 海辺の町';
   doc.flow = { nodes: [
-    { id: 'intro', position: { x: 250, y: 30 }, data: { label: '届かなかった手紙', kind: 'scene' } },
-    { id: 'cafe', position: { x: 90, y: 180 }, data: { label: '喫茶店「凪」', kind: 'scene' } },
-    { id: 'lighthouse', position: { x: 410, y: 180 }, data: { label: '古い灯台', kind: 'scene' } },
-    { id: 'choice', position: { x: 250, y: 340 }, data: { label: '灯りを消す？', kind: 'branch' } },
-    { id: 'end1', position: { x: 90, y: 510 }, data: { label: '動き出す時間', kind: 'ending' } },
-    { id: 'end2', position: { x: 410, y: 510 }, data: { label: '霧の向こうの灯り', kind: 'ending' } }
+    { id: 'intro', position: { x: 250, y: 30 }, data: { label: '届かなかった手紙' } },
+    { id: 'cafe', position: { x: 90, y: 180 }, data: { label: '喫茶店「凪」' } },
+    { id: 'lighthouse', position: { x: 410, y: 180 }, data: { label: '古い灯台' } },
+    { id: 'choice', position: { x: 250, y: 340 }, data: { label: '灯りを消す？' } },
+    { id: 'end1', position: { x: 90, y: 510 }, data: { label: '動き出す時間' } },
+    { id: 'end2', position: { x: 410, y: 510 }, data: { label: '霧の向こうの灯り' } }
   ], edges: [
     { id: 'e1', source: 'intro', target: 'cafe' }, { id: 'e2', source: 'intro', target: 'lighthouse' },
     { id: 'e3', source: 'cafe', target: 'choice' }, { id: 'e4', source: 'lighthouse', target: 'choice' },

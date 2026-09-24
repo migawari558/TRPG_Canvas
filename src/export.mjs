@@ -36,7 +36,7 @@ export function flowSvg(flow, headings = [], theme = 'forest') {
     return `<path d="M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2}" fill="none" stroke="${c.muted}" stroke-width="2" marker-end="url(#arrow)"/><text x="${(x1 + x2) / 2 + 9}" y="${(y1 + y2) / 2}" font-size="14" fill="${c.text}">${escapeHtml(edge.label || '')}</text>`;
   }).join('');
   function box(node) {
-    const color = node.group ? c.panel : node.data.kind === 'branch' ? c.branch : node.data.kind === 'ending' ? c.ending : c.soft;
+    const color = node.group ? c.panel : c.soft;
     const text = `<text x="${node.boxWidth / 2}" y="${node.group ? 28 : 38}" text-anchor="middle" font-size="16" fill="${c.text}">${node.lines.map((line, index) => `<tspan x="${node.boxWidth / 2}" dy="${index ? 21 : 0}">${escapeHtml(line)}</tspan>`).join('')}</text>`;
     const label = node.heading ? `<a href="#${node.heading.anchor}">${text}<title>本文へ: ${escapeHtml(node.heading.text)}</title></a>` : text;
     return `<g transform="translate(${node.position.x},${node.position.y})"><rect width="${node.boxWidth}" height="${node.boxHeight}" rx="10" fill="${color}" stroke="${c.border}"/>${label}</g>`;
