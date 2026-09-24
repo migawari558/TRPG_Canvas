@@ -50,6 +50,13 @@ test('storage roundtrip, conflict preservation, list and path validation', async
     assert.equal(deleted.conflict, true);
   } finally { await fs.rm(folder, { recursive: true, force: true }); }
 });
+test('character count treats image nodes and markdown images as zero characters', async () => {
+  const { characterCount } = await import('../src/model.mjs');
+  const image = { type: 'image', attrs: { src: `data:image/png;base64,${'A'.repeat(100000)}`, alt: '数えない代替文字' } };
+  assert.equal(characterCount({ content: { type: 'doc', content: [paragraph('本文'), image] } }), 2);
+  assert.equal(characterCount({ markdown: `本文\n\n![数えない代替文字](data:image/png;base64,${'A'.repeat(100000)} "width=50")` }), 2);
+  assert.equal(characterCount({ markdown: `本文\n<img alt="数えない" src="data:image/png;base64,${'A'.repeat(100000)}">` }), 2);
+});
 test('HTML escapes executable input, includes optional copy controls and flow', async () => {
   const { exportHtml } = await import('../src/export.mjs');
   const { sampleDocument } = await import('../src/model.mjs');

@@ -2,14 +2,14 @@ import Appearance from './Appearance.jsx';
 import { writeFlowScene } from './flow-model.mjs';
 import ExportDialog from './ExportDialog.jsx';
 import { defaultAppearance, normalizeAppearance, normalizeDesign, readPreference, themeVariables, isDarkTheme } from './themes.mjs';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BookOpen, Plus, Search, FileText, Network, Download, Settings2, ChevronDown, ChevronUp, ArrowUp, ArrowDown, CircleHelp, X, Check, FolderOpen, Upload, RefreshCw, Cloud, HardDrive, Copy, Quote, Feather, PanelLeftClose, PanelLeftOpen, LoaderCircle, AlertCircle } from 'lucide-react';
 import ScenarioEditor from './Editor.jsx';
 import Flow from './Flow.jsx';
 import Outline from './Outline.jsx';
 import Dashboard from './Dashboard.jsx';
 import { api, isDesktop } from './api.js';
-import { newDocument, sampleDocument, outline, moveSection, textOf } from './model.mjs';
+import { newDocument, sampleDocument, outline, moveSection, characterCount } from './model.mjs';
 import { exportHtml } from './export.mjs';
 function Modal({ title, eyebrow, onClose, children, className = '' }) {
   const ref = useRef();
@@ -98,8 +98,8 @@ export default function App() {
   }
   async function exportFile(exportFormat, options) { await persist(); const latest = docRef.current; const content = exportFormat === 'md' ? latest.markdown : exportHtml(latest, { ...options, printPreview: exportFormat === 'pdf' && !window.canvas }); const path = await api.export(exportFormat, latest.title, content, exportFormat === 'pdf' ? options.pdfPageSize : undefined); if (path) { setModal(null); notify(`${exportFormat.toUpperCase()}を書き出しました`); } }
   function onReady(instance, serializer) { editorRef.current = instance; serializeMarkdown.current = serializer; setEditor(instance); if (instance) setEditorContent(instance.getJSON()); }
-  const headings = outline(editorContent || doc?.content);
-  const wordCount = doc?.content ? textOf(doc.content).replace(/\s/g, '').length : (doc?.markdown || '').replace(/[\s#*>`_\-]/g, '').length;
+  const headings = useMemo(() => outline(editorContent || doc?.content), [editorContent, doc?.content]);
+  const wordCount = useMemo(() => characterCount(doc), [doc?.content, doc?.markdown]);
   function navigateHeading(item) {
     if (!editor || editor.isDestroyed) return;
     const current = outline(editor.getJSON()).find(heading => item.id ? heading.id === item.id : heading.index === item.index);

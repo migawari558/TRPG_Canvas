@@ -16,6 +16,14 @@ export function outline(content) {
 }
 function nodeSize(node) { return node.type === 'text' ? node.text.length : node.content ? 2 + node.content.reduce((n, child) => n + nodeSize(child), 0) : ['paragraph', 'heading', 'blockquote', 'codeBlock'].includes(node.type) ? 2 : 1; }
 export function textOf(node) { return node.text || (node.content || []).map(textOf).join(''); }
+export function characterCount(doc) {
+  if (doc?.content) return textOf(doc.content).replace(/\s/g, '').length;
+  const withoutImages = (doc?.markdown || '')
+    .replace(/!\[[^\]]*\]\(\s*(?:<[^>]*>|[^)\s]+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)/g, '')
+    .replace(/<img\b[^>]*>/gi, '')
+    .replace(/data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/=\s]+/gi, '');
+  return withoutImages.replace(/[\s#*>`_\-]/g, '').length;
+}
 export function sectionRange(nodes, start) {
   const level = nodes[start]?.attrs?.level;
   if (nodes[start]?.type !== 'heading') return null;

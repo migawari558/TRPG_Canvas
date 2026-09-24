@@ -1,7 +1,6 @@
-import { newDocument, textOf } from './model.mjs';
+import { newDocument, characterCount } from './model.mjs';
 const key = 'trpg-canvas-documents-v1';
 const read = () => JSON.parse(localStorage.getItem(key) || '{}');
-const characterCount = doc => doc.content ? textOf(doc.content).replace(/\s/g, '').length : doc.markdown.replace(/[\s#*>`_\-]/g, '').length;
 function download(title, text, type) {
   const url = URL.createObjectURL(new Blob([text], { type }));
   const a = document.createElement('a'); a.href = url; a.download = title; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);

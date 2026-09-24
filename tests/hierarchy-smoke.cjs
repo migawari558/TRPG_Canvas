@@ -30,6 +30,7 @@ app.whenReady().then(async () => {
     await js(`document.querySelector('button[aria-label="探索：霧に沈む町を展開"]').click()`);
     await flowTab(); await delay(300);
     await js(`document.querySelector('button[aria-label="喫茶店「凪」を編集"]').click()`);
+    await click('詳細設定');
     const targetId = await js(`(()=>{const select=document.querySelector('select[aria-label="対応する目次"]');const option=Array.from(select.options).find(o=>o.textContent.trim()==='喫茶店「凪」');select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));return option.value;})()`);
     await delay(250);
     await js(`document.querySelector('[data-id="cafe"] .node-label').click()`); await delay(300);

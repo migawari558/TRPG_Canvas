@@ -47,6 +47,12 @@ export function moveToGroup(flow, nodeId, groupId) {
   return { ...flow, nodes: sorted };
 }
 
+export function moveNodesToGroup(flow, nodeIds, groupId) {
+  const ids = [...new Set(nodeIds)].filter(id => flow.nodes.some(node => node.id === id));
+  if (!ids.length || !ids.every(id => canJoinGroup(flow, id, groupId))) return flow;
+  return ids.reduce((next, id) => moveToGroup(next, id, groupId), flow);
+}
+
 function nodeSize(node) {
   return {
     width: node.style?.width || node.measured?.width || node.width || (node.type === 'sceneGroup' ? 400 : 260),

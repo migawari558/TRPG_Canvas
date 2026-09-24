@@ -33,6 +33,8 @@ converter.addRule('embeddedImage', { filter: node => node.nodeName === 'IMG' && 
   return `![${alt}](${src}${width < 100 ? ` "width=${width}"` : ''})`;
 } });
 export const serializeEditorMarkdown = editor => converter.turndown(editor.getHTML());
+const blankParagraphCount = content => (content?.content || []).filter(node => node.type === 'paragraph' && !node.content?.length).length;
+const blankMarkerCount = source => (source?.match(/<!-- trpg-blank -->/g) || []).length;
 export default function ScenarioEditor({ doc, onChange, onReady }) {
   const imageInput = useRef(), importingImage = useRef(false);
   const [findOpen, setFindOpen] = useState(false), [findRequest, setFindRequest] = useState(0);
@@ -69,7 +71,8 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     if (editor) {
       editor.view.dispatch(editor.state.tr.setMeta('initializeHeadingIds', true).setMeta('addToHistory', false));
       onReady(editor, () => serializeEditorMarkdown(editor));
-      if (!doc.content) onChange({ content: editor.getJSON(), markdown: serializeEditorMarkdown(editor) });
+      const content = editor.getJSON();
+      if (!doc.content || blankParagraphCount(content) > blankMarkerCount(doc.markdown)) onChange({ content, markdown: serializeEditorMarkdown(editor) });
     }
     return () => onReady(null, null);
   }, [editor]);

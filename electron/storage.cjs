@@ -3,10 +3,16 @@ const path = require('node:path');
 const { createHash, randomUUID } = require('node:crypto');
 const revision = text => createHash('sha256').update(text).digest('hex');
 function characterCount(doc) {
-  if (!doc.content) return doc.markdown.replace(/[\s#*>`_\-]/g, '').length;
-  let text = '';
-  (function visit(node) { if (typeof node?.text === 'string') text += node.text; for (const child of node?.content || []) visit(child); })(doc.content);
-  return text.replace(/\s/g, '').length;
+  if (doc.content) {
+    let text = '';
+    (function visit(node) { if (typeof node?.text === 'string') text += node.text; for (const child of node?.content || []) visit(child); })(doc.content);
+    return text.replace(/\s/g, '').length;
+  }
+  return doc.markdown
+    .replace(/!\[[^\]]*\]\(\s*(?:<[^>]*>|[^)\s]+)(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)/g, '')
+    .replace(/<img\b[^>]*>/gi, '')
+    .replace(/data:image\/[a-z0-9.+-]+;base64,[a-z0-9+/=\s]+/gi, '')
+    .replace(/[\s#*>`_\-]/g, '').length;
 }
 function filePath(folder, id) {
   if (!/^[a-zA-Z0-9-]{1,80}$/.test(id)) throw new Error('不正なシナリオIDです');

@@ -17,6 +17,22 @@ test('manual groups prevent cycles, preserve edges and release scenes without da
  const pos=absolutePosition(grouped.nodes.find(n=>n.id==='s'),grouped.nodes);const released=moveToGroup(grouped,'s','');assert.deepEqual(released.nodes.find(n=>n.id==='s').position,pos);assert.deepEqual(released.edges,flow.edges);
  assert.deepEqual(removeFlowNode(grouped,'nested').nodes.find(n=>n.id==='s').position,pos);
 });
+test('multiple selected cards move to one group together without creating cycles',async()=>{
+ const {moveNodesToGroup}=await import('../src/flow-model.mjs');
+ const flow={nodes:[
+  {id:'target',type:'sceneGroup',position:{x:0,y:0},style:{width:400,height:300},data:{label:'target'}},
+  {id:'other',type:'sceneGroup',position:{x:500,y:0},style:{width:400,height:300},data:{label:'other'}},
+  {id:'a',type:'scene',position:{x:10,y:10},data:{label:'a'}},
+  {id:'b',type:'scene',parentId:'other',position:{x:20,y:90},data:{label:'b'}}
+ ],edges:[{id:'edge',source:'a',target:'b'}]};
+ const grouped=moveNodesToGroup(flow,['a','b','a'],'target');
+ assert.equal(grouped.nodes.find(node=>node.id==='a').parentId,'target');
+ assert.equal(grouped.nodes.find(node=>node.id==='b').parentId,'target');
+ assert.deepEqual(grouped.edges,flow.edges);
+ const released=moveNodesToGroup(grouped,['a','b'],'');
+ assert.ok(['a','b'].every(id=>!released.nodes.find(node=>node.id===id).parentId));
+ assert.equal(moveNodesToGroup(grouped,['target','a'],'a'),grouped,'invalid bulk moves are atomic');
+});
 test('dropping a scene into nested groups chooses the deepest group and preserves its canvas position',async()=>{
  const {dropIntoGroup,absolutePosition}=await import('../src/flow-model.mjs');
  const flow={nodes:[
