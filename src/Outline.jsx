@@ -17,9 +17,10 @@ export default function Outline({ headings, content, activeHeading, onNavigate, 
   const visible = headings.filter(heading => !heading.ancestorIds.some(id => collapsed.has(id)));
   function toggle(id) { setCollapsed(current => { const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next; }); }
   return <aside className="outline-panel" aria-label="シナリオの目次">
-    <div className="outline-title"><span>目次</span><span>{headings.length.toString().padStart(2, '0')}</span></div>
-    <div className="outline-bulk"><button disabled={!parents.size} onClick={() => setCollapsed(new Set(parents))}><ChevronsUp size={14}/>すべて閉じる</button><button disabled={!collapsed.size} onClick={() => setCollapsed(new Set())}><ChevronsDown size={14}/>すべて開く</button></div>
-    <p className="outline-subtitle">章をひらいて、物語をたどる。</p>
+    <div className="outline-fixed">
+      <div className="outline-title"><span>目次</span><span>{headings.length.toString().padStart(2, '0')}</span></div>
+      <div className="outline-bulk"><button disabled={!parents.size} onClick={() => setCollapsed(new Set(parents))}><ChevronsUp size={14}/>すべて閉じる</button><button disabled={!collapsed.size} onClick={() => setCollapsed(new Set())}><ChevronsDown size={14}/>すべて開く</button></div>
+    </div>
     <div className="outline-list">
       {visible.map(item => <div className={`outline-item ${item.id === activeHeading ? 'active' : ''}`} style={{ '--depth': item.depth }} key={item.id || item.index}>
         {parents.has(item.id) ? <button className="outline-toggle" aria-label={`${item.text}を${collapsed.has(item.id) ? '展開' : '折りたたむ'}`} aria-expanded={!collapsed.has(item.id)} onClick={() => toggle(item.id)}>{collapsed.has(item.id) ? <ChevronRight size={15}/> : <ChevronDown size={15}/>}</button> : <span className="outline-toggle-spacer"/>}

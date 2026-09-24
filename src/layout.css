@@ -53,15 +53,14 @@
   padding: 24px 18px 16px;
 }
 .outline-title { font-size:calc(16px * var(--ui-scale, 1)); }
-.outline-subtitle { font-size:calc(12px * var(--ui-scale, 1)); line-height: 1.7; margin-bottom: 18px; }
-.outline-item { margin-left: calc(var(--depth, 0) * 14px); min-height: 42px; gap: 0; }
-.outline-link { font-size:calc(14px * var(--ui-scale, 1)); padding: 10px 2px; gap: 6px; }
-.outline-link > span:first-child { white-space: normal; overflow-wrap: anywhere; flex: 1; }
+.outline-item { margin-left: calc(var(--depth, 0) * 12px); min-height: 30px; gap: 0; }
+.outline-link { font-size:calc(13px * var(--ui-scale, 1)); padding: 5px 2px; gap: 5px; }
+.outline-link > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
 .outline-link > span:last-child { white-space: normal; }
 .outline-toggle, .outline-toggle-spacer { width: 22px; flex-shrink: 0; padding: 0; color: var(--theme-muted, #879c76); }
-.outline-toggle { min-height: 30px; }
+.outline-toggle { min-height: 26px; }
 .outline-linked { flex-shrink: 0; color: var(--theme-muted, #81a066); }
-.reorder-buttons { flex-direction: column; padding: 0 2px; }
+.reorder-buttons { flex-direction: row; padding: 0 2px; }
 .reorder-buttons button { min-width: 21px; min-height: 20px; }
 .outline-hint { font-size:calc(12px * var(--ui-scale, 1)); margin-top: 18px; }
 .outline-flow-button { border: 1px solid var(--theme-border, #d5dfca); border-radius: 6px; padding: 12px 8px; font-size:calc(13px * var(--ui-scale, 1)); margin-top: 26px; color: var(--theme-text, #597747); background: var(--theme-soft, #eff4e7); }
@@ -147,7 +146,7 @@
   .outline-panel { width: 180px; padding: 15px 8px; }
   .outline-item { margin-left: calc(var(--depth, 0) * 8px); }
   .outline-link { font-size:calc(12px * var(--ui-scale, 1)); }
-  .outline-subtitle, .outline-bottom, .outline-hint { display: none; }
+  .outline-bottom, .outline-hint { display: none; }
   .reorder-buttons { opacity: 1; }
   .editor-toolbar { flex-wrap: wrap; height: auto; min-height: 65px; }
   .paper { padding: 18px; }

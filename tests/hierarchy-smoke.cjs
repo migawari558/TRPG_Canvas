@@ -22,6 +22,9 @@ app.whenReady().then(async () => {
     const groupCount=await js(`document.querySelectorAll('.tiptap h1').length`);
     assert.ok(await js(`document.querySelector('.outline-panel').getBoundingClientRect().right <= document.querySelector('.editor-area').getBoundingClientRect().left + 1`));
     assert.equal(await js(`getComputedStyle(document.querySelector('.tiptap')).fontSize`), '17px');
+    const outlineLayout = await js(`(()=>{const panel=document.querySelector('.outline-panel'),list=document.querySelector('.outline-list'),bulk=document.querySelector('.outline-bulk'),item=document.querySelector('.outline-item'),link=item.querySelector('.outline-link'),text=link.querySelector('span'),style=getComputedStyle(link),before=bulk.getBoundingClientRect().top;list.scrollTop=list.scrollHeight;return{itemHeight:item.getBoundingClientRect().height,linkHeight:link.getBoundingClientRect().height,padding:style.padding,lineHeight:style.lineHeight,fontSize:style.fontSize,textHeight:text.getBoundingClientRect().height,before,after:bulk.getBoundingClientRect().top,panelOverflow:getComputedStyle(panel).overflowY,listOverflow:getComputedStyle(list).overflowY,subtitle:!!document.querySelector('.outline-subtitle')}})()`);
+    assert.ok(outlineLayout.itemHeight <= 34, JSON.stringify(outlineLayout)); assert.equal(outlineLayout.before, outlineLayout.after); assert.equal(outlineLayout.panelOverflow, 'hidden'); assert.equal(outlineLayout.listOverflow, 'auto'); assert.equal(outlineLayout.subtitle, false);
+    await js(`document.querySelector('.outline-list').scrollTop=0`);
     const ids = await js(`Array.from(document.querySelectorAll('.tiptap h1,.tiptap h2')).map(el=>el.dataset.headingId)`);
     assert.ok(ids.every(Boolean)); assert.equal(new Set(ids).size, ids.length);
     await fs.writeFile(path.join(output, 'editor.png'), (await win.webContents.capturePage()).toPNG());
