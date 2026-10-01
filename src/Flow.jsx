@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ReactFlow, Background, Controls, MiniMap, Handle, Position, NodeResizer, addEdge, applyNodeChanges, applyEdgeChanges, MarkerType } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MiniMap, Handle, Position, NodeResizer, SelectionMode, addEdge, applyNodeChanges, applyEdgeChanges, MarkerType } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Plus, Trash2, X, Pencil, Link2, Layers, Ungroup, FileText, Check, StickyNote } from 'lucide-react';
 import { uid } from './model.mjs';
@@ -135,10 +135,11 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
           if (JSON.stringify(next.nodes) !== JSON.stringify(positioned.nodes)) onChange(next);
         }}
         onEdgesChange={changes => { selectChanges(changes, 'edges'); const structural = changes.filter(c => c.type !== 'select'); if (structural.length) change({ edges: applyEdgeChanges(structural, flow.edges) }); }}
+        onSelectionChange={({ nodes: selectedNodes, edges: selectedEdges }) => { setSelected(null); setSelection({ nodes: selectedNodes.map(node => node.id), edges: selectedEdges.map(edge => edge.id) }); }}
         onConnect={connection => change({ edges: addEdge({ ...connection, id: uid() }, flow.edges) })}
         onNodeClick={(event, node) => { if (event.ctrlKey || event.metaKey || event.shiftKey || editingNodeId === node.id) return; const heading = byHeading.get(node.data.headingId); if (heading && node.type !== 'sceneGroup') onNavigate(heading); else setSelected({ type: 'node', id: node.id }); }}
         onEdgeClick={(event, edge) => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey) setSelected({ type: 'edge', id: edge.id }); }}
-        onPaneClick={() => { setSelected(null); setEditingNodeId(null); setSelection({ nodes: [], edges: [] }); }} selectionOnDrag selectionKeyCode="Shift" multiSelectionKeyCode={['Control', 'Meta', 'Shift']} panOnDrag={[1,2]} fitView fitViewOptions={{ padding: 0.18, maxZoom: 1 }} minZoom={0.15} maxZoom={2} deleteKeyCode={null}>
+        onPaneClick={() => { setSelected(null); setEditingNodeId(null); setSelection({ nodes: [], edges: [] }); }} selectionOnDrag selectionMode={SelectionMode.Partial} selectionKeyCode="Shift" multiSelectionKeyCode={['Control', 'Meta', 'Shift']} panOnDrag={[1,2]} fitView fitViewOptions={{ padding: 0.18, maxZoom: 1 }} minZoom={0.15} maxZoom={2} deleteKeyCode={null}>
         <Background color="#cbd4c9" gap={22} size={1}/><Controls showInteractive={false}/>
         <MiniMap nodeColor={node => node.type === 'sceneGroup' ? '#dbe5d7' : '#a6c2b0'} maskColor="rgba(244,246,240,.65)"/>
       </ReactFlow>
@@ -162,7 +163,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
         </>}
         <button className="danger-link" onClick={() => { if (selected.type === 'node') onChange(removeFlowNode(flow, item.id)); else change({ edges: flow.edges.filter(edge => edge.id !== item.id) }); setSelected(null); }}><Trash2 size={15}/>この{selected.type === 'node' ? item.type === 'sceneGroup' ? 'グループ枠' : 'シーン' : 'つながり'}を削除</button>
       </div>}
-      <div className="flow-tip">鉛筆または名前のダブルクリックでカードを直接編集 · Ctrl＋クリック／背景をドラッグで複数選択 · 選択カードをまとめてグループ移動 · 右ドラッグで画面移動</div>
+      <div className="flow-tip">鉛筆または名前のダブルクリックでカードを直接編集 · Ctrl＋クリック／背景を囲って複数選択 · 選択カードをまとめてグループ移動 · 右ドラッグで画面移動</div>
     </div>
   </div>;
 }

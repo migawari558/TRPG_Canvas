@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Check, RotateCcw } from 'lucide-react';
-import { themes, getThemes, getTheme, getCustomTheme, previewCustomTheme, saveCustomTheme, removeCustomTheme, themeVariables, defaultAppearance } from './themes.mjs';
+import React, { useEffect, useState } from 'react';
+import { Check, RefreshCw, RotateCcw } from 'lucide-react';
+import { themes, getThemes, getTheme, getCustomTheme, normalizeFontFamily, previewCustomTheme, saveCustomTheme, removeCustomTheme, themeVariables, defaultAppearance } from './themes.mjs';
 
 export function ThemePicker({ value, onChange, label = 'テーマ' }) {
   const [draft, setDraft] = useState(null), [error, setError] = useState('');
@@ -39,9 +39,25 @@ export function ThemePicker({ value, onChange, label = 'テーマ' }) {
 export function FontSizeControl({ value, onChange, label = '本文の文字サイズ', min = 12, max = 28, unit = 'px' }) {
   return <label className="size-control"><span>{label}<output>{value}{unit}</output></span><input type="range" min={min} max={max} step="1" value={value} aria-label={label} onChange={event => onChange(Number(event.target.value))}/><span className="range-labels"><small>{min}{unit}</small><small>{max}{unit}</small></span></label>;
 }
+export function FontFamilyControl({ value = 'system', onChange, label = '本文と見出しのフォント' }) {
+  const [fonts, setFonts] = useState([]), [state, setState] = useState('loading');
+  async function load() {
+    setState('loading');
+    try {
+      if (typeof globalThis.queryLocalFonts !== 'function') throw new Error('unsupported');
+      const entries = await globalThis.queryLocalFonts();
+      const families = [...new Set(entries.map(font => String(font.family || '').trim()).filter(font => font && normalizeFontFamily(font) === font))].sort((a, b) => a.localeCompare(b, 'ja'));
+      setFonts(families); setState(families.length ? 'ready' : 'empty');
+    } catch { setFonts([]); setState('unavailable'); }
+  }
+  useEffect(() => { load(); }, []);
+  const options = value !== 'system' && !fonts.includes(value) ? [value, ...fonts] : fonts;
+  return <div className="font-family-control"><label>{label}<select aria-label={label} value={value} onChange={event => onChange(event.target.value)}><option value="system">テーマ標準</option>{options.map(font => <option key={font} value={font}>{font}</option>)}</select></label><div><small>{state === 'loading' ? 'インストール済みフォントを確認中…' : state === 'ready' ? `${fonts.length}種類のフォントを利用できます` : 'フォント一覧を取得できません。テーマ標準を利用できます。'}</small><button type="button" className="icon-button" title="フォント一覧を再読み込み" aria-label="フォント一覧を再読み込み" onClick={load}><RefreshCw size={14}/></button></div></div>;
+}
 export default function Appearance({ value, onChange }) {
   return <div className="appearance-settings"><p className="modal-description">変更はすぐに画面へ反映し、この端末に保存します。</p>
     <ThemePicker value={value.theme} onChange={theme => onChange({ ...value, theme })}/>
+    <FontFamilyControl value={value.fontFamily} onChange={fontFamily => onChange({ ...value, fontFamily })}/>
     <FontSizeControl value={value.fontSize} onChange={fontSize => onChange({ ...value, fontSize })}/>
     <FontSizeControl label="メニュー・目次の文字サイズ" value={value.uiScale} min={90} max={125} unit="%" onChange={uiScale => onChange({ ...value, uiScale })}/>
     <div className="appearance-sample" style={{ fontSize: `${value.fontSize}px` }}><strong>霧の向こうに、物語がある。</strong><p>探索者たちは、一通の手紙を手がかりに灯台へ向かう。</p><aside>GM MEMO<br/>ここに、進行のためのメモを。</aside></div>

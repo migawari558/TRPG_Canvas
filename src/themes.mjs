@@ -1,5 +1,7 @@
 export const themes = [
   { id: 'forest', name: 'フォレスト', description: '森の緑、藍の見出し、琥珀のアクセント', colors: { bg: '#f3f5ed', paper: '#fffef9', panel: '#eef2e7', text: '#303c39', muted: '#63736a', heading: '#334d72', subheading: '#78602f', chapter: '#614c70', accent: '#4d713e', onAccent: '#ffffff', soft: '#e6eedc', border: '#ccd9c1', quote: '#edf3e5', note: '#e9eee0', branch: '#f6ead2', ending: '#ebe5f1' }, serif: true },
+  { id: 'tahoe-light', name: 'Tahoe ライト', description: 'macOS風の透明感と、澄んだ青のライトテーマ', colors: { bg: '#eaf2fb', paper: '#fbfdff', panel: '#f2f7fccc', text: '#18202a', muted: '#657383', heading: '#175ea8', subheading: '#6f4ba5', chapter: '#174c78', accent: '#087af0', onAccent: '#ffffff', soft: '#e1effc', border: '#c5d5e5', quote: '#edf5fc', note: '#e8f2fa', branch: '#fff0d7', ending: '#eee9fb' }, serif: false, glass: true },
+  { id: 'tahoe-dark', name: 'Tahoe ダーク', description: 'macOS風の奥行きと、鮮やかな青のダークテーマ', colors: { bg: '#0b1119', paper: '#151d27', panel: '#111923dd', text: '#f2f5f8', muted: '#9aaabc', heading: '#70b7ff', subheading: '#c9a8ff', chapter: '#8bd8ee', accent: '#49a7ff', onAccent: '#061522', soft: '#223448', border: '#35485d', quote: '#1b2b3a', note: '#20303e', branch: '#4b402c', ending: '#393149' }, serif: false, glass: true },
   { id: 'parchment', name: '羊皮紙', description: '古い手記のような温かさ', colors: { bg: '#ede3d2', paper: '#fff6e5', panel: '#f0e5d2', text: '#4b392b', muted: '#8a735d', heading: '#365c68', subheading: '#805044', chapter: '#644b71', accent: '#946039', onAccent: '#ffffff', soft: '#eaddc6', border: '#d6c2a5', quote: '#f2e7d2', note: '#eee0c6', branch: '#f0dcb5', ending: '#e8dce2' }, serif: true },
   { id: 'midnight', name: 'ミッドナイト', description: '夜のセッションに、静かな紺', colors: { bg: '#121b25', paper: '#1c2936', panel: '#192431', text: '#e0e9ef', muted: '#a5b6c7', heading: '#dcc4ed', subheading: '#edca90', chapter: '#96d6dd', accent: '#a4cfae', onAccent: '#14251c', soft: '#2d4050', border: '#43586b', quote: '#253949', note: '#2b3d4b', branch: '#514632', ending: '#40394f' }, serif: true },
   { id: 'mono', name: 'モノクロ', description: '文字を引き立てる、白と墨', colors: { bg: '#ededed', paper: '#ffffff', panel: '#f5f5f5', text: '#242424', muted: '#686868', heading: '#34455a', subheading: '#65545d', chapter: '#303d4b', accent: '#303030', onAccent: '#ffffff', soft: '#e5e5e5', border: '#cccccc', quote: '#f1f1f1', note: '#eaeaea', branch: '#e4e4e4', ending: '#e0e0e0' }, serif: false }
@@ -89,17 +91,26 @@ export function removeCustomTheme(id, storage = globalThis.localStorage) {
   globalThis.window?.dispatchEvent(new CustomEvent('trpg-custom-themes-change', { detail: { removedId: id, baseId: removed?.baseId || 'forest' } }));
 }
 loadCustomThemes();
-export const defaultAppearance = { theme: 'forest', fontSize: 17, uiScale: 100 };
+export const defaultAppearance = { theme: 'forest', fontSize: 17, uiScale: 100, fontFamily: 'system' };
+export function normalizeFontFamily(value) {
+  const font = String(value || 'system').trim().normalize('NFC');
+  return font === 'system' || (font.length <= 80 && /^[\p{L}\p{M}\p{N} ._()+-]+$/u.test(font)) ? font : 'system';
+}
+export function cssFontFamily(value, fallback = "'Yu Gothic UI','Meiryo',sans-serif") {
+  const font = normalizeFontFamily(value);
+  return font === 'system' ? fallback : `"${font.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",${fallback}`;
+}
 export function normalizeDesign(value = {}) {
-  return { theme: getTheme(value?.theme).id, fontSize: Math.max(7, Math.min(28, Math.round(Number(value?.fontSize) || 17))) };
+  return { theme: getTheme(value?.theme).id, fontSize: Math.max(7, Math.min(28, Math.round(Number(value?.fontSize) || 17))), fontFamily: normalizeFontFamily(value?.fontFamily) };
 }
 export function normalizeAppearance(value = {}) {
   const design = normalizeDesign(value);
   return { ...design, fontSize: Math.max(12, design.fontSize), uiScale: Math.max(90, Math.min(125, Math.round(Number(value?.uiScale) || 100))) };
 }
-export function themeVariables(id) {
+export function themeVariables(id, fontFamily = 'system') {
   const theme = getTheme(id);
-  return { ...Object.fromEntries(Object.entries(theme.colors).map(([key, value]) => [`--theme-${key}`, value])), '--heading-font': theme.serif ? "'Yu Mincho','YuMincho',serif" : "'Yu Gothic UI','Meiryo',sans-serif" };
+  const chosen = normalizeFontFamily(fontFamily), body = cssFontFamily(chosen);
+  return { ...Object.fromEntries(Object.entries(theme.colors).map(([key, value]) => [`--theme-${key}`, value])), '--body-font': body, '--heading-font': chosen === 'system' ? (theme.serif ? "'Yu Mincho','YuMincho',serif" : body) : body };
 }
 export function readPreference(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }

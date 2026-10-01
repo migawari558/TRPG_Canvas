@@ -12,7 +12,8 @@ async function start() {
   if (!workspace) { app.quit(); return; }
   folder = workspace.folder;
   const { configFile } = workspace;
-  session.defaultSession.setPermissionRequestHandler((_wc, _permission, callback) => callback(false));
+  session.defaultSession.setPermissionCheckHandler((_wc, permission) => permission === 'local-fonts');
+  session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => callback(permission === 'local-fonts'));
   ipcMain.handle('workspace:info', () => ({ folder }));
   ipcMain.handle('workspace:choose', async () => {
     const result = await dialog.showOpenDialog(mainWindow, { title: 'シナリオの保存先（同期する場合はDrive / Dropbox内のフォルダ）', properties: ['openDirectory', 'createDirectory'] });
