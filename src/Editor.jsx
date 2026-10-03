@@ -90,7 +90,7 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     return () => window.removeEventListener('keydown', keydown);
   }, [editor, findOpen]);
   if (!editor) return null;
-  const syntax = ['**文字**', '*文字*', '<u>文字</u>', 'Ctrl+F / Ctrl+H', '#! ＋ Space', '# ＋ Space', '## ＋ Space', '### ＋ Space', '- ＋ Space', '1. ＋ Space', '[] ＋ Space（完了: [x] ＋ Space）', '> ＋ Space', '!!! ＋ Spaceで開始 / Ctrl+Enterで終了（Markdown: :::gm ～ :::）', ':::dialogue 話者名 ～ ::: / Ctrl+Enterで終了', '画像ファイルを選択・貼り付け', '\`\`\` ＋ Space', '---', 'Ctrl+Z', 'Ctrl+Shift+Z'];
+  const syntax = ['**文字**', '*文字*', '<u>文字</u>', 'Ctrl+F / Ctrl+H', '#! ＋ Space', '# ＋ Space', '## ＋ Space', '### ＋ Space', '- ＋ Space', '1. ＋ Space', '[] ＋ Space（完了: [x] ＋ Space）', '> ＋ Space', '!!! ＋ Spaceで開始 / Ctrl+Enterで終了（Markdown: :::gm ～ :::）', '::話者名 ＋ Space / Ctrl+Shift+D / Ctrl+Enterで終了', '画像ファイルを選択・貼り付け', '\`\`\` ＋ Space', '---', 'Ctrl+Z', 'Ctrl+Shift+Z'];
   const controls = [
     [Bold, '太字（Ctrl+B）', () => editor.chain().focus().toggleBold().run(), editor.isActive('bold')],
     [Italic, '斜体（Ctrl+I）', () => editor.chain().focus().toggleItalic().run(), editor.isActive('italic')],

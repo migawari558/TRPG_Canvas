@@ -18,7 +18,7 @@ test('all themes apply to standalone exports; invalid preferences cannot inject 
  assert.match(resolvedFonts(detailed).dialogue,/Meiryo/);
  const detailedHtml=exportHtml(sampleDocument(),detailed);
  assert.ok(detailedHtml.includes('.scenario-body .chapter-heading{font-family:"BIZ UDPMincho"'));
- assert.ok(detailedHtml.includes('.dialogue-speaker{font-family:"Meiryo"'));
+ assert.match(detailedHtml,/\.dialogue-speaker\{[^}]*font-family:"Meiryo"/);
 });
 
 test('custom themes persist three safe colors and keep readable text in HTML exports',async()=>{

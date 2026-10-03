@@ -53,7 +53,7 @@ export function moveSection(content, index, direction) {
   return { ...content, content: [...nodes.slice(0, start), ...nodes.slice(end, nextEnd), ...nodes.slice(start, end), ...nodes.slice(nextEnd)] };
 }
 export function newDocument(title = '新しいシナリオ', markdown = '## 導入\n\nここから、物語をはじめましょう。\n\n## 探索\n\n\n## 結末\n\n') {
-  return { id: uid(), version: 1, title, subtitle: 'オリジナルシナリオ', markdown, updatedAt: new Date().toISOString(), flow: { nodes: [], edges: [] } };
+  return { id: uid(), version: 1, title, systemName: '', subtitle: 'オリジナルシナリオ', markdown, updatedAt: new Date().toISOString(), flow: { nodes: [], edges: [] } };
 }
 export function sampleDocument() {
   const doc = newDocument('霧の向こうの灯台', `## シナリオ概要
@@ -103,6 +103,7 @@ export function sampleDocument() {
 **灯りを守った場合**：探索者たちは町を去る。振り返ると、霧の向こうに小さな灯りがまたたいていた。
 `);
   doc.subtitle = 'モダンホラー / 海辺の町';
+  doc.systemName = 'オリジナルTRPG';
   doc.flow = { nodes: [
     { id: 'intro', position: { x: 250, y: 30 }, data: { label: '届かなかった手紙' } },
     { id: 'cafe', position: { x: 90, y: 180 }, data: { label: '喫茶店「凪」' } },

@@ -60,6 +60,7 @@ button svg{flex-shrink:0}
 .title-input:focus{box-shadow:0 1px #acc29d}
 .document-subline{display:flex;align-items:center;gap:12px;color:var(--theme-muted, #a4ad9b);margin-top:12px;font-size:calc(13px * var(--ui-scale, 1))}
 .document-subline input{width:210px;border:0;background:transparent;outline:none;font-size:calc(13px * var(--ui-scale, 1));color:var(--theme-muted, #8d9d82)}
+.document-subline .system-name-input{width:150px;font-weight:650;color:var(--theme-accent, #52715c)}.document-subline .subtitle-input{width:210px}
 .view-tabs{padding:0 37px;display:flex;border-bottom:1px solid var(--line);gap:24px;flex-shrink:0;height:45px;align-items:stretch}
 .view-tabs>button{font-size:calc(14px * var(--ui-scale, 1));color:var(--theme-muted, #9aa28f);padding:0 6px;position:relative;gap:8px}
 .view-tabs>button.active{color:var(--theme-text, #4c6d41);font-weight:600}
