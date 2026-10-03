@@ -12,6 +12,7 @@ export function contentHtml(node) {
   if (tags[node.type]) { const tag=tags[node.type]; return `<${tag}${node.type==='orderedList'?` start="${Number(node.attrs?.start)||1}"`:''}>${body()}</${tag}>`; }
   if (node.type === 'heading') { const level=Math.min(6,Math.max(0,node.attrs?.level??1));return `<h${level||1}${level===0?' data-chapter="" class="chapter-heading"':''}>${body()}</h${level||1}>`; }
   if (node.type === 'gmNote') return `<aside data-gm-note="true" class="gm-note">${body()}</aside>`;
+  if (node.type === 'dialogue') return `<section data-dialogue="true" data-speaker="${esc(node.attrs?.speaker || '話者')}" class="dialogue"><div class="dialogue-speaker" data-dialogue-speaker="true">${esc(node.attrs?.speaker || '話者')}</div><div class="dialogue-body">${body()}</div></section>`;
   if (node.type === 'hardBreak') return '<br>';
   if (node.type === 'horizontalRule') return '<hr>';
   if (node.type === 'codeBlock') return `<pre><code>${body()}</code></pre>`;

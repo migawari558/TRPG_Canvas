@@ -28,4 +28,17 @@ for kind in ['GM', 'QUOTE']:
     assert p[f'LONG_{kind}_00'] == (0, 1), 'Oversized information must start in the current column'
     assert f'END_{kind}' in p
 
-print('PASS: first heading exception, subsequent column/page breaks, intact short blocks, complete oversized blocks')
+for columns in [1, 2]:
+    locations, speakers = set(), set()
+    with pdfplumber.open(root / f'dialogue-{columns}.pdf') as pdf:
+        for page_index, page in enumerate(pdf.pages):
+            for word in page.extract_words():
+                location = (page_index, int(columns == 2 and word['x0'] > page.width / 2))
+                if word['text'].startswith('DIALOGUE_') and word['text'] not in ['DIALOGUE_START', 'DIALOGUE_END']:
+                    locations.add(location)
+                if word['text'] == 'SPEAKER':
+                    speakers.add(location)
+    assert len(locations) > 1, 'The dialogue fixture must span pages or columns'
+    assert locations <= speakers, f'Speaker name must repeat at each dialogue continuation: {locations - speakers}'
+
+print('PASS: heading breaks, intact/oversized blocks and repeated dialogue speakers')

@@ -39,13 +39,16 @@ app.whenReady().then(async () => {
     assert.equal(await js('document.querySelectorAll(".scene-node").length'), 6);
     await click('シーン'); await delay(250);
     assert.equal(await js('document.querySelectorAll(".scene-node").length'), 7);
-    await js(`(()=>{const el=document.querySelector('.flow-inspector input');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,'検証シーン');el.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await js(`(()=>{const el=document.querySelector('[aria-label="シーン名をカードで編集"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,'検証シーン');el.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await js(`document.querySelector('[aria-label="カードの編集を完了"]').click()`);
     await delay(800);
     assert.ok(await js('document.querySelector(".flow-canvas").innerText.includes("検証シーン")'));
     await fs.writeFile(path.join(output, 'flow.png'), (await win.webContents.capturePage()).toPNG());
     await click('書き出す'); await delay(200);
     assert.ok(await js('document.querySelector("[role=dialog]").innerText.includes("コピーボタン")'));
     await fs.writeFile(path.join(output, 'export-dialog.png'), (await win.webContents.capturePage()).toPNG());
+    await js(`window.dispatchEvent(new KeyboardEvent('keydown',{key:'s',ctrlKey:true,bubbles:true}))`);
+    for(let i=0;i<30;i++){if(await js(`document.querySelector('.save-state')?.textContent.includes('保存済み')`))break;await delay(100);}
     const { sampleDocument } = await import('../src/model.mjs');
     const { exportHtml } = await import('../src/export.mjs');
     const sample = sampleDocument();

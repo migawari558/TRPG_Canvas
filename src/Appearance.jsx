@@ -39,28 +39,40 @@ export function ThemePicker({ value, onChange, label = 'テーマ' }) {
 export function FontSizeControl({ value, onChange, label = '本文の文字サイズ', min = 12, max = 28, unit = 'px' }) {
   return <label className="size-control"><span>{label}<output>{value}{unit}</output></span><input type="range" min={min} max={max} step="1" value={value} aria-label={label} onChange={event => onChange(Number(event.target.value))}/><span className="range-labels"><small>{min}{unit}</small><small>{max}{unit}</small></span></label>;
 }
-export function FontFamilyControl({ value = 'system', onChange, label = '本文と見出しのフォント' }) {
+let fontCache = null, fontRequest = null;
+async function localFonts(refresh = false) {
+  if (fontCache && !refresh) return fontCache;
+  if (fontRequest && !refresh) return fontRequest;
+  fontRequest = (async () => {
+    if (typeof globalThis.queryLocalFonts !== 'function') throw new Error('unsupported');
+    const entries = await globalThis.queryLocalFonts();
+    return [...new Set(entries.map(font => String(font.family || '').trim()).filter(font => font && normalizeFontFamily(font) === font))].sort((a, b) => a.localeCompare(b, 'ja'));
+  })();
+  try { fontCache = await fontRequest; return fontCache; } finally { fontRequest = null; }
+}
+export function FontFamilyControl({ value = 'system', onChange, label = '本文と見出しのフォント', bodyOption = false, compact = false }) {
   const [fonts, setFonts] = useState([]), [state, setState] = useState('loading');
-  async function load() {
+  async function load(refresh = false) {
     setState('loading');
     try {
-      if (typeof globalThis.queryLocalFonts !== 'function') throw new Error('unsupported');
-      const entries = await globalThis.queryLocalFonts();
-      const families = [...new Set(entries.map(font => String(font.family || '').trim()).filter(font => font && normalizeFontFamily(font) === font))].sort((a, b) => a.localeCompare(b, 'ja'));
+      const families = await localFonts(refresh);
       setFonts(families); setState(families.length ? 'ready' : 'empty');
     } catch { setFonts([]); setState('unavailable'); }
   }
   useEffect(() => { load(); }, []);
-  const options = value !== 'system' && !fonts.includes(value) ? [value, ...fonts] : fonts;
-  return <div className="font-family-control"><label>{label}<select aria-label={label} value={value} onChange={event => onChange(event.target.value)}><option value="system">テーマ標準</option>{options.map(font => <option key={font} value={font}>{font}</option>)}</select></label><div><small>{state === 'loading' ? 'インストール済みフォントを確認中…' : state === 'ready' ? `${fonts.length}種類のフォントを利用できます` : 'フォント一覧を取得できません。テーマ標準を利用できます。'}</small><button type="button" className="icon-button" title="フォント一覧を再読み込み" aria-label="フォント一覧を再読み込み" onClick={load}><RefreshCw size={14}/></button></div></div>;
+  const options = value !== 'system' && value !== 'body' && !fonts.includes(value) ? [value, ...fonts] : fonts;
+  return <div className={`font-family-control ${compact ? 'compact' : ''}`}><label>{label}<select aria-label={label} value={value} onChange={event => onChange(event.target.value)}>{bodyOption && <option value="body">本文と同じ</option>}<option value="system">テーマ標準</option>{options.map(font => <option key={font} value={font}>{font}</option>)}</select></label>{!compact && <div><small>{state === 'loading' ? 'インストール済みフォントを確認中…' : state === 'ready' ? `${fonts.length}種類のフォントを利用できます` : 'フォント一覧を取得できません。テーマ標準を利用できます。'}</small><button type="button" className="icon-button" title="フォント一覧を再読み込み" aria-label="フォント一覧を再読み込み" onClick={() => load(true)}><RefreshCw size={14}/></button></div>}</div>;
+}
+export function TypographyControls({ value, onChange, label = '本文と見出しのフォント' }) {
+  return <div className="typography-controls"><FontFamilyControl value={value.fontFamily} onChange={fontFamily => onChange({ ...value, fontFamily })} label={label}/><label className="font-details-toggle"><span><strong>要素ごとに設定</strong><small>見出し・章・セリフの話者名を個別に選びます</small></span><input type="checkbox" role="switch" aria-label="フォントの詳細設定" checked={value.fontAdvanced === true} onChange={event => onChange({ ...value, fontAdvanced: event.target.checked })}/></label>{value.fontAdvanced && <div className="font-details"><FontFamilyControl compact bodyOption label="見出し（H1〜H6）" value={value.headingFontFamily} onChange={headingFontFamily => onChange({ ...value, headingFontFamily })}/><FontFamilyControl compact bodyOption label="章" value={value.chapterFontFamily} onChange={chapterFontFamily => onChange({ ...value, chapterFontFamily })}/><FontFamilyControl compact bodyOption label="セリフの話者名" value={value.dialogueFontFamily} onChange={dialogueFontFamily => onChange({ ...value, dialogueFontFamily })}/></div>}</div>;
 }
 export default function Appearance({ value, onChange }) {
   return <div className="appearance-settings"><p className="modal-description">変更はすぐに画面へ反映し、この端末に保存します。</p>
     <ThemePicker value={value.theme} onChange={theme => onChange({ ...value, theme })}/>
-    <FontFamilyControl value={value.fontFamily} onChange={fontFamily => onChange({ ...value, fontFamily })}/>
+    <TypographyControls value={value} onChange={onChange}/>
     <FontSizeControl value={value.fontSize} onChange={fontSize => onChange({ ...value, fontSize })}/>
     <FontSizeControl label="メニュー・目次の文字サイズ" value={value.uiScale} min={90} max={125} unit="%" onChange={uiScale => onChange({ ...value, uiScale })}/>
-    <div className="appearance-sample" style={{ fontSize: `${value.fontSize}px` }}><strong>霧の向こうに、物語がある。</strong><p>探索者たちは、一通の手紙を手がかりに灯台へ向かう。</p><aside>GM MEMO<br/>ここに、進行のためのメモを。</aside></div>
+    <div className="appearance-sample" style={{ fontSize: `${value.fontSize}px` }}><strong className="sample-heading">霧の向こうに、物語がある。</strong><span className="sample-chapter">第一章　灯台へ</span><p>探索者たちは、一通の手紙を手がかりに灯台へ向かう。</p><div className="sample-dialogue"><b>コレット</b><span>ダーリン、こちらの方々を見て。</span></div><aside>GM MEMO<br/>ここに、進行のためのメモを。</aside></div>
     <button className="reset-appearance" onClick={() => onChange(defaultAppearance)}><RotateCcw size={15}/>標準設定に戻す</button>
   </div>;
 }

@@ -91,7 +91,7 @@ export function removeCustomTheme(id, storage = globalThis.localStorage) {
   globalThis.window?.dispatchEvent(new CustomEvent('trpg-custom-themes-change', { detail: { removedId: id, baseId: removed?.baseId || 'forest' } }));
 }
 loadCustomThemes();
-export const defaultAppearance = { theme: 'forest', fontSize: 17, uiScale: 100, fontFamily: 'system' };
+export const defaultAppearance = { theme: 'forest', fontSize: 17, uiScale: 100, fontFamily: 'system', fontAdvanced: false, headingFontFamily: 'system', chapterFontFamily: 'system', dialogueFontFamily: 'body' };
 export function normalizeFontFamily(value) {
   const font = String(value || 'system').trim().normalize('NFC');
   return font === 'system' || (font.length <= 80 && /^[\p{L}\p{M}\p{N} ._()+-]+$/u.test(font)) ? font : 'system';
@@ -100,17 +100,26 @@ export function cssFontFamily(value, fallback = "'Yu Gothic UI','Meiryo',sans-se
   const font = normalizeFontFamily(value);
   return font === 'system' ? fallback : `"${font.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}",${fallback}`;
 }
+const normalizeDetailFont = value => value === 'body' ? 'body' : normalizeFontFamily(value);
 export function normalizeDesign(value = {}) {
-  return { theme: getTheme(value?.theme).id, fontSize: Math.max(7, Math.min(28, Math.round(Number(value?.fontSize) || 17))), fontFamily: normalizeFontFamily(value?.fontFamily) };
+  return { theme: getTheme(value?.theme).id, fontSize: Math.max(7, Math.min(28, Math.round(Number(value?.fontSize) || 17))), fontFamily: normalizeFontFamily(value?.fontFamily), fontAdvanced: value?.fontAdvanced === true, headingFontFamily: normalizeDetailFont(value?.headingFontFamily), chapterFontFamily: normalizeDetailFont(value?.chapterFontFamily), dialogueFontFamily: normalizeDetailFont(value?.dialogueFontFamily || 'body') };
 }
 export function normalizeAppearance(value = {}) {
   const design = normalizeDesign(value);
   return { ...design, fontSize: Math.max(12, design.fontSize), uiScale: Math.max(90, Math.min(125, Math.round(Number(value?.uiScale) || 100))) };
 }
-export function themeVariables(id, fontFamily = 'system') {
+export function resolvedFonts(value = {}) {
+  const design = normalizeDesign(value), theme = getTheme(design.theme);
+  const body = cssFontFamily(design.fontFamily), themeHeading = theme.serif ? "'Yu Mincho','YuMincho',serif" : body;
+  if (!design.fontAdvanced) return { body, heading: design.fontFamily === 'system' ? themeHeading : body, chapter: design.fontFamily === 'system' ? themeHeading : body, dialogue: body };
+  const choose = (family, fallback) => family === 'body' ? body : family === 'system' ? fallback : cssFontFamily(family);
+  return { body, heading: choose(design.headingFontFamily, themeHeading), chapter: choose(design.chapterFontFamily, themeHeading), dialogue: choose(design.dialogueFontFamily, body) };
+}
+export function themeVariables(id, fontSettings = 'system') {
   const theme = getTheme(id);
-  const chosen = normalizeFontFamily(fontFamily), body = cssFontFamily(chosen);
-  return { ...Object.fromEntries(Object.entries(theme.colors).map(([key, value]) => [`--theme-${key}`, value])), '--body-font': body, '--heading-font': chosen === 'system' ? (theme.serif ? "'Yu Mincho','YuMincho',serif" : body) : body };
+  const settings = typeof fontSettings === 'object' ? fontSettings : { fontFamily: fontSettings };
+  const fonts = resolvedFonts({ ...settings, theme: id });
+  return { ...Object.fromEntries(Object.entries(theme.colors).map(([key, value]) => [`--theme-${key}`, value])), '--body-font': fonts.body, '--heading-font': fonts.heading, '--chapter-font': fonts.chapter, '--dialogue-font': fonts.dialogue };
 }
 export function readPreference(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }

@@ -11,5 +11,7 @@ app.whenReady().then(async()=>{try{
  const long=(kind==='GM'?'> [!GM]\n>\n':'')+Array.from({length:36},(_,i)=>`> LONG_${kind}_${String(i).padStart(2,'0')} 長い情報は段をまたいで続きます。\n>`).join('\n');
  await fs.writeFile(path.join(output,`blocks-${kind}.pdf`),await renderPdf(exportHtml(make(`# START\n\n${filler}\n\n${note}\n\n本文に戻ります。\n\n${long}\n\nEND_${kind}`),{columns:2,fontSize:15,copyButtons:true})));
  }
- console.log('PASS: generated heading breaks and short/oversized GM and information blocks');app.exit(0);
+ const dialogue=`:::dialogue SPEAKER\n${Array.from({length:72},(_,i)=>`DIALOGUE_${String(i).padStart(2,'0')} 長いセリフが続きます。`).join('\n\n')}\n:::`;
+ for(const columns of [1,2])await fs.writeFile(path.join(output,`dialogue-${columns}.pdf`),await renderPdf(exportHtml(make(`# DIALOGUE_START\n\n${dialogue}\n\nDIALOGUE_END`),{columns,fontSize:15,copyButtons:false})));
+ console.log('PASS: generated heading breaks, information blocks and repeated-speaker dialogue pages');app.exit(0);
 }catch(e){console.error(e);app.exit(1)}});

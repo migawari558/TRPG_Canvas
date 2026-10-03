@@ -1,16 +1,24 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 test('all themes apply to standalone exports; invalid preferences cannot inject CSS',async()=>{
- const {themes,normalizeAppearance,normalizeDesign}=await import('../src/themes.mjs');
+ const {themes,normalizeAppearance,normalizeDesign,resolvedFonts}=await import('../src/themes.mjs');
  const {exportHtml}=await import('../src/export.mjs');const {sampleDocument}=await import('../src/model.mjs');
  for(const theme of themes){const html=exportHtml(sampleDocument(),{theme:theme.id,fontSize:23,interactive:false});assert.ok(html.includes(`background:${theme.colors.paper}`));assert.ok(html.includes(`fill="${theme.colors.text}"`));assert.ok(html.includes('font-size:23px'));assert.ok(!html.includes('<script>'));}
- assert.deepEqual(normalizeAppearance({theme:'</style><script>',fontSize:999,uiScale:-1,fontFamily:'</style>'}),{theme:'forest',fontSize:28,fontFamily:'system',uiScale:90});
- assert.deepEqual(normalizeAppearance(null),{theme:'forest',fontSize:17,fontFamily:'system',uiScale:100});
+ const fontDefaults={fontAdvanced:false,headingFontFamily:'system',chapterFontFamily:'system',dialogueFontFamily:'body'};
+ assert.deepEqual(normalizeAppearance({theme:'</style><script>',fontSize:999,uiScale:-1,fontFamily:'</style>'}),{theme:'forest',fontSize:28,fontFamily:'system',uiScale:90,...fontDefaults});
+ assert.deepEqual(normalizeAppearance(null),{theme:'forest',fontSize:17,fontFamily:'system',uiScale:100,...fontDefaults});
  assert.equal(normalizeDesign({fontSize:5}).fontSize,7);
  assert.equal(normalizeAppearance({fontSize:5}).fontSize,12);
  assert.ok(exportHtml(sampleDocument(),{fontSize:7}).includes('font-size:7px'));
  assert.ok(exportHtml(sampleDocument(),{theme:'tahoe-light',fontFamily:'BIZ UDPGothic'}).includes('font-family:"BIZ UDPGothic"'));
  assert.equal(normalizeDesign({fontFamily:'Bad;font'}).fontFamily,'system');
+ const detailed={theme:'forest',fontFamily:'Meiryo',fontAdvanced:true,headingFontFamily:'Yu Gothic',chapterFontFamily:'BIZ UDPMincho',dialogueFontFamily:'body'};
+ assert.match(resolvedFonts(detailed).heading,/Yu Gothic/);
+ assert.match(resolvedFonts(detailed).chapter,/BIZ UDPMincho/);
+ assert.match(resolvedFonts(detailed).dialogue,/Meiryo/);
+ const detailedHtml=exportHtml(sampleDocument(),detailed);
+ assert.ok(detailedHtml.includes('.scenario-body .chapter-heading{font-family:"BIZ UDPMincho"'));
+ assert.ok(detailedHtml.includes('.dialogue-speaker{font-family:"Meiryo"'));
 });
 
 test('custom themes persist three safe colors and keep readable text in HTML exports',async()=>{

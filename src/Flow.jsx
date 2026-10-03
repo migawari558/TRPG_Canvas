@@ -68,7 +68,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
     data: { ...node.data, parentId: node.parentId || '', heading: byHeading.get(node.data.headingId), inlineEditing: editingNodeId === node.id,
       groupOptions: editingNodeId === node.id ? flow.nodes.filter(group => group.type === 'sceneGroup' && canJoinGroup(flow, node.id, group.id)).map(group => ({ id: group.id, label: group.data.label })) : [],
       startInline: () => { setEditingNodeId(node.id); setSelected(null); }, finishInline: () => setEditingNodeId(null),
-      openDetails: () => { setEditingNodeId(null); setSelected({ type: 'node', id: node.id }); },
+      openDetails: () => { setEditingNodeId(null); setSelection({ nodes: [node.id], edges: [] }); setSelected({ type: 'node', id: node.id }); },
       update: patch => updateNodeById(node.id, patch), changeGroup: (groupId, patch = {}) => { const updated = { ...flow, nodes: flow.nodes.map(item => item.id === node.id ? { ...item, data: { ...item.data, ...patch } } : item) }; onChange(moveToGroup(updated, node.id, groupId)); }, navigate: onNavigate, write: () => onWrite(node.id) }
   }));
   const edges = flow.edges.map(edge => ({ ...edge, selected: selection.edges.includes(edge.id) || (selected?.type === 'edge' && selected.id === edge.id), markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: 'var(--theme-muted)', strokeWidth: 1.6 } }));
@@ -135,7 +135,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
           if (JSON.stringify(next.nodes) !== JSON.stringify(positioned.nodes)) onChange(next);
         }}
         onEdgesChange={changes => { selectChanges(changes, 'edges'); const structural = changes.filter(c => c.type !== 'select'); if (structural.length) change({ edges: applyEdgeChanges(structural, flow.edges) }); }}
-        onSelectionChange={({ nodes: selectedNodes, edges: selectedEdges }) => { setSelected(null); setSelection({ nodes: selectedNodes.map(node => node.id), edges: selectedEdges.map(edge => edge.id) }); }}
+        onSelectionChange={({ nodes: selectedNodes, edges: selectedEdges }) => { const nodeIds = selectedNodes.map(node => node.id), edgeIds = selectedEdges.map(edge => edge.id); setSelected(current => !current || (current.type === 'node' ? nodeIds : edgeIds).includes(current.id) ? current : null); setSelection({ nodes: nodeIds, edges: edgeIds }); }}
         onConnect={connection => change({ edges: addEdge({ ...connection, id: uid() }, flow.edges) })}
         onNodeClick={(event, node) => { if (event.ctrlKey || event.metaKey || event.shiftKey || editingNodeId === node.id) return; const heading = byHeading.get(node.data.headingId); if (heading && node.type !== 'sceneGroup') onNavigate(heading); else setSelected({ type: 'node', id: node.id }); }}
         onEdgeClick={(event, edge) => { if (!event.ctrlKey && !event.metaKey && !event.shiftKey) setSelected({ type: 'edge', id: edge.id }); }}
@@ -145,7 +145,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
       </ReactFlow>
       {!nodes.length && <div className="flow-empty"><Layers size={36}/><h3>まずは、物語の流れから</h3><p>シーンを追加して、点どうしをつないでみましょう。<br/>本文は、流れが決まってから書き始められます。</p></div>}
       {item && <div className="flow-inspector">
-        <div className="inspector-heading"><strong>{selected.type === 'node' ? 'シーンの編集' : 'つながりの編集'}</strong><button className="icon-button" aria-label="編集を閉じる" onClick={() => setSelected(null)}><X size={17}/></button></div>
+        <div className="inspector-heading"><strong>{selected.type === 'node' ? 'シーンの編集' : 'つながりの編集'}</strong><button className="icon-button" aria-label="編集を閉じる" onClick={() => { setSelected(null); setSelection({ nodes: [], edges: [] }); }}><X size={17}/></button></div>
         <label>{selected.type === 'node' ? 'シーン名' : '条件・ラベル'}<input maxLength={100} value={selected.type === 'node' ? item.data.label : item.label || ''} onChange={event => selected.type === 'node' ? updateNode({ label: event.target.value }) : change({ edges: flow.edges.map(edge => edge.id === item.id ? { ...edge, label: event.target.value } : edge) })}/></label>
         {selected.type === 'node' && <>
           <label>所属グループ<select aria-label="所属グループ" value={item.parentId || ''} onChange={event => onChange(moveToGroup(flow, item.id, event.target.value))}><option value="">グループの外</option>{flow.nodes.filter(node => node.type === 'sceneGroup' && canJoinGroup(flow, item.id, node.id)).map(node => <option key={node.id} value={node.id}>{node.data.label}</option>)}</select></label>
@@ -161,7 +161,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
           </details>
           {item.type === 'sceneGroup' && <p className="muted small">選択中に「シーン」を追加するとこの中に配置します。枠の角でサイズ変更、ドラッグでまとめて移動できます。所属の変更は本文の順序・見出しを変更しません。</p>}
         </>}
-        <button className="danger-link" onClick={() => { if (selected.type === 'node') onChange(removeFlowNode(flow, item.id)); else change({ edges: flow.edges.filter(edge => edge.id !== item.id) }); setSelected(null); }}><Trash2 size={15}/>この{selected.type === 'node' ? item.type === 'sceneGroup' ? 'グループ枠' : 'シーン' : 'つながり'}を削除</button>
+        <button className="danger-link" onClick={() => { if (selected.type === 'node') onChange(removeFlowNode(flow, item.id)); else change({ edges: flow.edges.filter(edge => edge.id !== item.id) }); setSelected(null); setSelection({ nodes: [], edges: [] }); }}><Trash2 size={15}/>この{selected.type === 'node' ? item.type === 'sceneGroup' ? 'グループ枠' : 'シーン' : 'つながり'}を削除</button>
       </div>}
       <div className="flow-tip">鉛筆または名前のダブルクリックでカードを直接編集 · Ctrl＋クリック／背景を囲って複数選択 · 選択カードをまとめてグループ移動 · 右ドラッグで画面移動</div>
     </div>

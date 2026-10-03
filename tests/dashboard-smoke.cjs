@@ -54,7 +54,7 @@ app.whenReady().then(async () => {
     await button('ダッシュボードへ'); await delay(350);
     assert.ok(await js(`Array.from(document.querySelectorAll('.scenario-card')).some(el=>el.textContent.includes('GMメモ検証'))`));
     const doc = await js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).find(item=>item.doc.title==='GMメモ検証').doc`);
-    assert.ok(doc.markdown.includes('> [!GM]'));
+    assert.ok(doc.markdown.includes(':::gm'));
     assert.ok(doc.content.content.some(node => node.type === 'gmNote'));
     await js(`Array.from(document.querySelectorAll('.scenario-card')).find(el=>el.textContent.includes('GMメモ検証')).click()`); await delay(350);
     assert.ok(await js(`document.querySelector('.gm-note').innerText.includes('GMだけの秘密')`));

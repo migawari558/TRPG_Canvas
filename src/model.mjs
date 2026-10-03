@@ -15,7 +15,7 @@ export function outline(content) {
   });
 }
 function nodeSize(node) { return node.type === 'text' ? node.text.length : node.content ? 2 + node.content.reduce((n, child) => n + nodeSize(child), 0) : ['paragraph', 'heading', 'blockquote', 'codeBlock'].includes(node.type) ? 2 : 1; }
-export function textOf(node) { return node.text || (node.content || []).map(textOf).join(''); }
+export function textOf(node) { return node.text || `${node.type === 'dialogue' ? node.attrs?.speaker || '' : ''}${(node.content || []).map(textOf).join('')}`; }
 export function characterCount(doc) {
   if (doc?.content) return textOf(doc.content).replace(/\s/g, '').length;
   const withoutImages = (doc?.markdown || '')
