@@ -158,6 +158,7 @@ button svg{flex-shrink:0}
 .sync-steps{margin:20px 0;display:flex;flex-direction:column;gap:17px;color:var(--theme-muted, #7d9269);font-size:calc(14px * var(--ui-scale, 1))}
 .sync-steps>div{display:flex;gap:12px;align-items:center}
 .sync-steps span{background:var(--theme-soft, #ebf0e1);border-radius:50%;height:23px;width:23px;display:grid;place-items:center;font-size:calc(13px * var(--ui-scale, 1))}
+.drive-actions{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:18px}.drive-actions button{display:flex;align-items:center;justify-content:center;gap:8px}
 .hint-box{font-size:calc(13px * var(--ui-scale, 1));background:var(--theme-panel, #f2f4eb);border-radius:5px;padding:16px;color:var(--theme-muted, #8c9f77);line-height:1.9}
 .muted{color:var(--theme-muted, #9cad89);font-size:calc(14px * var(--ui-scale, 1));line-height:1.8}
 .small{font-size:calc(13px * var(--ui-scale, 1));margin:16px 0}

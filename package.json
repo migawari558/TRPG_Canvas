@@ -1,6 +1,6 @@
 {
   "name": "trpg-canvas",
-  "version": "0.12.19",
+  "version": "0.12.20",
   "private": true,
   "description": "TRPGシナリオのためのローカル執筆アプリ",
   "main": "electron/main.cjs",
@@ -32,6 +32,8 @@
     "test:pdf-writer": "electron tests/pdf-writer.cjs",
     "test:pdf-page-sizes": "electron tests/pdf-page-sizes.cjs",
     "test:docx": "electron tests/docx-smoke.cjs",
+    "test:drive": "node --test tests/google-drive.test.cjs",
+    "test:drive-ui": "electron tests/browser-drive-smoke.cjs",
     "dist:win": "npm run build && electron-builder --win portable --x64 --publish never",
     "dist:mac": "npm run build && node scripts/build-mac.cjs"
   },
