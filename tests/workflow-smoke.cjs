@@ -7,7 +7,7 @@ app.whenReady().then(async()=>{try{
  const key=async(keyCode,modifiers=[])=>{w.webContents.sendInputEvent({type:'keyDown',keyCode,modifiers});w.webContents.sendInputEvent({type:'keyUp',keyCode,modifiers});await delay(100);};
  const data=()=>js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).find(v=>v.doc.title==='改善テスト').doc`);
  const source='# 第一幕\n\n## 図書館\n\n前の文章\n\n### 小さな手掛かり\n\n細部\n\n# 第二幕\n\n## 灯台\n\n結末';
- await w.loadFile(path.resolve('dist/index.html'));await delay(900);w.show();w.focus();
+ await w.loadFile(path.resolve('dist/index.html'), { query: { testStorage: '1' } });await delay(900);w.show();w.focus();
  await js(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${JSON.stringify(source)}],'改善テスト.md'));const el=document.querySelector('input[accept=".md,.markdown,.txt"]');el.files=dt.files;el.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(300);
  await click('すべて閉じる');assert.equal(await js(`document.querySelectorAll('.outline-link').length`),2);await click('すべて開く');assert.equal(await js(`document.querySelectorAll('.outline-link').length`),5);
  await js(`(()=>{const p=document.querySelector('.tiptap p'),r=document.createRange();r.selectNodeContents(p);r.collapse(false);getSelection().removeAllRanges();getSelection().addRange(r);document.querySelector('.tiptap').focus();})()`);

@@ -12,7 +12,7 @@ app.whenReady().then(async()=>{try{
  const data=()=>js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).filter(v=>v.doc.title==='検索テスト').at(-1).doc`);
  const count=()=>js(`document.querySelector('.find-count').textContent`);
  const key=async(keyCode,modifiers=[])=>{w.webContents.sendInputEvent({type:'keyDown',keyCode,modifiers});w.webContents.sendInputEvent({type:'keyUp',keyCode,modifiers});await delay(150);};
- await w.loadFile(path.resolve('dist/index.html'));await delay(1000);w.show();w.focus();
+ await w.loadFile(path.resolve('dist/index.html'), { query: { testStorage: '1' } });await delay(1000);w.show();w.focus();
  await importMd('## 霧の町\n\n霧**の**町で出会う。<u>重要な情報</u>\n\n> [!GM]\n>\n> 霧の町の秘密\n\n- [ ] 霧の町を探索\n\nNPC npc $1 [a]');await delay(500);
  assert.equal(await js(`document.querySelector('.tiptap u').textContent`),'重要な情報');
  await key('f',['control']);assert.ok(await js(`!!document.querySelector('.find-bar')`));

@@ -5,7 +5,7 @@ app.whenReady().then(async()=>{try{
  const js=async code=>{try{const value=await w.webContents.executeJavaScript(code,true);await delay(100);return value;}catch(e){console.error(code);throw e;}};
  const importMd=text=>js(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${JSON.stringify(text)}],'チェックリスト.md'));const input=document.querySelector('input[accept=".md,.markdown,.txt"]');input.files=dt.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`);
  const data=()=>js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).filter(v=>v.doc.title==='チェックリスト').at(-1).doc`);
- await w.loadFile(path.resolve('dist/index.html'));await delay(1000);w.show();w.focus();
+ await w.loadFile(path.resolve('dist/index.html'), { query: { testStorage: '1' } });await delay(1000);w.show();w.focus();
  await importMd('## セッションの準備\n\n- [ ] ハンドアウトを用意する\n- [x] マップを確認する\n  - [ ] 隠し通路の確認\n- 通常の箇条書き\n\n> [!GM]\n>\n> - [x] NPCの秘密を確認する\n\n追加項目');await delay(400);
  assert.equal(await js(`document.querySelectorAll('.tiptap input[type=checkbox]').length`),4);assert.equal(await js(`document.querySelectorAll('.tiptap input:checked').length`),2);
  assert.equal(await js(`getComputedStyle(document.querySelector('.tiptap input[type=checkbox]').closest('li')).display`),'flex');

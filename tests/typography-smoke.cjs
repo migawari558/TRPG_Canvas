@@ -3,7 +3,7 @@ const output=path.resolve('.test-output/typography');app.setPath('userData',path
 app.whenReady().then(async()=>{try{
  await fs.mkdir(output,{recursive:true});const win=new BrowserWindow({width:1200,height:950,show:false,webPreferences:{sandbox:true,contextIsolation:true}});
  const js=code=>win.webContents.executeJavaScript(code,true);
- await win.loadFile(path.resolve('dist/index.html'));await delay(1000);win.show();win.focus();
+ await win.loadFile(path.resolve('dist/index.html'), { query: { testStorage: '1' } });await delay(1000);win.show();win.focus();
  const markdown='*斜体の日本語と Italic English*\n\n通常改行の一行目\n\n通常改行の二行目\n\nシフト改行の一行目  \nシフト改行の二行目\n\n> 引用の一行目\n>\n> 引用の二行目\n\n> [!GM]\n>\n> メモの一行目\n>\n> メモの二行目';
  await js(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${JSON.stringify(markdown)}],'書式検証.md',{type:'text/markdown'}));const input=document.querySelector('input[accept=".md,.markdown,.txt"]');input.files=dt.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(600);
  const inspect=selector=>`(()=>{const root=document.querySelector(${JSON.stringify(selector)}),p=[...root.querySelectorAll('p')],em=root.querySelector('em');const first=p.find(e=>e.textContent==='通常改行の一行目'),next=p.find(e=>e.textContent==='通常改行の二行目'),hard=p.find(e=>e.textContent.includes('シフト改行の一行目'));return{margins:p.map(e=>getComputedStyle(e).marginTop),distance:next.getBoundingClientRect().top-first.getBoundingClientRect().top,line:parseFloat(getComputedStyle(first).lineHeight),hard:hard.getBoundingClientRect().height,italic:getComputedStyle(em).fontStyle,synthesis:getComputedStyle(em).fontSynthesis}})()`;

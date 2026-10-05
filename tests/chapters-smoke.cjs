@@ -5,7 +5,7 @@ app.whenReady().then(async()=>{try{
  const js=async code=>{const result=await w.webContents.executeJavaScript(code,true);await delay(100);return result;};
  const importMd=text=>js(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${JSON.stringify(text)}],'章テスト.md'));const el=document.querySelector('input[accept=".md,.markdown,.txt"]');el.files=dt.files;el.dispatchEvent(new Event('change',{bubbles:true}));})()`);
  const data=()=>js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).filter(v=>v.doc.title==='章テスト').at(-1).doc`);
- await w.loadFile(path.resolve('dist/index.html'));await delay(900);w.show();w.focus();await importMd('#! 第一章\n\n# 導入\n\n本文です。\n\n## 探索\n\n本文です。\n\n### 秘密\n\n本文です。\n\n#### 情報\n\n本文です。\n\n##### 補足\n\n本文です。\n\n###### 注記\n\n本文です。\n\n#! 第二章\n\n# 結末\n\n本文です。');await delay(400);
+ await w.loadFile(path.resolve('dist/index.html'), { query: { testStorage: '1' } });await delay(900);w.show();w.focus();await importMd('#! 第一章\n\n# 導入\n\n本文です。\n\n## 探索\n\n本文です。\n\n### 秘密\n\n本文です。\n\n#### 情報\n\n本文です。\n\n##### 補足\n\n本文です。\n\n###### 注記\n\n本文です。\n\n#! 第二章\n\n# 結末\n\n本文です。');await delay(400);
  assert.equal(await js(`document.querySelectorAll('.tiptap .chapter-heading').length`),2);assert.equal(await js(`getComputedStyle(document.querySelector('.tiptap .chapter-heading')).textAlign`),'center');
  await js(`document.querySelector('[aria-label="第一章を後へ"]').click();undefined`);assert.equal(await js(`document.querySelector('.tiptap .chapter-heading').textContent`),'第二章');
  await js(`document.querySelector('[aria-label="元に戻す（Ctrl+Z）"]').click();undefined`);assert.equal(await js(`document.querySelector('.tiptap .chapter-heading').textContent`),'第一章');

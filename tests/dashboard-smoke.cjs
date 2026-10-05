@@ -15,7 +15,7 @@ app.whenReady().then(async () => {
     const js = async code => { try { return await win.webContents.executeJavaScript(code, true); } catch (error) { console.error('SCRIPT', code); throw error; } };
     const button = label => js(`document.querySelector('button[aria-label=${JSON.stringify(label)}]').click()`);
     const setInput = (selector, value) => js(`(()=>{const el=document.querySelector(${JSON.stringify(selector)});Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,${JSON.stringify(value)});el.dispatchEvent(new Event('input',{bubbles:true}));})()`);
-    await win.loadFile(path.resolve(__dirname, '../dist/index.html')); await delay(1100);
+    await win.loadFile(path.resolve(__dirname, '../dist/index.html'), { query: { testStorage: '1' } }); await delay(1100);
     await js('localStorage.clear()'); win.webContents.reload(); await delay(1100);
     win.show(); win.focus(); await delay(200);
     await button('サイドバーを切り替え'); await delay(150);

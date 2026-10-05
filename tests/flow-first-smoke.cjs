@@ -17,7 +17,7 @@ app.whenReady().then(async () => {
   const flow = () => js(`document.querySelectorAll('.view-tabs button')[1].click()`);
   const data = () => js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1')))[0].doc`);
   const edit = label => js(`document.querySelector('button[aria-label=${JSON.stringify(`${label}を編集`)}]').click()`);
-  await win.loadFile(path.resolve(__dirname, '../dist/index.html')); await delay(1200); win.show(); win.focus();
+  await win.loadFile(path.resolve(__dirname, '../dist/index.html'), { query: { testStorage: '1' } }); await delay(1200); win.show(); win.focus();
   const count = await js(`document.querySelectorAll('.tiptap h2').length`);
   await flow(); await click('グループ');
   assert.ok(await js(`!!document.querySelector('[aria-label="グループ名をカードで編集"]')`));

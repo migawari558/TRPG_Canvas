@@ -1,5 +1,11 @@
 import { newDocument, characterCount } from './model.mjs';
 const key = 'trpg-canvas-documents-v1';
+const testBrowserStorage = !window.canvas
+  && navigator.userAgent.includes('Electron')
+  && new URLSearchParams(window.location.search).get('testStorage') === '1';
+if (!window.canvas && !testBrowserStorage) {
+  throw new Error('TRPG Canvasはデスクトップアプリとして起動してください。');
+}
 const read = () => JSON.parse(localStorage.getItem(key) || '{}');
 function download(title, text, type) {
   const url = URL.createObjectURL(new Blob([text], { type }));
@@ -7,7 +13,9 @@ function download(title, text, type) {
 }
 export const isDesktop = !!window.canvas;
 export const api = window.canvas || {
-  info: async () => ({ folder: 'ブラウザ内に保存（デスクトップ版ではフォルダを選択できます）' }),
+  // Renderer smoke tests use isolated browser storage. This branch is unavailable
+  // in normal browsers and is not a supported web application runtime.
+  info: async () => ({ folder: 'テスト用ストレージ' }),
   list: async () => ({ documents: Object.values(read()).map(x => ({ id: x.doc.id, title: x.doc.title, subtitle: x.doc.subtitle || '', updatedAt: x.doc.updatedAt, characterCount: characterCount(x.doc), sceneCount: x.doc.flow.nodes.length })), errors: [] }),
   load: async id => { const result = read()[id]; if (!result) throw new Error('シナリオが見つかりません'); return result; },
   remove: async (id, revision) => {

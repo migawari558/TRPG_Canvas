@@ -6,7 +6,7 @@ app.whenReady().then(async()=>{let win;try{
  const js=async code=>{const value=await win.webContents.executeJavaScript(code,true);await delay(100);return value;};
  const click=text=>js(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent.trim()===${JSON.stringify(text)}).click()`);
  const remove=()=>js(`document.querySelector('.scenario-delete').click()`);
- await win.loadFile(path.resolve('dist/index.html'));await delay(1200);win.show();win.focus();
+ await win.loadFile(path.resolve('dist/index.html'), { query: { testStorage: '1' } });await delay(1200);win.show();win.focus();
  await js(`document.querySelector('[aria-label="ダッシュボードへ"]').click()`);await remove();await delay(200);
  assert.ok(await js(`document.querySelector('[role="dialog"]').textContent.includes('霧の向こうの灯台')`));
  await fs.writeFile(path.join(output,'confirmation.png'),(await win.webContents.capturePage()).toPNG());

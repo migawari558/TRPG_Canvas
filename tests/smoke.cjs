@@ -14,7 +14,7 @@ app.whenReady().then(async () => {
     win = new BrowserWindow({ width: 1440, height: 1000, show: false, webPreferences: { sandbox: true, contextIsolation: true, nodeIntegration: false } });
     const errors = [];
     win.webContents.on('console-message', (event) => { if (event.level === 'error') { errors.push(event.message); console.error('RENDERER:', event.message); } });
-    await win.loadFile(path.resolve(__dirname, '../dist/index.html'));
+    await win.loadFile(path.resolve(__dirname, '../dist/index.html'), { query: { testStorage: '1' } });
     const js = async code => { try { return await win.webContents.executeJavaScript(code, true); } catch (e) { console.error('SCRIPT:', code); throw e; } };
     const click = text => js(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent.trim()===${JSON.stringify(text)})?.click()`);
     await delay(1300);

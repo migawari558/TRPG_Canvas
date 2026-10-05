@@ -15,7 +15,7 @@ app.whenReady().then(async () => {
     const js = code => win.webContents.executeJavaScript(code, true);
     const click = text => js(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent.trim()===${JSON.stringify(text)})?.click()`);
     const flowTab = () => js(`Array.from(document.querySelectorAll('.view-tabs button')).find(b=>b.textContent.includes('フローチャート')).click()`);
-    await win.loadFile(path.resolve(__dirname, '../dist/index.html')); await delay(1000);
+    await win.loadFile(path.resolve(__dirname, '../dist/index.html'), { query: { testStorage: '1' } }); await delay(1000);
     await js('localStorage.clear()'); win.webContents.reload(); await delay(1100);
     win.show(); win.focus(); await delay(200);
     await js(`(()=>{const key='trpg-canvas-documents-v1',all=JSON.parse(localStorage.getItem(key));Object.values(all).forEach(v=>{v.doc.markdown=v.doc.markdown.replace(/^##/gm,'#');v.doc.content.content.forEach(n=>{if(n.type==='heading')n.attrs.level--})});localStorage.setItem(key,JSON.stringify(all));})()`);win.webContents.reload();await delay(1100);
