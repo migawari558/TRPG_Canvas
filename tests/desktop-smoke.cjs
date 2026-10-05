@@ -20,6 +20,11 @@ app.whenReady().then(async () => {
     await delay(1300);
     const js = code => window.webContents.executeJavaScript(code, true);
     assert.ok(await js('!!window.canvas'));
+    const updateInfo = await js('window.canvas.updateInfo()');
+    assert.equal(updateInfo.currentVersion, require('../package.json').version);
+    await js(`Array.from(document.querySelectorAll('button')).find(button => button.textContent.includes('保存・同期')).click()`); await delay(150);
+    assert.ok(await js(`document.querySelector('.update-card').textContent.includes(${JSON.stringify(require('../package.json').version)})`));
+    await js(`document.querySelector('.modal-close').click()`);
     const info = await js('window.canvas.info()');
     assert.equal(info.folder, path.join(output, 'TRPG Canvas'));
     const list = await js('window.canvas.list()');
@@ -43,7 +48,7 @@ app.whenReady().then(async () => {
     await js(`window.canvas.remove(${JSON.stringify(id)},${JSON.stringify(stored.revision)})`);
     assert.ok(!fs.existsSync(path.join(chosen.folder, `${id}.trpg.json`)));
     assert.ok(fs.existsSync(path.join(chosen.folder, `${id}.trpg.json.trashed`)));
-    console.log('PASS: sandboxed preload, native file save/load, native PDF and HTML export, workspace selection and settings persistence');
+    console.log('PASS: sandboxed preload, update UI, native file save/load, native PDF and HTML export, workspace selection and settings persistence');
     app.exit(0);
   } catch (e) { console.error(e); app.exit(1); }
 });

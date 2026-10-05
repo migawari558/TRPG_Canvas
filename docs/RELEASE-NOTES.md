@@ -1,3 +1,10 @@
+## v0.12.23 の変更
+
+- 「保存・同期」画面からGitHub Releasesの最新版を確認し、端末に合う更新ファイルをダウンロードして開けるようにしました。
+- Windows配布へ更新しやすいインストーラー版を追加し、従来のポータブル版も残しました。
+- GitHub Pages、ブラウザ版、Google Drive API連携を削除し、シナリオごとの個別ファイル保存へ戻しました。
+- v0.12.20〜v0.12.22の単一ライブラリは、初回読込時に個別ファイルへ安全に復元します。
+
 ## v0.12.19 の変更
 
 - Microsoft Wordで編集できる `.docx` 書き出しを追加しました。
@@ -46,7 +53,8 @@
 
 | 利用する端末 | ファイル |
 | --- | --- |
-| Windows 64bit | `TRPG-Canvas-バージョン-windows-x64.exe` |
+| Windows 64bit（インストーラー） | `TRPG-Canvas-バージョン-windows-x64-setup.exe` |
+| Windows 64bit（ポータブル） | `TRPG-Canvas-バージョン-windows-x64-portable.exe` |
 | Apple Silicon Mac（Mシリーズ） | `TRPG-Canvas-バージョン-mac-arm64.dmg` |
 | Intel Mac | `TRPG-Canvas-バージョン-mac-x64.dmg` |
 

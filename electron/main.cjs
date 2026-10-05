@@ -1,11 +1,13 @@
-const { app, BrowserWindow, ipcMain, dialog, session, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, session, shell, net } = require('electron');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const storage = require('./storage.cjs');
 const { renderPdf } = require('./pdf.cjs');
 const { prepareFolder, saveSettings, resolveWorkspace } = require('./workspace.cjs');
-let mainWindow, folder, closeReady = false;
+const { checkForUpdate, downloadUpdate } = require('./update.cjs');
+let mainWindow, folder, closeReady = false, availableUpdate = null, downloadedUpdate = '';
 const dev = process.argv.includes('--dev');
+const currentVersion = app.isPackaged ? app.getVersion() : require('../package.json').version;
 async function start() {
   if (process.platform === 'win32') app.setAppUserModelId('jp.trpgcanvas.app');
   const workspace = await resolveWorkspace(app, dialog);
@@ -15,6 +17,30 @@ async function start() {
   session.defaultSession.setPermissionCheckHandler((_wc, permission) => permission === 'local-fonts');
   session.defaultSession.setPermissionRequestHandler((_wc, permission, callback) => callback(permission === 'local-fonts'));
   ipcMain.handle('workspace:info', () => ({ folder }));
+  ipcMain.handle('app:update-info', () => ({ currentVersion, platform: process.platform, arch: process.arch, packaged: app.isPackaged }));
+  ipcMain.handle('app:update-check', async () => {
+    const result = await checkForUpdate({ net, currentVersion });
+    availableUpdate = result.available ? result : null; downloadedUpdate = '';
+    return result;
+  });
+  ipcMain.handle('app:update-download', async () => {
+    if (!availableUpdate?.asset) throw new Error('この端末用の更新ファイルが見つかりません');
+    downloadedUpdate = await downloadUpdate({
+      net, downloadsFolder: app.getPath('downloads'), asset: availableUpdate.asset,
+      onProgress: progress => mainWindow?.webContents.send('app:update-progress', progress)
+    });
+    return { path: downloadedUpdate, name: path.basename(downloadedUpdate) };
+  });
+  ipcMain.handle('app:update-open', async () => {
+    if (!downloadedUpdate) throw new Error('先に更新ファイルをダウンロードしてください');
+    const message = await shell.openPath(downloadedUpdate);
+    if (message) throw new Error(message);
+    return true;
+  });
+  ipcMain.handle('app:update-open-release', async () => {
+    if (!availableUpdate?.pageUrl) throw new Error('更新ページが見つかりません');
+    await shell.openExternal(availableUpdate.pageUrl); return true;
+  });
   ipcMain.handle('workspace:choose', async () => {
     const result = await dialog.showOpenDialog(mainWindow, { title: 'シナリオの保存先（同期する場合はDrive / Dropbox内のフォルダ）', properties: ['openDirectory', 'createDirectory'] });
     if (result.canceled) return null;

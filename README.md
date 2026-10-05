@@ -2,7 +2,7 @@
 
 TRPGシナリオをローカルで執筆するデスクトップアプリです。React / Tiptap / React Flow / Electronで構築しています。
 
-配布版は[GitHub Releases](https://github.com/migawari558/TRPG_Canvas/releases)に掲載します。Windows用exe、Apple Silicon Mac用dmg、Intel Mac用dmgを用意する構成です。Mac版はGitHub Actionsでビルド・検証します。公開前の版はReleasesの下書きとなります。
+配布版は[GitHub Releases](https://github.com/migawari558/TRPG_Canvas/releases)に掲載します。Windows用インストーラー／ポータブルexe、Apple Silicon Mac用dmg、Intel Mac用dmgを用意する構成です。Mac版はGitHub Actionsでビルド・検証します。公開前の版はReleasesの下書きとなります。
 
 配布者向けの設定と署名の手順は[配布ガイド](docs/DISTRIBUTION.md)を参照してください。
 
@@ -62,6 +62,7 @@ npm start
 - **Word出力**：編集可能な `.docx` として書き出します。テーマ、文字サイズ、要素別フォント、用紙サイズ、1段／2段組みを指定でき、見出しと目次、リスト、チェックリスト、GMメモ、セリフ、画像、任意のフローチャートを反映します。タイトルとフローチャートはページ幅いっぱいに配置します。目次はWordで開いた際に更新されます。
 - **Markdown読み込み・書き出し**：本文を `.md` で持ち出せます。
 - **自動保存**：変更後650msで保存。Ctrl+Sでも保存。ウィンドウを閉じる際も保存完了を待ちます。保存失敗時は閉じずにエラーを表示します。
+- **アプリ内更新**：「保存・同期」→「更新を確認」でGitHub Releasesの最新版を確認できます。更新がある場合は端末に合うインストーラー、ポータブルexe、またはdmgをダウンロードし、そのまま開けます。シナリオはアプリ本体と別に保存されるため、更新で削除されません。
 
 最初の起動時には、操作を試せるオリジナルのサンプルシナリオが用意されます。以前のシナリオも読み込めます。見出し用のIDは初めて開いた際に追加されます。
 

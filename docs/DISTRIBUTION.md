@@ -2,11 +2,9 @@
 
 ## このプロジェクトの配布先
 
-リポジトリは [migawari558/TRPG_Canvas](https://github.com/migawari558/TRPG_Canvas) です。Privateのまま運用し、招待した人だけに配布します。
+リポジトリは [migawari558/TRPG_Canvas](https://github.com/migawari558/TRPG_Canvas) です。現在はPublicとして配布します。
 
-1. リポジトリの **Settings → Collaborators → Add people** から、配布する相手のGitHubアカウントを招待します。
-2. 相手に招待を承諾してもらいます。
-3. [Releases](https://github.com/migawari558/TRPG_Canvas/releases) のURLを渡します。相手は招待されたアカウントでログインして、端末に合うファイルをダウンロードします。
+利用者には[Releases](https://github.com/migawari558/TRPG_Canvas/releases)のURLを案内します。初回は端末に合うファイルをダウンロードし、以後はアプリ内の「保存・同期」→「更新を確認」から更新できます。
 
 下書きのReleaseは通常のダウンロード案内には使えません。ビルド結果を確認し、Publish releaseでリポジトリ内に公開してから案内してください。Privateリポジトリのままなら、Releaseを公開しても誰でもアクセスできる状態にはなりません。
 
@@ -22,7 +20,7 @@ git remote add origin https://github.com/OWNER/REPOSITORY.git
 git push -u origin main
 ```
 
-3. GitHubのActionsで「Build desktop release」を開き、Run workflowを実行します。Windows x64、Apple Silicon Mac、Intel MacをそれぞれGitHub上で作成します。
+3. GitHubのActionsで「Build desktop release」を開き、Run workflowを実行します。Windows x64のインストーラーとポータブル版、Apple Silicon Mac、Intel MacをそれぞれGitHub上で作成します。
 4. 全ビルド成功後、Releasesに下書きができます。試用して説明文を整え、Publish releaseを押すと配布できます。失敗した場合は公開用の下書きを作りません。
 
 `release/` や `node_modules/` をGitへ追加する必要はありません。シナリオデータもコミットしません。利用者へ渡すのはReleasesページのURLです。
@@ -57,7 +55,7 @@ git push origin --tags
 
 ## ローカルビルド
 
-- Windows: `npm ci` → `npm run dist:win`
+- Windows: `npm ci` → `npm run dist:win`（インストーラーとポータブル版を作成）
 - macOS: `npm ci` → `npm run dist:mac`（実行したMacのCPU向け）
 
 Mac版のビルド・実機確認はmacOSが必要です。Windows上でMac版の起動確認はできません。GitHub Actionsの各Macジョブでは、単体テストに加えてElectronの起動復旧・保存・HTML/PDF出力を検証します。

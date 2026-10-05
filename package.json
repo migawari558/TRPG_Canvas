@@ -1,6 +1,6 @@
 {
   "name": "trpg-canvas",
-  "version": "0.12.19",
+  "version": "0.12.23",
   "private": true,
   "description": "TRPGシナリオのためのローカル執筆アプリ",
   "main": "electron/main.cjs",
@@ -14,7 +14,7 @@
     "test:hierarchy": "electron tests/hierarchy-smoke.cjs",
     "test:dashboard": "electron tests/dashboard-smoke.cjs",
     "test:appearance": "electron tests/appearance-smoke.cjs",
-    "dist": "npm run build && electron-builder --win portable",
+    "dist": "npm run build && electron-builder --win nsis portable --x64 --publish never",
     "test:flow-first": "electron tests/flow-first-smoke.cjs",
     "test:delete": "electron tests/delete-smoke.cjs",
     "test:pdf-columns": "electron tests/pdf-columns.cjs",
@@ -31,7 +31,7 @@
     "test:pdf-writer": "electron tests/pdf-writer.cjs",
     "test:pdf-page-sizes": "electron tests/pdf-page-sizes.cjs",
     "test:docx": "electron tests/docx-smoke.cjs",
-    "dist:win": "npm run build && electron-builder --win portable --x64 --publish never",
+    "dist:win": "npm run build && electron-builder --win nsis portable --x64 --publish never",
     "dist:mac": "npm run build && node scripts/build-mac.cjs"
   },
   "dependencies": {
@@ -77,11 +77,21 @@
       "assets/icon.icns"
     ],
     "win": {
-      "target": "portable",
+      "target": [
+        "nsis",
+        "portable"
+      ],
       "signAndEditExecutable": true,
       "icon": "assets/icon.ico",
-      "signExecutable": false,
-      "artifactName": "TRPG-Canvas-${version}-windows-${arch}.${ext}"
+      "signExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "TRPG-Canvas-${version}-windows-${arch}-setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "TRPG-Canvas-${version}-windows-${arch}-portable.${ext}"
     },
     "mac": {
       "category": "public.app-category.productivity",

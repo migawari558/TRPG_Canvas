@@ -41,9 +41,9 @@ jobs:
       - run: npm run test:startup
       - run: npm run test:desktop
       - run: npm run test:pdf-page-sizes
-      - name: Build Windows portable app
+      - name: Build Windows installer and portable app
         if: runner.os == 'Windows'
-        run: npx --no-install electron-builder --win portable --x64 --publish never
+        run: npx --no-install electron-builder --win nsis portable --x64 --publish never
       - name: Build macOS disk image and zip
         if: runner.os == 'macOS'
         env:
