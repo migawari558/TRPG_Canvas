@@ -56,7 +56,18 @@ export function showSearchMatch(editor) {
   const search = searchKey.getState(editor.state), match = search.matches[search.active];
   if (!match) return;
   // Keep focus in the find field while moving the manuscript selection into view.
-  editor.commands.setTextSelection(match); editor.commands.scrollIntoView();
+  editor.commands.setTextSelection(match);
+  requestAnimationFrame(() => {
+    const current = editor.view.dom.querySelector('.search-current');
+    if (!current) return;
+    const scroller = current.closest('.editor-scroll');
+    if (!scroller) { current.scrollIntoView({ block: 'center' }); return; }
+    const currentBox = current.getBoundingClientRect(), scrollerBox = scroller.getBoundingClientRect();
+    const previousBehavior = scroller.style.scrollBehavior;
+    scroller.style.scrollBehavior = 'auto';
+    scroller.scrollTop += currentBox.top - scrollerBox.top - (scroller.clientHeight - currentBox.height) / 2;
+    requestAnimationFrame(() => { scroller.style.scrollBehavior = previousBehavior; });
+  });
 }
 export function replaceMatches(editor, replacement, all = false) {
   const search = searchKey.getState(editor.state), matches = all ? search.matches : search.matches.slice(search.active, search.active + 1);

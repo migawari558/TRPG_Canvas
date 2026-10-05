@@ -13,9 +13,16 @@ app.whenReady().then(async()=>{try{
  const count=()=>js(`document.querySelector('.find-count').textContent`);
  const key=async(keyCode,modifiers=[])=>{w.webContents.sendInputEvent({type:'keyDown',keyCode,modifiers});w.webContents.sendInputEvent({type:'keyUp',keyCode,modifiers});await delay(150);};
  await w.loadFile(path.resolve('dist/index.html'), { query: { testStorage: '1' } });await delay(1000);w.show();w.focus();
- await importMd('## 霧の町\n\n霧**の**町で出会う。<u>重要な情報</u>\n\n> [!GM]\n>\n> 霧の町の秘密\n\n- [ ] 霧の町を探索\n\nNPC npc $1 [a]');await delay(500);
+ const filler=Array.from({length:70},(_,i)=>`長い原稿の段落 ${i+1}`).join('\n\n');
+ await importMd(`移動確認\n\n## 霧の町\n\n霧**の**町で出会う。<u>重要な情報</u>\n\n> [!GM]\n>\n> 霧の町の秘密\n\n- [ ] 霧の町を探索\n\nNPC npc $1 [a]\n\n${filler}\n\n移動確認`);await delay(500);
  assert.equal(await js(`document.querySelector('.tiptap u').textContent`),'重要な情報');
  await key('f',['control']);assert.ok(await js(`!!document.querySelector('.find-bar')`));
+ await input('検索する文字','移動確認');assert.equal(await count(),'1 / 2 件');
+ const top=await js(`document.querySelector('.editor-scroll').scrollTop`);
+ await click('次の検索結果');assert.equal(await count(),'2 / 2 件');
+ const bottom=await js(`document.querySelector('.editor-scroll').scrollTop`);assert.ok(bottom>top+300,`検索結果へスクロールしていません: ${top} -> ${bottom}`);
+ assert.ok(await js(`(()=>{const hit=document.querySelector('.search-current').getBoundingClientRect(),view=document.querySelector('.editor-scroll').getBoundingClientRect();return hit.top>=view.top&&hit.bottom<=view.bottom;})()`));
+ await click('前の検索結果');assert.equal(await count(),'1 / 2 件');assert.ok(await js(`document.querySelector('.editor-scroll').scrollTop`) < bottom);
  await input('検索する文字','霧の町');assert.equal(await count(),'1 / 4 件');
  await click('次の検索結果');assert.equal(await count(),'2 / 4 件');await click('前の検索結果');assert.equal(await count(),'1 / 4 件');
  await input('置換後の文字','雨の街');await button('1件置換');assert.equal(await count(),'1 / 3 件');assert.equal(await js(`document.querySelector('.tiptap h2').textContent`),'雨の街');
@@ -27,8 +34,8 @@ app.whenReady().then(async()=>{try{
  await input('検索する文字','NPC');await input('置換後の文字','NPC');await button('すべて置換');assert.equal(await count(),'1 / 1 件');
  await fs.writeFile(path.join(output,'editor.png'),(await w.webContents.capturePage()).toPNG());
  await key('Escape');assert.equal(await js(`document.querySelectorAll('.search-match').length`),0);
- await js(`(()=>{const p=[...document.querySelectorAll('.tiptap>p')].at(-1),r=document.createRange();r.selectNodeContents(p);getSelection().removeAllRanges();getSelection().addRange(r);document.querySelector('.tiptap').focus();})()`);
- await click('下線（Ctrl+U）');assert.ok(await js(`document.querySelector('.tiptap>p:last-child u')?.textContent.includes('NPC')`));
+ await js(`(()=>{const p=[...document.querySelectorAll('.tiptap>p')].find(node=>node.textContent.includes('NPC')),r=document.createRange();r.selectNodeContents(p);getSelection().removeAllRanges();getSelection().addRange(r);document.querySelector('.tiptap').focus();})()`);
+ await click('下線（Ctrl+U）');assert.ok(await js(`[...document.querySelectorAll('.tiptap>p')].find(node=>node.textContent.includes('NPC'))?.querySelector('u')?.textContent.includes('NPC')`));
  await delay(850);let doc=await data();assert.ok(doc.markdown.includes('<u>'));assert.ok(!doc.markdown.includes('search-match'));
  await importMd(doc.markdown);await delay(500);assert.equal(await js(`document.querySelectorAll('.tiptap u').length`),2);
  const {markdown,exportHtml}=await import('../src/export.mjs');assert.ok(markdown.render('<u onclick="bad()">unsafe</u>').includes('&lt;u'));assert.ok(markdown.render('`<u>code</u>`').includes('&lt;u&gt;code'));assert.ok(markdown.render('<u>**bold**</u>').includes('<u><strong>bold</strong></u>'));
