@@ -36,13 +36,15 @@ async function start() {
     return { title: path.basename(file, path.extname(file)), markdown: await fs.readFile(file, 'utf8') };
   });
   ipcMain.handle('document:export', async (_event, format, title, content, pageSize) => {
-    if (!['html', 'pdf', 'md'].includes(format) || typeof content !== 'string') throw new Error('不正な書き出し形式');
+    const binary = format === 'docx' && (ArrayBuffer.isView(content) || content instanceof ArrayBuffer);
+    if (!['html', 'pdf', 'md', 'docx'].includes(format) || (!binary && typeof content !== 'string')) throw new Error('不正な書き出し形式');
     const safeTitle = String(title).replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').slice(0, 100) || 'scenario';
     const result = await dialog.showSaveDialog(mainWindow, { defaultPath: `${safeTitle}.${format}`, filters: [{ name: format.toUpperCase(), extensions: [format] }] });
     if (result.canceled) return null;
     if (format === 'pdf') {
       await fs.writeFile(result.filePath, await renderPdf(content, pageSize));
-    } else await fs.writeFile(result.filePath, content, 'utf8');
+    } else if (format === 'docx') await fs.writeFile(result.filePath, Buffer.from(content.buffer || content, content.byteOffset || 0, content.byteLength));
+    else await fs.writeFile(result.filePath, content, 'utf8');
     return result.filePath;
   });
   ipcMain.on('app:close-ready', () => { closeReady = true; mainWindow.close(); });

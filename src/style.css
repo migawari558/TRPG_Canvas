@@ -138,7 +138,7 @@ button svg{flex-shrink:0}
 .eyebrow{font-size:calc(12px * var(--ui-scale, 1));letter-spacing:2px;color:var(--theme-muted, #93a57f)}
 .modal h2{font-family:'Yu Mincho',serif;color:var(--theme-text, #3d563a);font-size:calc(28px * var(--ui-scale, 1));margin:16px 0 10px}
 .modal-description{font-size:calc(15px * var(--ui-scale, 1));line-height:1.95;color:var(--theme-muted, #8b9b7d)}
-.format-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:27px 0}
+.format-options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:27px 0}
 .format-options button{display:flex;flex-direction:column;border:1px solid var(--theme-border, #e2e7d8);border-radius:7px;position:relative;padding:23px 9px 17px;color:var(--theme-muted, #91a180);background:var(--theme-panel, #fafbf5);gap:11px}
 .format-options button.chosen{border-color:var(--theme-border, #829c6a);background:var(--theme-soft, #f0f5e7);color:var(--theme-text, #56713f)}
 .format-options strong{font-size:calc(15px * var(--ui-scale, 1));font-weight:500}

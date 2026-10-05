@@ -24,6 +24,6 @@ export const api = window.canvas || {
   },
   export: async (format, title, content) => {
     if (format === 'pdf') { const win = window.open('', '_blank'); if (!win) throw new Error('印刷ウィンドウを開けませんでした'); win.document.write(content); win.document.close(); win.onload = () => win.print(); return '印刷画面'; }
-    download(`${title}.${format}`, content, format === 'html' ? 'text/html;charset=utf-8' : 'text/markdown;charset=utf-8'); return 'ダウンロード';
+    download(`${title}.${format}`, content, format === 'html' ? 'text/html;charset=utf-8' : format === 'docx' ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : 'text/markdown;charset=utf-8'); return 'ダウンロード';
   }
 };
