@@ -4,6 +4,7 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 
 const output = path.resolve('.test-output/browser-drive');
+app.disableHardwareAcceleration();
 app.setPath('userData', path.join(output, `profile-${Date.now()}`));
 const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
@@ -21,7 +22,7 @@ app.whenReady().then(async () => {
     await js(`Array.from(document.querySelectorAll('button')).find(button=>button.textContent.includes('保存・同期')).click()`);
     await delay(150);
     assert.ok(await js(`document.querySelector('[role="dialog"]').innerText.includes('Google Drive同期は準備中です')`));
-    assert.ok(await js(`document.querySelector('[role="dialog"]').innerText.includes('ほかのファイルを読み取る権限は要求しません')`));
+    assert.ok(await js(`document.querySelector('[role="dialog"]').innerText.includes('選んだファイルだけを読み書き')`));
     await fs.writeFile(path.join(output, 'drive-settings.png'), (await window.webContents.capturePage()).toPNG());
     assert.deepEqual(errors, []);
     console.log('PASS: browser storage starts normally and shows safe Google Drive setup state');

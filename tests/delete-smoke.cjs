@@ -1,5 +1,5 @@
 const {app,BrowserWindow}=require('electron');const fs=require('node:fs/promises'),path=require('node:path'),assert=require('node:assert/strict');
-const output=path.resolve('.test-output/delete-ui');app.setPath('userData',path.join(output,`profile-${Date.now()}`));const delay=ms=>new Promise(r=>setTimeout(r,ms));
+const output=path.resolve('.test-output/delete-ui');app.disableHardwareAcceleration();app.setPath('userData',path.join(output,`profile-${Date.now()}`));const delay=ms=>new Promise(r=>setTimeout(r,ms));
 app.whenReady().then(async()=>{let win;try{
  await fs.mkdir(output,{recursive:true});win=new BrowserWindow({width:1440,height:1000,show:false,webPreferences:{sandbox:true,contextIsolation:true,nodeIntegration:false}});
  const errors=[];win.webContents.on('console-message',e=>{if(e.level==='error')errors.push(e.message);});
@@ -13,12 +13,16 @@ app.whenReady().then(async()=>{let win;try{
  await click('キャンセル');assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),1);
  await remove();await delay(200);
  await js(`(()=>{const key='trpg-canvas-documents-v1';const data=JSON.parse(localStorage.getItem(key));Object.values(data)[0].revision='external-change';localStorage.setItem(key,JSON.stringify(data));})()`);
- await click('削除する');assert.ok(await js(`document.querySelector('.delete-error').textContent.includes('変更されました')`));assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),1);
+ await click('削除済みシナリオへ移す');assert.ok(await js(`document.querySelector('.delete-error').textContent.includes('変更されました')`));assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),1);
  await click('キャンセル');
- await remove();await delay(150);await click('削除する');await delay(1000);
+ await remove();await delay(150);await click('削除済みシナリオへ移す');await delay(1000);
  assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),0);
  assert.equal(await js(`Object.keys(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).length`),0);
+ assert.equal(await js(`Object.keys(JSON.parse(localStorage.getItem('trpg-canvas-trash-v1'))).length`),1);
  win.webContents.reload();await delay(1200);assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),0);assert.ok(await js(`!!document.querySelector('.dashboard-empty')`));
+ await fs.writeFile(path.join(output,'deleted-list.png'),(await win.webContents.capturePage()).toPNG());
+ await click('復元');await delay(500);assert.equal(await js(`document.querySelectorAll('.scenario-card').length`),1);assert.equal(await js(`Object.keys(JSON.parse(localStorage.getItem('trpg-canvas-trash-v1'))).length`),0);
+ await remove();await delay(150);await click('削除済みシナリオへ移す');await delay(500);
  await js(`document.querySelector('.dashboard-actions .primary-button').click()`);await delay(900);assert.ok(await js(`!!document.querySelector('.tiptap')`));
- assert.deepEqual(errors,[]);console.log('PASS: confirmation, cancel, stale revision rejection, current/last scenario deletion, no autosave resurrection, empty reload and new creation');app.exit(0);
+ assert.deepEqual(errors,[]);console.log('PASS: confirmation, cancel, stale revision rejection, recoverable deletion, reload, restore and new creation');app.exit(0);
 }catch(e){console.error(e);win?.destroy();app.exit(1);}});

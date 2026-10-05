@@ -46,6 +46,7 @@
 .dashboard-empty h2 { font-size:calc(19px * var(--ui-scale, 1)); font-weight: 500; }
 .dashboard-empty p { font-size:calc(14px * var(--ui-scale, 1)); }
 .dashboard-folder { display: flex; gap: 9px; align-items: center; margin-top: 32px; color: var(--theme-muted, #a5b595); font-size:calc(11px * var(--ui-scale, 1)); overflow-wrap: anywhere; }
+.trash-panel{margin-top:28px;border:1px solid var(--theme-border);border-radius:9px;background:var(--theme-panel);overflow:hidden}.trash-panel summary{display:flex;align-items:center;gap:8px;padding:12px 15px;cursor:pointer;font-size:calc(13px * var(--ui-scale,1));font-weight:650;color:var(--theme-muted)}.trash-panel summary span{margin-left:auto;padding:1px 7px;border-radius:999px;background:var(--theme-soft)}.trash-panel>div{border-top:1px solid var(--theme-border)}.trash-item{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 15px;border-bottom:1px solid var(--theme-border)}.trash-item:last-child{border-bottom:0}.trash-item>span{display:flex;min-width:0;flex-direction:column;gap:2px}.trash-item strong{overflow-wrap:anywhere}.trash-item small{color:var(--theme-muted)}.trash-item button{display:flex;align-items:center;gap:6px;flex:none;padding:7px 10px}
 .outline-panel {
   width: 280px;
   border-left: 0;

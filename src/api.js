@@ -1,8 +1,9 @@
 import { newDocument, characterCount } from './model.mjs';
 import { createGoogleDriveSync } from './google-drive.mjs';
 const key = 'trpg-canvas-documents-v1';
+const trashKey = 'trpg-canvas-trash-v1';
 const read = () => JSON.parse(localStorage.getItem(key) || '{}');
-const drive = !window.canvas ? createGoogleDriveSync({ clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || '' }) : null;
+const drive = !window.canvas ? createGoogleDriveSync({ clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || '', apiKey: import.meta.env.VITE_GOOGLE_API_KEY || '', appId: import.meta.env.VITE_GOOGLE_APP_ID || '' }) : null;
 function download(title, text, type) {
   const url = URL.createObjectURL(new Blob([text], { type }));
   const a = document.createElement('a'); a.href = url; a.download = title; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
@@ -16,7 +17,15 @@ export const api = window.canvas || {
     const data = read();
     if (!data[id]) throw new Error('シナリオが見つかりません');
     if (!revision || data[id].revision !== revision) throw new Error('確認後にシナリオが変更されました。一覧を更新して、もう一度削除してください。');
-    delete data[id]; localStorage.setItem(key, JSON.stringify(data)); drive.markDeleted(id);
+    const trash = JSON.parse(localStorage.getItem(trashKey) || '{}'), deletedAt = new Date().toISOString();
+    trash[id] = { ...data[id], deletedAt }; delete data[id]; localStorage.setItem(key, JSON.stringify(data)); localStorage.setItem(trashKey, JSON.stringify(trash)); drive.markDeleted(id);
+  },
+  listTrash: async () => Object.entries(JSON.parse(localStorage.getItem(trashKey) || '{}')).map(([id, entry]) => ({ id, title: entry.doc?.title || '無題のシナリオ', deletedAt: entry.deletedAt || '' })).sort((a, b) => b.deletedAt.localeCompare(a.deletedAt)),
+  restore: async id => {
+    const trash = JSON.parse(localStorage.getItem(trashKey) || '{}'), entry = trash[id];
+    if (!entry) throw new Error('削除済みシナリオが見つかりません');
+    const data = read(), doc = { ...entry.doc, updatedAt: new Date().toISOString() }, result = { doc, revision: crypto.randomUUID() };
+    data[id] = result; delete trash[id]; localStorage.setItem(key, JSON.stringify(data)); localStorage.setItem(trashKey, JSON.stringify(trash)); drive.markSaved(id); return result;
   },
   save: async (doc, revision) => {
     const data = read(); const conflict = (data[doc.id]?.revision || null) !== (revision || null);
@@ -30,6 +39,7 @@ export const api = window.canvas || {
   },
   googleDriveStatus: async () => drive.status(),
   googleDriveConnect: async () => drive.connect(),
+  googleDriveChooseFile: async () => drive.chooseFile(),
   googleDriveSync: async () => drive.sync(),
   googleDriveDisconnect: async () => drive.disconnect()
 };
