@@ -50,6 +50,33 @@ test('storage roundtrip, conflict preservation, list and path validation', async
     assert.equal(deleted.conflict, true);
   } finally { await fs.rm(folder, { recursive: true, force: true }); }
 });
+test('shared library rollback restores current documents without reviving deletions', async () => {
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-library-rollback-'));
+  try {
+    const { newDocument } = await import('../src/model.mjs');
+    const current = newDocument('共有ライブラリの最新版');
+    current.updatedAt = '2026-10-05T02:00:00Z';
+    const old = { ...current, title: '古い個別ファイル', updatedAt: '2026-10-05T01:00:00Z' };
+    const deleted = newDocument('削除済み');
+    await fs.writeFile(storage.filePath(folder, current.id), JSON.stringify(old, null, 2));
+    await fs.writeFile(storage.filePath(folder, deleted.id), JSON.stringify(deleted, null, 2));
+    await fs.writeFile(path.join(folder, 'trpg-canvas-library-v1.json'), JSON.stringify({
+      version: 1,
+      documents: { [current.id]: { doc: current, revision: 'library' } },
+      deleted: { [deleted.id]: '2026-10-05T03:00:00Z' },
+      trash: { [deleted.id]: { doc: deleted, revision: 'deleted', deletedAt: '2026-10-05T03:00:00Z' } }
+    }, null, 2));
+    const listed = await storage.list(folder);
+    assert.ok(listed.documents.some(item => item.title === '共有ライブラリの最新版'));
+    assert.ok(listed.documents.some(item => item.title === '古い個別ファイル（単一ファイル移行前のバックアップ）'));
+    assert.ok(!listed.documents.some(item => item.title === '削除済み'));
+    assert.equal((await storage.read(folder, current.id)).doc.title, '共有ライブラリの最新版');
+    assert.equal((await fs.stat(path.join(folder, 'trpg-canvas-library-v1.archived.json'))).isFile(), true);
+    await assert.rejects(fs.stat(path.join(folder, 'trpg-canvas-library-v1.json')), error => error.code === 'ENOENT');
+    const second = await storage.list(folder);
+    assert.deepEqual(second.documents.map(item => item.id).sort(), listed.documents.map(item => item.id).sort());
+  } finally { await fs.rm(folder, { recursive: true, force: true }); }
+});
 test('character count treats image nodes and markdown images as zero characters', async () => {
   const { characterCount } = await import('../src/model.mjs');
   const image = { type: 'image', attrs: { src: `data:image/png;base64,${'A'.repeat(100000)}`, alt: '数えない代替文字' } };
