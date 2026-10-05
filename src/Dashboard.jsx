@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Search, Plus, Upload, FileText, Network, ArrowUpRight, RefreshCw, Feather, FolderOpen, Trash2, RotateCcw } from 'lucide-react';
+import { Search, Plus, Upload, FileText, Network, ArrowUpRight, RefreshCw, Feather, FolderOpen, Trash2 } from 'lucide-react';
 
-export default function Dashboard({ documents, trash = [], workspace, busy, onOpen, onCreate, onImport, onRefresh, onDelete, onRestore }) {
+export default function Dashboard({ documents, workspace, busy, onOpen, onCreate, onImport, onRefresh, onDelete }) {
   const [query, setQuery] = useState(''), [sort, setSort] = useState('updated');
   const filtered = documents.filter(doc => `${doc.title} ${doc.subtitle || ''}`.toLocaleLowerCase().includes(query.toLocaleLowerCase()))
     .sort((a, b) => sort === 'title' ? a.title.localeCompare(b.title, 'ja') : (b.updatedAt || '').localeCompare(a.updatedAt || ''));
@@ -14,7 +14,6 @@ export default function Dashboard({ documents, trash = [], workspace, busy, onOp
       <div className="card-top"><span><FileText size={19}/> SCENARIO</span><ArrowUpRight size={18}/></div><h2>{doc.title || '無題のシナリオ'}</h2><p>{doc.subtitle || 'まだ説明がありません'}</p><div className="card-stats"><span>{(doc.characterCount || 0).toLocaleString()} 文字</span><span><Network size={14}/>{doc.sceneCount || 0} シーン</span></div><div className="card-date">{doc.updatedAt ? new Date(doc.updatedAt).toLocaleString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '日時不明'} 更新</div>
     </button><button className="scenario-delete icon-button" aria-label={`${doc.title}を削除`} title="シナリオを削除" disabled={busy} onClick={() => onDelete(doc.id)}><Trash2 size={17}/></button></div>)}</div>
     {!filtered.length && <div className="dashboard-empty"><FileText size={32}/><h2>{query ? '一致するシナリオがありません' : '最初の物語をつくりましょう'}</h2><p>{query ? '検索する言葉を変えてみてください。' : '新規作成、またはMarkdownの読み込みから始められます。'}</p></div>}
-    {!!trash.length && <details className="trash-panel"><summary><Trash2 size={15}/>削除済みシナリオ <span>{trash.length}</span></summary><div>{trash.map(item => <div className="trash-item" key={item.id}><span><strong>{item.title}</strong><small>{item.deletedAt ? new Date(item.deletedAt).toLocaleString('ja-JP') : '削除日時不明'}</small></span><button className="secondary-button" disabled={busy} onClick={() => onRestore(item.id)}><RotateCcw size={15}/>復元</button></div>)}</div></details>}
     <div className="dashboard-folder"><FolderOpen size={16}/><span>{workspace}</span></div>
   </section>;
 }

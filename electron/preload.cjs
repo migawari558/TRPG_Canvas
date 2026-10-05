@@ -5,8 +5,6 @@ contextBridge.exposeInMainWorld('canvas', {
   list: () => ipcRenderer.invoke('document:list'),
   load: id => ipcRenderer.invoke('document:load', id),
   remove: (id, revision) => ipcRenderer.invoke('document:remove', id, revision),
-  listTrash: () => ipcRenderer.invoke('document:trash'),
-  restore: id => ipcRenderer.invoke('document:restore', id),
   save: (doc, revision) => ipcRenderer.invoke('document:save', doc, revision),
   importMarkdown: () => ipcRenderer.invoke('document:import'),
   export: (format, title, content, pageSize) => ipcRenderer.invoke('document:export', format, title, content, pageSize),

@@ -32,8 +32,6 @@ test('storage roundtrip, conflict preservation, list and path validation', async
     doc.markdown = `本文\n\n![large](data:image/png;base64,${'A'.repeat(100000)})`;
     const initial = await storage.save(folder, doc, null);
     assert.deepEqual((await storage.read(folder, doc.id)).doc, doc);
-    assert.equal((await fs.stat(storage.libraryPath(folder))).isFile(), true);
-    await assert.rejects(fs.stat(storage.filePath(folder, doc.id)), error => error.code === 'ENOENT');
     const external = await storage.save(folder, { ...doc, title: 'Remote' }, initial.revision);
     const conflict = await storage.save(folder, { ...doc, title: 'Local' }, initial.revision);
     assert.equal(conflict.conflict, true);
@@ -45,37 +43,11 @@ test('storage roundtrip, conflict preservation, list and path validation', async
     assert.ok(listed.every(item => item.characterCount === 2), 'character count must not scan or count embedded image data');
     assert.throws(() => storage.filePath(folder, '../escape'));
     assert.throws(() => storage.validate({ ...doc, flow: { nodes: [{ id: 'bad', position: { x: '<script>', y: 0 }, data: { label: 'bad' } }], edges: [] } }));
-    await storage.remove(folder, doc.id, external.revision);
-    assert.equal((await storage.list(folder)).documents.some(item => item.id === doc.id), false);
-    assert.equal((await storage.listTrash(folder))[0].title, 'Remote');
-    await storage.restore(folder, doc.id);
-    assert.equal((await storage.read(folder, doc.id)).doc.title, 'Remote');
-  } finally { await fs.rm(folder, { recursive: true, force: true }); }
-});
-test('desktop migrates legacy scenario files to the shared library without removing originals', async () => {
-  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-migration-'));
-  try {
-    const { newDocument } = await import('../src/model.mjs');
-    const first = newDocument('既存シナリオA'), second = newDocument('既存シナリオB');
-    first.updatedAt = '2026-10-01T00:00:00Z'; second.updatedAt = '2026-10-02T00:00:00Z';
-    await fs.writeFile(storage.filePath(folder, first.id), JSON.stringify(first, null, 2));
-    await fs.writeFile(storage.filePath(folder, second.id), JSON.stringify(second, null, 2));
     await fs.writeFile(path.join(folder, 'broken.trpg.json'), '{');
-    const listed = await storage.list(folder);
-    assert.deepEqual(listed.documents.map(item => item.title), ['既存シナリオB', '既存シナリオA']);
-    assert.deepEqual(listed.errors, ['broken.trpg.json']);
-    const libraryFile = storage.libraryPath(folder);
-    const library = JSON.parse(await fs.readFile(libraryFile, 'utf8'));
-    assert.equal(Object.keys(library.documents).length, 2);
-    assert.equal((await fs.stat(storage.filePath(folder, first.id))).isFile(), true);
-    library.documents[first.id].doc = { ...first, title: 'Web更新', updatedAt: '2026-10-03T00:00:00Z' };
-    await fs.writeFile(libraryFile, JSON.stringify(library, null, 2));
-    assert.equal((await storage.read(folder, first.id)).doc.title, 'Web更新');
-    const saved = await storage.save(folder, { ...library.documents[first.id].doc, title: '移行後の更新', updatedAt: '2026-10-04T00:00:00Z' }, library.documents[first.id].revision);
-    assert.equal(saved.conflict, false);
-    assert.equal(JSON.parse(await fs.readFile(storage.filePath(folder, first.id), 'utf8')).title, '既存シナリオA');
-    await fs.writeFile(storage.filePath(folder, first.id), JSON.stringify({ ...first, title: '個別ファイル側の変更' }, null, 2));
-    assert.equal((await storage.read(folder, first.id)).doc.title, '移行後の更新');
+    assert.deepEqual((await storage.list(folder)).errors, ['broken.trpg.json']);
+    await fs.unlink(storage.filePath(folder, doc.id));
+    const deleted = await storage.save(folder, external.doc, external.revision);
+    assert.equal(deleted.conflict, true);
   } finally { await fs.rm(folder, { recursive: true, force: true }); }
 });
 test('character count treats image nodes and markdown images as zero characters', async () => {

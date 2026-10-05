@@ -1,9 +1,9 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, shell } = require('electron');
 const fs = require('node:fs');
+const fsp = require('node:fs/promises');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const output = path.resolve(__dirname, `../.test-output/desktop-${Date.now()}`);
-app.disableHardwareAcceleration();
 fs.mkdirSync(output, { recursive: true });
 app.setPath('userData', path.join(output, 'profile'));
 app.setPath('documents', output);
@@ -11,6 +11,7 @@ dialog.showSaveDialog = async (_window, options) => ({ canceled: false, filePath
 dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [path.join(output, 'sync-folder')] });
 fs.mkdirSync(path.join(output, 'sync-folder'), { recursive: true });
 require('../electron/main.cjs');
+shell.trashItem = async file => { assert.ok(file.startsWith(output + path.sep)); await fsp.rename(file, file + '.trashed'); };
 const delay = ms => new Promise(r => setTimeout(r, ms));
 app.whenReady().then(async () => {
   try {
@@ -36,16 +37,13 @@ app.whenReady().then(async () => {
     assert.equal(chosen.folder, path.join(output, 'sync-folder'));
     const stored = await js(`window.canvas.save(${JSON.stringify(loaded.doc)},null)`);
     assert.equal(stored.conflict, false);
-    assert.ok(fs.existsSync(path.join(chosen.folder, 'trpg-canvas-library-v1.json')));
-    assert.ok(!fs.existsSync(path.join(chosen.folder, `${id}.trpg.json`)));
+    assert.ok(fs.existsSync(path.join(chosen.folder, `${id}.trpg.json`)));
     const settings = JSON.parse(fs.readFileSync(path.join(output, 'profile/settings.json'), 'utf8'));
     assert.equal(settings.folder, chosen.folder);
     await js(`window.canvas.remove(${JSON.stringify(id)},${JSON.stringify(stored.revision)})`);
-    assert.equal((await js('window.canvas.listTrash()'))[0].id, id);
-    await js(`window.canvas.restore(${JSON.stringify(id)})`);
-    assert.equal((await js('window.canvas.listTrash()')).length, 0);
-    assert.equal((await js('window.canvas.load(' + JSON.stringify(id) + ')')).doc.id, id);
-    console.log('PASS: sandboxed preload, shared-library save/load, recoverable deletion, native export and workspace persistence');
+    assert.ok(!fs.existsSync(path.join(chosen.folder, `${id}.trpg.json`)));
+    assert.ok(fs.existsSync(path.join(chosen.folder, `${id}.trpg.json.trashed`)));
+    console.log('PASS: sandboxed preload, native file save/load, native PDF and HTML export, workspace selection and settings persistence');
     app.exit(0);
   } catch (e) { console.error(e); app.exit(1); }
 });
