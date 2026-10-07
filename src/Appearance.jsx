@@ -71,7 +71,7 @@ export default function Appearance({ value, onChange }) {
     <ThemePicker value={value.theme} onChange={theme => onChange({ ...value, theme })}/>
     <TypographyControls value={value} onChange={onChange}/>
     <FontSizeControl value={value.fontSize} onChange={fontSize => onChange({ ...value, fontSize })}/>
-    <FontSizeControl label="メニュー・目次の文字サイズ" value={value.uiScale} min={90} max={125} unit="%" onChange={uiScale => onChange({ ...value, uiScale })}/>
+    <FontSizeControl label="メニュー・目次の文字サイズ" value={value.uiScale} min={70} max={125} unit="%" onChange={uiScale => onChange({ ...value, uiScale })}/>
     <div className="appearance-sample" style={{ fontSize: `${value.fontSize}px` }}><strong className="sample-heading">霧の向こうに、物語がある。</strong><span className="sample-chapter">第一章　灯台へ</span><p>探索者たちは、一通の手紙を手がかりに灯台へ向かう。</p><div className="sample-dialogue"><b>コレット</b><span>ダーリン、こちらの方々を見て。</span></div><aside>GM MEMO<br/>ここに、進行のためのメモを。</aside></div>
     <button className="reset-appearance" onClick={() => onChange(defaultAppearance)}><RotateCcw size={15}/>標準設定に戻す</button>
   </div>;

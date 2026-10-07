@@ -106,7 +106,7 @@ export function normalizeDesign(value = {}) {
 }
 export function normalizeAppearance(value = {}) {
   const design = normalizeDesign(value);
-  return { ...design, fontSize: Math.max(12, design.fontSize), uiScale: Math.max(90, Math.min(125, Math.round(Number(value?.uiScale) || 100))) };
+  return { ...design, fontSize: Math.max(12, design.fontSize), uiScale: Math.max(70, Math.min(125, Math.round(Number(value?.uiScale) || 100))) };
 }
 export function resolvedFonts(value = {}) {
   const design = normalizeDesign(value), theme = getTheme(design.theme);

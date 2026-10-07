@@ -54,15 +54,21 @@
 .tiptap img{display:block;max-width:100%;height:auto;margin:12px 0;border-radius:4px}.tiptap img.ProseMirror-selectednode{outline:2px solid var(--theme-accent);outline-offset:3px}.image-size-toolbar{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding:8px 14px;background:var(--theme-panel);border-bottom:1px solid var(--theme-border);font-size:12px}.image-size-toolbar strong{margin-right:5px;color:var(--theme-muted)}.image-size-toolbar button{padding:6px 9px;border:1px solid var(--theme-border);border-radius:5px;background:var(--theme-paper);color:var(--theme-text)}.image-size-toolbar button[aria-pressed="true"]{background:var(--theme-soft);border-color:var(--theme-accent);color:var(--theme-accent)}.image-size-toolbar button span{color:var(--theme-muted);font-size:10px}.image-status{padding:8px 20px;font-size:13px;color:var(--theme-muted)}.image-error{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fbebe2;color:#923b30;padding:8px 20px;font-size:13px}
 .tiptap ul[data-type="taskList"]{list-style:none;padding-left:0}.tiptap li[data-type="taskItem"]{display:flex;align-items:flex-start;gap:10px}.tiptap li[data-type="taskItem"]>label{flex:0 0 auto;display:flex;align-items:center;min-height:2.05em}.tiptap li[data-type="taskItem"]>label input{width:16px;height:16px;accent-color:var(--theme-accent);cursor:pointer;margin:0}.tiptap li[data-type="taskItem"]>div{flex:1;min-width:0}.tiptap li[data-type="taskItem"] ul{margin:0 0 0 18px}
 /* Keep document metadata compact so the manuscript gets the vertical space. */
-.document-header{padding:12px 30px 10px}
+.document-header{padding:9px 26px 8px}
 .document-kicker{display:none}
-.title-input{font-size:calc(24px * var(--ui-scale,1));line-height:1.4;letter-spacing:.5px}
-.document-subline{margin-top:5px;gap:10px;font-size:calc(12px * var(--ui-scale,1))}
+.title-input{font-size:calc(22px * var(--ui-scale,1));line-height:1.32;letter-spacing:.4px}
+.document-subline{margin-top:3px;gap:9px;font-size:calc(11px * var(--ui-scale,1))}
 .document-subline input{font-size:inherit}
-.topbar{min-height:50px;padding-top:5px;padding-bottom:5px}
-.view-tabs{min-height:38px;padding-left:24px;padding-right:24px}
-.view-tabs>button{min-height:38px}
-@media(max-width:680px){.document-header{padding:10px 20px}.title-input{font-size:calc(22px * var(--ui-scale,1))}}
+.topbar{min-height:44px;padding-top:4px;padding-bottom:4px}
+.top-ui-toggle{display:flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid var(--theme-border);border-radius:6px;color:var(--theme-muted);font-size:calc(12px * var(--ui-scale,1))}
+.top-ui-collapsed .document-header{display:none}
+.view-tabs{min-height:35px;padding-left:22px;padding-right:22px}
+.view-tabs>button{min-height:35px}
+.editor-toolbar{min-height:40px;height:auto;padding-top:5px;padding-bottom:5px}
+.statusbar{height:25px}
+@media(max-height:760px){.topbar{min-height:40px;padding-top:2px;padding-bottom:2px}.document-header{padding:6px 22px 5px}.title-input{font-size:calc(20px * var(--ui-scale,1));line-height:1.25}.document-subline{margin-top:2px}.view-tabs{min-height:32px}.view-tabs>button{min-height:32px}.editor-toolbar{min-height:35px;padding-top:3px;padding-bottom:3px}.editor-toolbar button{height:26px}.statusbar{height:22px}.paper-eyebrow{margin-bottom:14px}}
+@media(max-width:900px){.top-ui-toggle span{display:none}}
+@media(max-width:680px){.document-header{padding:7px 18px}.title-input{font-size:calc(20px * var(--ui-scale,1))}.topbar-actions .appearance-button{font-size:0}.topbar-actions .appearance-button svg{width:16px;height:16px}}
 .find-bar{flex-shrink:0;padding:10px 20px;background:var(--theme-paper);border-bottom:1px solid var(--theme-border);font-size:13px}.find-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px}.find-row+.find-row{margin-top:8px}.find-row>input{flex:1;min-width:150px;padding:7px 10px;border:1px solid var(--theme-border);border-radius:5px;background:var(--theme-bg);color:var(--theme-text);font:inherit}.find-row button{padding:6px 8px;border:1px solid var(--theme-border);border-radius:5px}.find-row label{display:flex;align-items:center;gap:5px;white-space:nowrap}.find-count{min-width:100px;text-align:center;color:var(--theme-muted)}.find-bar p{margin:6px 0 0;color:var(--theme-muted)}.tiptap .search-match{background:#ffe795;color:#302400}.tiptap .search-current{background:#ffbb66;color:#302400;outline:2px solid #ab5800}.tiptap u{text-decoration:underline}
 .pdf-preview{display:flex;flex-direction:column;flex:1;min-height:0}.pdf-navigation{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:10px;gap:8px}.pdf-navigation button{padding:6px}.pdf-pages{overflow:auto;flex:1;min-height:0;text-align:center;background:var(--theme-soft);padding:16px 0}.pdf-pages canvas{display:block;margin:auto;box-shadow:0 2px 8px #0003}.pdf-pages canvas[hidden]{display:none}
 @media(max-width:800px){.export-layout{grid-template-columns:1fr;height:auto}.export-preview{height:65vh}.export-settings{overflow:visible}.export-modal{max-height:94vh}.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -71,7 +77,7 @@
 .writing-notes-editor>.tiptap{font-size:14px}
 
 
-.tiptap h1.chapter-heading{text-align:center;font-size:2.2em;margin:2.5em 0 .7em;letter-spacing:.08em;line-height:1.5}.editor-toolbar{flex-wrap:wrap}
+.tiptap h1.chapter-heading{text-align:center;font-size:2.2em;margin:2.5em 0 .7em;letter-spacing:.08em;line-height:1.5}.editor-toolbar{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden}.editor-toolbar :is(button,.toolbar-label,.toolbar-divider,.markdown-badge){flex:none}
 
 .tiptap h1{color:var(--theme-heading)}.tiptap :is(h2,h3,h4,h5,h6){color:var(--theme-subheading)}.tiptap h1.chapter-heading{color:var(--theme-chapter);font-family:var(--chapter-font)}.outline-bulk{display:flex;gap:8px;margin:8px 0 10px}.outline-bulk button{display:flex;gap:4px;align-items:center;font-size:11px;color:var(--theme-muted)}.flow-toolbar{flex-wrap:wrap;gap:10px}.flow-actions{flex-wrap:wrap}.react-flow__edge.selected .react-flow__edge-path{stroke:var(--theme-accent);stroke-width:3}.react-flow__selection{background:#8aaac422;border:1px solid var(--theme-heading)}
 
