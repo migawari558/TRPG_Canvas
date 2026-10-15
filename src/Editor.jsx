@@ -39,8 +39,9 @@ converter.addRule('embeddedImage', { filter: node => node.nodeName === 'IMG' && 
 export const serializeEditorMarkdown = editor => converter.turndown(editor.getHTML());
 const blankParagraphCount = content => (content?.content || []).filter(node => node.type === 'paragraph' && !node.content?.length).length;
 const blankMarkerCount = source => (source?.match(/<!-- trpg-blank -->/g) || []).length;
-export default function ScenarioEditor({ doc, onChange, onReady }) {
-  const imageInput = useRef(), importingImage = useRef(false);
+export default function ScenarioEditor({ doc, onChange, onEdit, onReady }) {
+  const imageInput = useRef(), importingImage = useRef(false), onEditRef = useRef(onEdit);
+  onEditRef.current = onEdit;
   const [findOpen, setFindOpen] = useState(false), [findRequest, setFindRequest] = useState(0);
   function openFind() { setFindOpen(true); setFindRequest(value => value + 1); }
   const [imageError, setImageError] = useState(''), [imageBusy, setImageBusy] = useState(false), [selectedImageWidth, setSelectedImageWidth] = useState(null);
@@ -69,7 +70,7 @@ export default function ScenarioEditor({ doc, onChange, onReady }) {
     onSelectionUpdate: ({ editor }) => setSelectedImageWidth(editor.isActive('image') ? normalizeImageWidth(editor.getAttributes('image').width) : null),
     // Embedded images can be several megabytes. Keep keystrokes cheap and build
     // Markdown once when the document is autosaved instead of on every change.
-    onUpdate: ({ editor }) => onChange({ content: editor.getJSON() })
+    onUpdate: ({ editor }) => onEditRef.current?.(editor)
   });
   useEffect(() => {
     if (editor) {

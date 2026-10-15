@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronRight, ArrowUp, ArrowDown, Link2, Layers, ChevronsUp, ChevronsDown } from 'lucide-react';
-import { moveSection } from './model.mjs';
 
 export default function Outline({ headings, content, activeHeading, onNavigate, onReorder, flow, onShowFlow }) {
   const [collapsed, setCollapsed] = useState(new Set());
@@ -15,6 +14,16 @@ export default function Outline({ headings, content, activeHeading, onNavigate, 
   const parents = new Set(headings.map(heading => heading.parentId).filter(Boolean));
   const linkedIds = new Set(flow.nodes.map(node => node.data.headingId).filter(Boolean));
   const visible = headings.filter(heading => !heading.ancestorIds.some(id => collapsed.has(id)));
+  const movement = useMemo(() => {
+    const groups = new Map(), result = new Map();
+    for (const item of headings) {
+      const group = `${item.parentId || 'root'}:${item.level}`;
+      if (!groups.has(group)) groups.set(group, []);
+      groups.get(group).push(item);
+    }
+    for (const siblings of groups.values()) siblings.forEach((item, index) => result.set(item.id || item.index, { previous: index > 0, next: index < siblings.length - 1 }));
+    return result;
+  }, [headings]);
   function toggle(id) { setCollapsed(current => { const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next; }); }
   return <aside className="outline-panel" aria-label="シナリオの目次">
     <div className="outline-fixed">
@@ -26,8 +35,8 @@ export default function Outline({ headings, content, activeHeading, onNavigate, 
         {parents.has(item.id) ? <button className="outline-toggle" aria-label={`${item.text}を${collapsed.has(item.id) ? '展開' : '折りたたむ'}`} aria-expanded={!collapsed.has(item.id)} onClick={() => toggle(item.id)}>{collapsed.has(item.id) ? <ChevronRight size={15}/> : <ChevronDown size={15}/>}</button> : <span className="outline-toggle-spacer"/>}
         <button className="outline-link" onClick={() => onNavigate(item)} title={item.text}><span>{item.text}</span>{linkedIds.has(item.id) && <Link2 size={12} className="outline-linked" aria-label="フローとリンク済み"/>}</button>
         <div className="reorder-buttons">
-          <button aria-label={`${item.text}を前へ`} title="節全体を前へ移動" disabled={!content || moveSection(content, item.index, -1) === content} onClick={() => onReorder(item, -1)}><ArrowUp size={13}/></button>
-          <button aria-label={`${item.text}を後へ`} title="節全体を後へ移動" disabled={!content || moveSection(content, item.index, 1) === content} onClick={() => onReorder(item, 1)}><ArrowDown size={13}/></button>
+          <button aria-label={`${item.text}を前へ`} title="節全体を前へ移動" disabled={!content || !movement.get(item.id || item.index)?.previous} onClick={() => onReorder(item, -1)}><ArrowUp size={13}/></button>
+          <button aria-label={`${item.text}を後へ`} title="節全体を後へ移動" disabled={!content || !movement.get(item.id || item.index)?.next} onClick={() => onReorder(item, 1)}><ArrowDown size={13}/></button>
         </div>
       </div>)}
       {!headings.length && <p className="muted">「#! 」で章、「# 」でH1見出しを追加できます。</p>}

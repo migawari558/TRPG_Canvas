@@ -15,6 +15,7 @@
     "test:dashboard": "electron tests/dashboard-smoke.cjs",
     "test:appearance": "electron tests/appearance-smoke.cjs",
     "test:compact-ui": "electron tests/compact-ui-smoke.cjs",
+    "test:input-performance": "electron tests/input-performance-smoke.cjs",
     "dist": "npm run build && electron-builder --win nsis portable --x64 --publish never",
     "test:flow-first": "electron tests/flow-first-smoke.cjs",
     "test:delete": "electron tests/delete-smoke.cjs",
