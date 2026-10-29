@@ -71,7 +71,7 @@ app.whenReady().then(async()=>{try{
  const expanded=await js(`document.querySelector('.editor-scroll').clientHeight`);
  const anchorBefore=await js(`document.querySelector('[aria-label="シナリオ本文"] p').getBoundingClientRect().top`);
  await js(`(()=>{const scroll=document.querySelector('.editor-scroll');scroll.style.scrollBehavior='auto';scroll.scrollTop=230;})()`);await delay(250);
- assert.equal(await js(`document.querySelector('.mobile-app').classList.contains('mobile-reading')`),true);
+ assert.equal(await js(`document.querySelector('.mobile-app').classList.contains('mobile-reading')`),true,JSON.stringify(await js(`({top:document.querySelector('.editor-scroll').scrollTop,height:document.querySelector('.editor-scroll').clientHeight,contentTop:document.querySelector('.mobile-app').style.getPropertyValue('--mobile-content-top'),focused:document.activeElement?.outerHTML.slice(0,150)})`)));
  assert.equal(await js(`document.querySelector('.editor-scroll').clientHeight`),expanded,'上部UI収納で本文の高さが変わっています');
  const anchorAfter=await js(`document.querySelector('[aria-label="シナリオ本文"] p').getBoundingClientRect().top`);
  assert.ok(Math.abs(anchorBefore-anchorAfter-230)<2,`本文がスクロール量以上に跳ねています: ${anchorBefore} -> ${anchorAfter}`);
