@@ -10,3 +10,5 @@ const mobile = Capacitor.getPlatform() === 'android' || import.meta.env.MODE ===
 createRoot(document.getElementById('root')).render(mobile ? <MobileApp/> : <App />);
 
 import './appearance.css';
+
+import './desktop.css';

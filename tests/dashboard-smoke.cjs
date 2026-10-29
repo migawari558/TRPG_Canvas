@@ -18,12 +18,12 @@ app.whenReady().then(async () => {
     await win.loadFile(path.resolve(__dirname, '../dist/index.html'), { query: { testStorage: '1' } }); await delay(1100);
     await js('localStorage.clear()'); win.webContents.reload(); await delay(1100);
     win.show(); win.focus(); await delay(200);
-    await button('サイドバーを切り替え'); await delay(150);
-    assert.ok(await js(`document.querySelector('.main').getBoundingClientRect().width >= innerWidth - 1`));
-    assert.equal(await js(`document.querySelector('.main').getBoundingClientRect().left`), 0);
+    await button('目次を閉じる'); await delay(150);
+    assert.ok(await js(`document.querySelector('.main').getBoundingClientRect().width >= innerWidth - document.querySelector('.app-rail').getBoundingClientRect().width - 1`));
+    assert.equal(await js(`document.querySelector('.main').getBoundingClientRect().left`), await js(`document.querySelector('.app-rail').getBoundingClientRect().right`));
     assert.ok(await js(`document.querySelector('.tiptap').getBoundingClientRect().width > 600`));
     await fs.writeFile(path.join(output, 'sidebar-closed.png'), (await win.webContents.capturePage()).toPNG());
-    await button('サイドバーを切り替え'); await delay(100);
+    await button('目次を開く'); await delay(100);
     assert.ok(await js(`document.querySelector('.main').getBoundingClientRect().left >= 200`));
     await button('ダッシュボードへ'); await delay(350);
     assert.equal(await js(`document.querySelectorAll('.scenario-card').length`), 1);
@@ -59,8 +59,8 @@ app.whenReady().then(async () => {
     await js(`Array.from(document.querySelectorAll('.scenario-card')).find(el=>el.textContent.includes('GMメモ検証')).click()`); await delay(350);
     assert.ok(await js(`document.querySelector('.gm-note').innerText.includes('GMだけの秘密')`));
     await fs.writeFile(path.join(output, 'gm-note.png'), (await win.webContents.capturePage()).toPNG());
-    await win.setSize(1000, 800); await button('サイドバーを切り替え'); await delay(200);
-    assert.ok(await js(`document.querySelector('.main').getBoundingClientRect().width >= innerWidth - 1`));
+    await win.setSize(1000, 800); await button('目次を閉じる'); await delay(200);
+    assert.ok(await js(`document.querySelector('.main').getBoundingClientRect().width >= innerWidth - document.querySelector('.app-rail').getBoundingClientRect().width - 1`));
     assert.ok(await js(`document.documentElement.scrollWidth <= innerWidth`));
     await js(`(()=>{const data=new DataTransfer();data.items.add(new File([${JSON.stringify(doc.markdown)}],'gm-roundtrip.md',{type:'text/markdown'}));const input=document.querySelector('input[accept=".md,.markdown,.txt"]');input.files=data.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`); await delay(450);
     assert.ok(await js(`document.querySelector('.gm-note').innerText.includes('GMだけの秘密')`));
