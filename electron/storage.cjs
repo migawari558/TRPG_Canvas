@@ -93,7 +93,8 @@ async function save(folder, doc, baseRevision) {
   try { current = revision(await fs.readFile(dest, 'utf8')); } catch (e) { if (e.code !== 'ENOENT') throw e; }
   let conflict = current !== (baseRevision || null);
   if (conflict) {
-    doc = { ...doc, id: randomUUID(), title: `${doc.title}（競合コピー）` };
+    const { conflictCopy } = await import('./conflict-copy.mjs');
+    doc = conflictCopy(doc, randomUUID());
     dest = filePath(folder, doc.id);
   }
   const text = JSON.stringify(doc, null, 2);

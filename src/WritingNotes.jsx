@@ -8,7 +8,7 @@ import { markdown } from './export.mjs';
 import { ScenarioTaskItem } from './ScenarioTaskItem.js';
 import { serializeWritingNotes } from './writing-notes-markdown.mjs';
 
-export default function WritingNotes({ value, onChange, width, onWidth }) {
+export default function WritingNotes({ value, onChange, width, onWidth, headerAction }) {
   const drag = useRef(null), lastEmitted = useRef(value || ''), onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
   const editor = useEditor({
@@ -44,7 +44,7 @@ export default function WritingNotes({ value, onChange, width, onWidth }) {
   ] : [];
   return <aside className="writing-notes" style={{ width }}>
     <div className="notes-resizer" role="separator" aria-label="執筆メモの横幅" aria-orientation="vertical" aria-valuemin="190" aria-valuemax="520" aria-valuenow={Math.round(width)} tabIndex={0} onPointerDown={event => { drag.current = { x: event.clientX, width }; event.currentTarget.setPointerCapture(event.pointerId); document.body.classList.add('resizing-notes'); }} onKeyDown={event => { if (event.key === 'ArrowLeft') { event.preventDefault(); onWidth(Math.min(520, width + 20)); } if (event.key === 'ArrowRight') { event.preventDefault(); onWidth(Math.max(190, width - 20)); } }}/>
-    <div className="writing-notes-heading"><span><StickyNote size={15}/>執筆メモ</span><small>LIVE MARKDOWN</small></div>
+    <div className="writing-notes-heading"><span><StickyNote size={15}/>執筆メモ</span>{headerAction || <small>LIVE MARKDOWN</small>}</div>
     <p className="writing-notes-description">構想・TODOなど。書き出しには含まれません。</p>
     <div className="writing-notes-toolbar" role="toolbar" aria-label="執筆メモの書式">{controls.map(([Icon, label, syntax, action, active]) => <button key={label} type="button" className={active ? 'active' : ''} aria-label={label} aria-pressed={!!active} title={`${label.replace('執筆メモ：', '')}\n記法: ${syntax}`} onMouseDown={event => event.preventDefault()} onClick={action}><Icon size={13}/></button>)}</div>
     <EditorContent editor={editor} className="writing-notes-editor"/>

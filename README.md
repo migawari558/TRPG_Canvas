@@ -6,6 +6,8 @@ TRPGシナリオをローカルで執筆するデスクトップアプリです�
 
 配布者向けの設定と署名の手順は[配布ガイド](docs/DISTRIBUTION.md)を参照してください。
 
+Android版は[Androidリリース](https://github.com/migawari558/TRPG_Canvas/releases/tag/android-v0.1.0)のAPKを使用してください。[インストール・Drive連携・更新の案内](docs/ANDROID.md)を用意しています。Actions配布のデバッグ試作版から移行する場合は、端末の下書きをファイルへ保存してから入れ替えてください。
+
 ## 起動
 
 `release/TRPG Canvas 0.12.0.exe` がある場合は、ダブルクリックで起動できます（インストール不要）。
@@ -171,3 +173,7 @@ PDFでは連続する章・H1を同じ段に保ちます。空の段落は段頭
 話者名は開始行へ書きます。囲みの中では太字・斜体・改行など通常のMarkdownを使えます。
 
 執筆中は、空の行の先頭で `::コレット` と入力してスペースを押すだけでも同じセリフブロックに変換されます。話者名をあとから入力したい場合は `Ctrl+Shift+D`（Macは`Command+Shift+D`）を使います。
+
+## Android試作版
+
+Android版は `codex/android-editor` ブランチで開発しています。[Android Studioでの起動とGoogle Driveファイルの利用手順](docs/ANDROID.md)を参照してください。PC上のブラウザでは `npm run dev:mobile` でスマホ画面を試せます。

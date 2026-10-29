@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TRPG Canvas</string>
+    <string name="title_activity_main">TRPG Canvas</string>
+    <string name="package_name">jp.trpgcanvas.mobile</string>
+    <string name="custom_url_scheme">jp.trpgcanvas.mobile</string>
+</resources>
