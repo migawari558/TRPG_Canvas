@@ -49,7 +49,7 @@ Actionsの成果物は保存期限があります。これは正式公開リリ�
 
 設定の「更新を確認」は `android-vX.Y.Z` タグで公開済みのAndroidリリースとAPKを探します。PC版リリースや未公開の下書き、プレリリースは対象外です。更新があれば配布ページを開き、APKをダウンロードして上書きインストールします。無操作でのインストールは行いません。
 
-正式リリース用のワークフローは `.github/workflows/android-release.yml` です。公開前に管理者が長期保管する署名鍵を用意し、GitHub Actions secretsへ `ANDROID_KEYSTORE_BASE64`、`ANDROID_STORE_PASSWORD`、`ANDROID_KEY_ALIAS`、`ANDROID_KEY_PASSWORD` を設定してください。同じ鍵を全更新に使います。タグpushで署名APK付きの下書きリリースを作ります。確認後に公開するとアプリ側から検出できます。署名鍵の未設定時はリリースビルドを停止します。現在は正式版を公開していません。
+正式リリース用のワークフローは `.github/workflows/android-release.yml` です。公開前に管理者が長期保管する署名鍵を用意し、GitHub Actions secretsへ `ANDROID_KEYSTORE_BASE64`、`ANDROID_STORE_PASSWORD`、`ANDROID_KEY_ALIAS`、`ANDROID_KEY_PASSWORD` を設定してください。同じ鍵を全更新に使います。タグpushで署名APK付きの下書きリリースを作ります。確認後に公開するとアプリ側から検出できます。署名鍵の未設定時はリリースビルドを停止します。初回正式版は `android-v0.1.0` です。公開済みの版はGitHub Releasesで確認できます。
 
 デバッグ試作版と正式版は鍵が違うため、正式版へ移る際はファイルへ保存してから試作版を削除してください。
 
