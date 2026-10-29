@@ -1,5 +1,9 @@
 import { registerPlugin } from '@capacitor/core';
 export const ScenarioFiles = registerPlugin('ScenarioFiles');
+export function scenarioFileName(doc) {
+  if(!/^[a-zA-Z0-9-]{1,80}$/.test(doc.id))throw new Error('シナリオIDが不正です');
+  return `${doc.id}.trpg.json`;
+}
 
 export function parseScenario(text) {
   if (text.length > 20_000_000) throw new Error('ファイルが大きすぎます（20MBまで）');
