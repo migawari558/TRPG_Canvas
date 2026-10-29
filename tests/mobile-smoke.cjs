@@ -28,7 +28,8 @@ app.whenReady().then(async()=>{try{
  await js(`document.querySelector('.mobile-heading').click()`);assert.equal(await js(`!!document.querySelector('.mobile-drawer')`),false);
  await label('執筆メモを開く');assert.equal(await js(`document.querySelector('.mobile-drawer').classList.contains('notes')`),true);
  assert.equal(await js(`getComputedStyle(document.querySelector('.writing-notes-description')).display`),'none');
- assert.ok(await js(`parseFloat(getComputedStyle(document.querySelector('.mobile-drawer')).borderRadius)>=20`));
+ assert.ok(await js(`parseFloat(getComputedStyle(document.querySelector('.mobile-drawer')).borderTopLeftRadius)>=20`));
+ assert.ok(await js(`Math.abs(document.querySelector('.mobile-drawer').getBoundingClientRect().right-innerWidth)<2`));
  await fs.writeFile(path.join(output,'floating-notes.png'),(await win.webContents.capturePage()).toPNG());
  await label('パネルを閉じる');
  await js(`Array.from(document.querySelectorAll('.mobile-switchbar nav button')).find(button=>button.textContent==='フロー').click()`);
