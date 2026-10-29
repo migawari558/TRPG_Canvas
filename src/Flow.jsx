@@ -107,7 +107,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
 
   return <div className="flow-view" onKeyDown={event => { if (['Delete', 'Backspace'].includes(event.key) && !event.target.closest('input,textarea,select,[contenteditable="true"]') && selectionCount) { event.preventDefault(); deleteSelection(); } }}>
     <div className="flow-toolbar">
-      <div><strong>流れを組み立てて、シーンを書こう</strong><span>シーンをつなぎ、「本文を書く」から執筆。グループを選んで追加すると、その中に配置します。</span></div>
+      <div><strong>フローチャート</strong><span>シーンをつなぎ、「本文を書く」から執筆。グループを選んで追加すると、その中に配置します。</span></div>
       <div className="flow-actions">
         {selectedCardIds.length > 1 && <label className="bulk-group">まとめて移動<select aria-label="選択したカードをグループへ移動" value="" onChange={event => { moveSelection(event.target.value === '__outside' ? '' : event.target.value); }}><option value="" disabled>グループを選択</option><option value="__outside">グループの外</option>{bulkGroups.map(group => <option key={group.id} value={group.id}>{group.data.label}</option>)}</select></label>}
         <button disabled={!selectionCount} aria-label="選択したフローを削除" onClick={deleteSelection}><Trash2 size={16}/>選択を削除{selectionCount ? `（${selectionCount}）` : ''}</button>
@@ -143,7 +143,7 @@ export default function Flow({ flow, headings, onChange, onNavigate, onWrite }) 
         <Background color="#cbd4c9" gap={22} size={1}/><Controls showInteractive={false}/>
         <MiniMap nodeColor={node => node.type === 'sceneGroup' ? '#dbe5d7' : '#a6c2b0'} maskColor="rgba(244,246,240,.65)"/>
       </ReactFlow>
-      {!nodes.length && <div className="flow-empty"><Layers size={36}/><h3>まずは、物語の流れから</h3><p>シーンを追加して、点どうしをつないでみましょう。<br/>本文は、流れが決まってから書き始められます。</p></div>}
+      {!nodes.length && <div className="flow-empty"><Layers size={36}/><h3>シーンがありません</h3><p>シーンを追加し、接続点をドラッグしてつなげます。</p></div>}
       {item && <div className="flow-inspector">
         <div className="inspector-heading"><strong>{selected.type === 'node' ? 'シーンの編集' : 'つながりの編集'}</strong><button className="icon-button" aria-label="編集を閉じる" onClick={() => { setSelected(null); setSelection({ nodes: [], edges: [] }); }}><X size={17}/></button></div>
         <label>{selected.type === 'node' ? 'シーン名' : '条件・ラベル'}<input maxLength={100} value={selected.type === 'node' ? item.data.label : item.label || ''} onChange={event => selected.type === 'node' ? updateNode({ label: event.target.value }) : change({ edges: flow.edges.map(edge => edge.id === item.id ? { ...edge, label: event.target.value } : edge) })}/></label>

@@ -14,7 +14,7 @@ app.whenReady().then(async () => {
     win.webContents.on('console-message', event => { if (event.level === 'error') { errors.push(event.message); console.error(event.message); } });
     const js = code => win.webContents.executeJavaScript(code, true);
     const click = text => js(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent.trim()===${JSON.stringify(text)})?.click()`);
-    const flowTab = () => js(`Array.from(document.querySelectorAll('.view-tabs button')).find(b=>b.textContent.includes('フローチャート')).click()`);
+    const flowTab = () => js(`Array.from(document.querySelectorAll('.mode-switch button')).find(b=>b.textContent.includes('フロー')).click()`);
     await win.loadFile(path.resolve(__dirname, '../dist/index.html'), { query: { testStorage: '1' } }); await delay(1000);
     await js('localStorage.clear()'); win.webContents.reload(); await delay(1100);
     win.show(); win.focus(); await delay(200);
@@ -65,7 +65,7 @@ app.whenReady().then(async () => {
     await js(`document.querySelector('button[aria-label="グループを解除"]').click()`); await delay(400);
     assert.equal(await js(`document.querySelectorAll('.scene-group').length`), 0);
     assert.equal(await js(`document.querySelectorAll('.react-flow__node').length`), count);
-    await win.setSize(1000, 800); await click('シナリオ編集'); await delay(350);
+    await win.setSize(1000, 800); await click('本文'); await delay(350);
     assert.ok(await js(`getComputedStyle(document.querySelector('.outline-panel')).display !== 'none'`));
     await fs.writeFile(path.join(output, 'compact-editor.png'), (await win.webContents.capturePage()).toPNG());
     const { exportHtml } = await import('../src/export.mjs');

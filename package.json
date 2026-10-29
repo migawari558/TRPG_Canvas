@@ -39,7 +39,8 @@
     "test:pdf-page-sizes": "electron tests/pdf-page-sizes.cjs",
     "test:docx": "electron tests/docx-smoke.cjs",
     "dist:win": "npm run build && electron-builder --win nsis portable --x64 --publish never",
-    "dist:mac": "npm run build && node scripts/build-mac.cjs"
+    "dist:mac": "npm run build && node scripts/build-mac.cjs",
+    "test:design": "electron tests/design-smoke.cjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.6.10",
