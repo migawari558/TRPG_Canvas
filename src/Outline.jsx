@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, ChevronRight, ArrowUp, ArrowDown, Link2, Layers, ChevronsUp, ChevronsDown } from 'lucide-react';
 
-export default function Outline({ headings, content, activeHeading, onNavigate, onReorder, flow, onShowFlow }) {
+export default function Outline({ headings, content, activeHeading, onNavigate, onReorder, flow, onShowFlow, headerAction }) {
   const [collapsed, setCollapsed] = useState(new Set());
   useEffect(() => {
     const active = headings.find(heading => heading.id === activeHeading);
@@ -27,7 +27,7 @@ export default function Outline({ headings, content, activeHeading, onNavigate, 
   function toggle(id) { setCollapsed(current => { const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next; }); }
   return <aside className="outline-panel" aria-label="シナリオの目次">
     <div className="outline-fixed">
-      <div className="outline-title"><span>目次</span><span>{headings.length.toString().padStart(2, '0')}</span></div>
+      <div className="outline-title"><span>目次</span><span>{headings.length.toString().padStart(2, '0')}</span>{headerAction}</div>
       <div className="outline-bulk"><button disabled={!parents.size} onClick={() => setCollapsed(new Set(parents))}><ChevronsUp size={14}/>すべて閉じる</button><button disabled={!collapsed.size} onClick={() => setCollapsed(new Set())}><ChevronsDown size={14}/>すべて開く</button></div>
     </div>
     <div className="outline-list">

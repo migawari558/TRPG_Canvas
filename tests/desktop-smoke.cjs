@@ -22,7 +22,7 @@ app.whenReady().then(async () => {
     assert.ok(await js('!!window.canvas'));
     const updateInfo = await js('window.canvas.updateInfo()');
     assert.equal(updateInfo.currentVersion, require('../package.json').version);
-    await js(`Array.from(document.querySelectorAll('button')).find(button => button.textContent.includes('保存・同期')).click()`); await delay(150);
+    await js(`document.querySelector('[aria-label="保存・同期"]').click()`); await delay(150);
     assert.ok(await js(`document.querySelector('.update-card').textContent.includes(${JSON.stringify(require('../package.json').version)})`));
     await js(`document.querySelector('.modal-close').click()`);
     const info = await js('window.canvas.info()');
