@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { ArrowLeft, FileText, List, StickyNote, FolderOpen, Plus, Save, Settings2, X } from 'lucide-react';
 import ScenarioEditor, { serializeEditorMarkdown } from '../Editor.jsx';
@@ -24,18 +24,40 @@ export default function MobileApp() {
   const [deleteTarget,setDeleteTarget]=useState(null);
   useEffect(()=>{try{localStorage.setItem('trpg-mobile-design',JSON.stringify({...design,defaultsVersion:2}));}catch{setMessage('表示設定を保存できませんでした');}},[design]);
   const [reading, setReading] = useState(false);
+  const root=useRef(null),scrollFrame=useRef(null),scrollTarget=useRef(null),readingRef=useRef(false);
+  readingRef.current=reading;
   const lastScroll = useRef(0);
-  const scrollMotion=useRef({distance:0,until:0});
+  const scrollMotion=useRef({distance:0});
   function trackScroll(event) {
     if (!event.target.classList.contains('editor-scroll')) return;
-    const top = event.target.scrollTop, delta = top - lastScroll.current;
-    lastScroll.current = top;
-    const motion=scrollMotion.current;
-    if(performance.now()<motion.until)return;
-    motion.distance=Math.sign(delta)===Math.sign(motion.distance)?motion.distance+delta:delta;
-    if(top<16 || motion.distance < -35){setReading(false);motion.until=performance.now()+300;motion.distance=0;}
-    else if(motion.distance>35 && top>70){setReading(true);motion.until=performance.now()+300;motion.distance=0;}
+    scrollTarget.current=event.target;
+    if(scrollFrame.current!==null)return;
+    scrollFrame.current=requestAnimationFrame(()=>{
+      scrollFrame.current=null;
+      if(!scrollTarget.current?.isConnected)return;
+      const top=scrollTarget.current.scrollTop,delta=top-lastScroll.current,motion=scrollMotion.current;
+      lastScroll.current=top;
+      motion.distance=Math.sign(delta)===Math.sign(motion.distance)?motion.distance+delta:delta;
+      const next=top<16||motion.distance < -35?false:motion.distance>35&&top>70?true:readingRef.current;
+      if(next!==readingRef.current){readingRef.current=next;setReading(next);motion.distance=0;}
+    });
   }
+  useEffect(()=>()=>{if(scrollFrame.current!==null)cancelAnimationFrame(scrollFrame.current);},[]);
+  useLayoutEffect(()=>{
+    if(!entry||tab!=='editor')return;
+    const element=root.current;
+    const header=element.querySelector(':scope > .mobile-header'),switchbar=element.querySelector(':scope > .mobile-switchbar'),state=element.querySelector('.mobile-save-state'),source=element.querySelector('.mobile-file-source');
+    function measure(){
+      const headerHeight=header?.offsetHeight||0,switchHeight=switchbar?.offsetHeight||0,stateHeight=state?.offsetHeight||0;
+      element.style.setProperty('--mobile-header-height',`${headerHeight}px`);
+      element.style.setProperty('--mobile-meta-top',`${headerHeight+switchHeight}px`);
+      element.style.setProperty('--mobile-source-top',`${headerHeight+switchHeight+stateHeight}px`);
+      element.style.setProperty('--mobile-content-top',`${headerHeight+switchHeight+stateHeight+(source?.offsetHeight||0)}px`);
+    }
+    const observer=new ResizeObserver(measure);
+    [header,switchbar,state,source].filter(Boolean).forEach(node=>observer.observe(node));measure();
+    return()=>observer.disconnect();
+  },[entry?.key,!!entry?.uri,tab]);
   const [message, setMessage] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false), [headings, setHeadings] = useState([]);
   const current = useRef(null), editor = useRef(null), version = useRef(0), saved = useRef(0), timer = useRef(null), input = useRef(null), saving = useRef(Promise.resolve());
   const native = Capacitor.getPlatform() === 'android';
@@ -161,7 +183,7 @@ export default function MobileApp() {
     requestAnimationFrame(() => { const instance=editor.current; if(!instance || instance.isDestroyed)return; const target=outline(instance.getJSON()).find(h=>h.id===item.id); if(!target)return; instance.commands.setTextSelection(target.pos+1); instance.view.dom.children[target.index]?.scrollIntoView({block:'start'}); });
   }
   const doc=entry?.doc;
-  return <div className={`mobile-app ${reading && entry && tab==='editor' ? 'mobile-reading' : ''}`} data-theme={design.theme} style={{...themeVariables(design.theme),height:viewportHeight,'--editor-font-size':`${design.fontSize}px`,colorScheme:isDarkTheme(design.theme)?'dark':'light'}} onScrollCapture={trackScroll} onMouseDown={event=>{if(event.target.closest('.editor-toolbar button'))event.preventDefault();}}>
+  return <div ref={root} className={`mobile-app ${entry&&tab==='editor'?'mobile-editor-open':''} ${reading && entry && tab==='editor' ? 'mobile-reading' : ''}`} data-theme={design.theme} style={{...themeVariables(design.theme),height:viewportHeight,'--editor-font-size':`${design.fontSize}px`,colorScheme:isDarkTheme(design.theme)?'dark':'light'}} onScrollCapture={trackScroll} onMouseDown={event=>{if(event.target.closest('.editor-toolbar button'))event.preventDefault();}}>
     <header className="mobile-header">{entry ? <button aria-label="シナリオ一覧へ戻る" disabled={busy} onClick={()=>run(async()=>{await flushCurrent(); current.current=null; editor.current=null; setEntry(null); await refresh();})}><ArrowLeft size={21}/></button> : <FileText size={23}/>}<strong>{doc?.title || 'マイシナリオ'}</strong>{entry && <button disabled={busy} aria-label="元ファイルに保存" onClick={()=>run(saveFile)}><Save size={20}/></button>}{!entry && <button className="mobile-settings-open" aria-label="スマホの設定" onClick={()=>setSettingsOpen(true)}><Settings2 size={18}/><span>設定</span></button>}</header>
     {deleteTarget && <div className="mobile-drawer-shade" onClick={()=>setDeleteTarget(null)}><aside className="mobile-delete-dialog" role="dialog" aria-modal="true" aria-label="端末の下書きを削除" onClick={event=>event.stopPropagation()}><h2>下書きを削除しますか？</h2><p>「{deleteTarget.doc.title}」の端末内の下書きを削除します。Driveなどの元ファイルは削除しません。未反映の変更は失われます。</p><button disabled={busy} onClick={()=>setDeleteTarget(null)}>キャンセル</button><button disabled={busy} onClick={()=>run(async()=>{await syncRunning.current;await draftStore('delete',deleteTarget.key);setDeleteTarget(null);await refresh();})}>下書きを削除</button></aside></div>}
     {settingsOpen && <div className="mobile-drawer-shade" onClick={()=>setSettingsOpen(false)}><aside className="mobile-drawer notes mobile-settings" role="dialog" aria-modal="true" aria-label="スマホの設定" onClick={event=>event.stopPropagation()}><button className="mobile-drawer-close" aria-label="設定を閉じる" onClick={()=>setSettingsOpen(false)}><X size={20}/></button><section className="mobile-panel"><h1>設定</h1><h2>デザイン</h2><label className="mobile-setting">本文サイズ <output>{design.fontSize}px</output><input aria-label="スマホ本文サイズ" type="range" min="10" max="24" step="1" value={design.fontSize} onChange={event=>setDesign({...design,fontSize:Number(event.target.value)})}/></label><label className="mobile-setting">配色テーマ<select aria-label="スマホ配色テーマ" value={design.theme} onChange={event=>setDesign({...design,theme:event.target.value})}>{getThemes().map(theme=><option key={theme.id} value={theme.id}>{theme.name}</option>)}</select></label><div className="mobile-design-sample" style={{fontSize:design.fontSize}}>霧の向こうに、物語がある。<br/>探索者たちは灯台へ向かう。</div><h2>保存先</h2><p><strong>自動保存：この端末</strong><br/>本文・メモの下書きを端末内に保存します。</p><p><strong>ファイル保存：Drive・端末など</strong><br/>連携済みのファイルは入力後に自動保存し、保存時に競合を確認し、元ファイルの変更はシナリオを開き直した時に読み込みます。新規シナリオは右上のボタンで初回の保存先を選びます。</p><button className="mobile-primary" disabled={busy} onClick={()=>run(async()=>{setSettingsOpen(false);await pick();})}><FolderOpen size={17}/>保存先のファイルを開く</button><p>Driveアプリへログインし、ファイル選択画面でDriveを選んでください。固定の同期フォルダは使用しません。</p><button onClick={()=>setDesign({theme:'mono',fontSize:14})}>表示設定を初期値に戻す</button><h2>アプリの更新</h2><button className="mobile-primary" disabled={busy} onClick={()=>run(async()=>{if(!native){setUpdate({unreleased:true});return;}setUpdate(await ScenarioFiles.checkUpdate());})}>更新を確認</button>{update && <p>{update.unreleased?'Android正式版はまだ公開されていません。試作APKはGitHub Actionsから取得してください。':update.available?`新しいAndroid版 ${update.latest} があります。`:`現在のAndroid版 ${update.installed} は最新版です。`}</p>}{update?.available && <button className="mobile-primary" onClick={()=>run(()=>ScenarioFiles.openReleases())}>更新APKの配布ページを開く</button>}<p>正式版はAPKをダウンロード後、Androidの案内に従って上書きインストールします。</p></section></aside></div>}
@@ -169,7 +191,7 @@ export default function MobileApp() {
     {message && <div className="mobile-message" role="status">{message}<button aria-label="通知を閉じる" onClick={()=>setMessage('')}><X size={16}/></button></div>}
     {!entry ? <main className="mobile-library"><button className="mobile-primary" disabled={busy} onClick={()=>run(pick)}><FolderOpen size={19}/>Drive・端末から開く</button><button disabled={busy} onClick={()=>run(async()=>{const doc=newDocument(); const value={key:crypto.randomUUID(),doc};await draftStore('put',value);await open(value);})}><Plus size={18}/>新しいシナリオ</button><h2>端末の下書き</h2>{entries.map(value=><SwipeDraft key={value.key} value={value} onOpen={()=>run(()=>open(value))} onDelete={()=>setDeleteTarget(value)}/>)}{!entries.length&&<p>開いたシナリオは端末にも自動保存されます。</p>}<small>DriveはAndroidのファイル選択画面から選べます。連携したファイルへは自動保存し、開き直すと最新版を読み込みます。</small></main> : <>
       <div className="mobile-save-state">{dirty ? '端末に保存中…' : '端末に保存済み'}<span>{syncState==='syncing' ? '元ファイルと同期中…' : syncState==='error' ? '同期を再試行します' : !entry.uri ? '初回は右上で保存先を選択' : filePending ? '自動保存待ち' : 'ファイルへ保存済み · Drive反映待ちあり'}</span></div>{entry.uri && <div className="mobile-file-source" title={entry.uri}>保存先: {entry.name||'連携ファイル'} · {entry.provider||'選択したプロバイダー'}</div>}
-      <section className={`mobile-body ${tab==='editor'?'':'hidden'}`}><div className="mobile-title-row"><input className="mobile-title" aria-label="シナリオタイトル" value={doc.title} onChange={event=>changed({title:event.target.value})}/><button aria-label="シナリオ情報を編集" title="シナリオ情報" onClick={()=>setInfoOpen(true)}><Settings2 size={16}/></button></div><ScenarioEditor key={entry.key} doc={doc} onChange={changed} onEdit={()=>changed()} onReady={instance=>{editor.current=instance;if(instance)setHeadings(outline(instance.getJSON()));}}/></section>
+      <section className={`mobile-body ${tab==='editor'?'':'hidden'}`}><ScenarioEditor documentHeader={<div className="mobile-title-row"><input className="mobile-title" aria-label="シナリオタイトル" value={doc.title} onChange={event=>changed({title:event.target.value})}/><button aria-label="シナリオ情報を編集" title="シナリオ情報" onClick={()=>setInfoOpen(true)}><Settings2 size={16}/></button></div>} key={entry.key} doc={doc} onChange={changed} onEdit={()=>changed()} onReady={instance=>{editor.current=instance;if(instance)setHeadings(outline(instance.getJSON()));}}/></section>
       {infoOpen && <div className="mobile-drawer-shade" onClick={()=>setInfoOpen(false)}><aside className="mobile-drawer notes mobile-settings" role="dialog" aria-modal="true" aria-label="シナリオ情報" onClick={event=>event.stopPropagation()}><button className="mobile-drawer-close" aria-label="シナリオ情報を閉じる" onClick={()=>setInfoOpen(false)}><X size={20}/></button><section className="mobile-panel"><h1>シナリオ情報</h1>{[['title','シナリオ名'],['systemName','システム名'],['subtitle','シナリオの説明']].map(([key,label])=><label className="mobile-setting" key={key}>{label}<input type="text" aria-label={label} value={doc[key]||''} maxLength={key==='systemName'?80:200} onChange={event=>changed({[key]:event.target.value})}/></label>)}<p>変更は端末に自動保存します。Driveに連携済みなら元ファイルへ自動保存します。</p></section></aside></div>}
       {drawer && <div className={`mobile-drawer-shade ${drawer==='notes'?'notes-shade':''}`} onClick={()=>setDrawer(null)}><aside className={`mobile-drawer ${drawer}`} role="dialog" aria-modal="true" aria-label={drawer==='outline'?'目次':'執筆メモ'} onClick={event=>event.stopPropagation()} onKeyDown={event=>{if(event.key==='Escape')setDrawer(null);}}>{drawer==='outline'?<><button className="mobile-drawer-close" aria-label="パネルを閉じる" onClick={()=>setDrawer(null)}><X size={20}/></button><MobileOutline headings={headings} onNavigate={navigate}/></>:<WritingNotes value={doc.writingNotes||''} onChange={writingNotes=>changed({writingNotes})} width={320} onWidth={()=>{}} headerAction={<button className="mobile-drawer-close" aria-label="パネルを閉じる" onClick={()=>setDrawer(null)}><X size={20}/></button>}/>}</aside></div>}
       {tab==='flow'&&<section className="mobile-panel"><h1>フローチャート</h1><p>閲覧専用 · 横にスクロールして確認できます</p><div className="mobile-flow" dangerouslySetInnerHTML={{__html:flowSvg(doc.flow,headings,'mono')}}/>{doc.flow.nodes.filter(node=>node.data.headingId).map(node=><button className="mobile-heading" key={node.id} onClick={()=>navigate({id:node.data.headingId})}>{node.data.label} → 本文</button>)}</section>}
