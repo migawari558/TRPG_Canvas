@@ -24,6 +24,7 @@ jobs:
         with:
           packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
       - run: npm ci
+      - run: node --test tests/mobile-sync.test.cjs tests/mobile-compat.test.cjs
       - run: npm run android:sync
       - name: Prepare fixed release signing key
         env:
@@ -48,4 +49,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp android/app/build/outputs/apk/release/app-release.apk "TRPG-Canvas-${GITHUB_REF_NAME}.apk"
-          gh release create "$GITHUB_REF_NAME" "TRPG-Canvas-${GITHUB_REF_NAME}.apk" --verify-tag --draft --title "TRPG Canvas ${GITHUB_REF_NAME}" --notes 'Android版。APKをダウンロードし、Androidの案内に従ってインストールしてください。'
+          sha256sum "TRPG-Canvas-${GITHUB_REF_NAME}.apk" > SHA256SUMS.txt
+          gh release create "$GITHUB_REF_NAME" "TRPG-Canvas-${GITHUB_REF_NAME}.apk" SHA256SUMS.txt --verify-tag --draft --latest=false --title "TRPG Canvas ${GITHUB_REF_NAME}" --notes-file docs/ANDROID-RELEASE-NOTES.md

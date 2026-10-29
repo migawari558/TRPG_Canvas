@@ -6,6 +6,8 @@ TRPGシナリオをローカルで執筆するデスクトップアプリです�
 
 配布者向けの設定と署名の手順は[配布ガイド](docs/DISTRIBUTION.md)を参照してください。
 
+Android版は[Androidリリース](https://github.com/migawari558/TRPG_Canvas/releases/tag/android-v0.1.0)のAPKを使用してください。[インストール・Drive連携・更新の案内](docs/ANDROID.md)を用意しています。Actions配布のデバッグ試作版から移行する場合は、端末の下書きをファイルへ保存してから入れ替えてください。
+
 ## 起動
 
 `release/TRPG Canvas 0.12.0.exe` がある場合は、ダブルクリックで起動できます（インストール不要）。

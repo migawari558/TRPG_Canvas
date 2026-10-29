@@ -3,6 +3,7 @@ dist/
 release/
 *.log
 .test-output/
+.signing/
 
 # Local settings and scenario data
 .env
