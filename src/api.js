@@ -1,9 +1,10 @@
 import { newDocument, characterCount } from './model.mjs';
+import { Capacitor } from '@capacitor/core';
 const key = 'trpg-canvas-documents-v1';
 const testBrowserStorage = !window.canvas
   && navigator.userAgent.includes('Electron')
   && new URLSearchParams(window.location.search).get('testStorage') === '1';
-if (!window.canvas && !testBrowserStorage) {
+if (!window.canvas && !testBrowserStorage && Capacitor.getPlatform() !== 'android' && import.meta.env.MODE !== 'mobile') {
   throw new Error('TRPG Canvasはデスクトップアプリとして起動してください。');
 }
 const read = () => JSON.parse(localStorage.getItem(key) || '{}');

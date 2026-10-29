@@ -1,0 +1,6 @@
+{
+  "appId": "jp.trpgcanvas.mobile",
+  "appName": "TRPG Canvas",
+  "webDir": "dist",
+  "android": { "allowMixedContent": false }
+}

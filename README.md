@@ -171,3 +171,7 @@ PDFでは連続する章・H1を同じ段に保ちます。空の段落は段頭
 話者名は開始行へ書きます。囲みの中では太字・斜体・改行など通常のMarkdownを使えます。
 
 執筆中は、空の行の先頭で `::コレット` と入力してスペースを押すだけでも同じセリフブロックに変換されます。話者名をあとから入力したい場合は `Ctrl+Shift+D`（Macは`Command+Shift+D`）を使います。
+
+## Android試作版
+
+Android版は `codex/android-editor` ブランチで開発しています。[Android Studioでの起動とGoogle Driveファイルの利用手順](docs/ANDROID.md)を参照してください。PC上のブラウザでは `npm run dev:mobile` でスマホ画面を試せます。
