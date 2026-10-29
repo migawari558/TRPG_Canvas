@@ -134,9 +134,12 @@ export default function MobileApp() {
     return () => { document.removeEventListener('visibilitychange', hide); clearTimeout(timer.current); };
   }, []);
   async function run(action) { setBusy(true); setMessage(''); try { await action(); } catch(error) { setMessage(error.message); } finally { setBusy(false); } }
-  async function open(value) {
+  async function open(value,fresh=false) {
     await syncRunning.current;
-    await localSave();value=(await draftStore('list')).find(item=>item.key===value.key)||value; current.current = value; version.current = saved.current = 0; editor.current = null;
+    await localSave();
+    if(fresh)await draftStore('put',value);
+    else value=(await draftStore('list')).find(item=>item.key===value.key)||value;
+    current.current = value; version.current = saved.current = 0; editor.current = null;
     setEntry(value); setDirty(false); setTab('editor'); setDrawer(null); setReading(false); lastScroll.current=0; setHeadings(outline(value.doc.content));
     setFilePending(!value.uri || value.baseText!==JSON.stringify(value.doc));
     clearTimeout(syncTimer.current);syncTimer.current=setTimeout(()=>syncRef.current?.(),100);
@@ -150,7 +153,7 @@ export default function MobileApp() {
     const existing = (await draftStore('list')).find(item => item.key === key);
     if (existing && existing.baseText !== JSON.stringify(existing.doc) && !window.confirm('端末の下書きがあります。元ファイルを読み直しますか？キャンセルすると下書きを開きます。')) { await open(existing); return; }
     const value = { key, doc, uri: file.uri, hash: file.hash, name:file.name, provider:file.provider, baseText: JSON.stringify(doc) };
-    await draftStore('put', value); await open(value);
+    await open(value,true);
   }
   async function saveFile() {
     await syncRunning.current;
