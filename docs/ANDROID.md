@@ -31,6 +31,14 @@ npm run dev:mobile
 
 Google Drive専用のOAuth認証／自動同期ではなく、Android標準のStorage Access Frameworkを使う試作です。Drive提供機能の実機検証は別途必要です。PC版のファイル形式とフローのデータは保持します。
 
+## GitHubからスマホへ試作APKを入れる
+
+1. GitHubへログインし、リポジトリのActionsで「Build Android preview」の成功した実行を開きます。
+2. Artifactsの `TRPG-Canvas-Android-preview` をダウンロードしてZIPを展開します。中の `app-debug.apk` が試作用アプリです。
+3. AndroidでAPKを開き、ブラウザ／ファイルアプリからの「不明なアプリのインストール」を必要に応じて許可し、インストールします。
+
+Actionsの成果物は保存期限があります。これは正式公開リリースではなく開発用デバッグ版です。CIの実行ごとに署名鍵が変わるため、前の試作版へ上書きインストールできない場合があります。その場合、必要な下書きを元ファイルへ保存してから旧試作版をアンインストールしてください。PC版とは別アプリです。
+
 ## 検証
 
 `npm run test:mobile` でスマホ幅の本文編集、左右パネル、フローの閲覧専用、修飾バー位置、下書きの再読込を確認できます。これはElectronでWeb画面を検証するテストであり、AndroidのIME・ソフトキーボード・Drive書き込みの実機検証とは別です。
