@@ -9,6 +9,7 @@
     "android:sync": "npm run build && cap sync android",
     "android:open": "cap open android",
     "test:mobile": "vite build --mode mobile --outDir .test-output/mobile-dist && electron tests/mobile-smoke.cjs",
+    "test:mobile-sync": "vite build --mode mobile --outDir .test-output/mobile-dist && electron tests/mobile-auto-sync.cjs",
     "dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && electron . --dev\"",
     "build": "vite build",
     "start": "electron .",

@@ -8,7 +8,7 @@ export function scenarioFileName(doc) {
 export function parseScenario(text) {
   if (text.length > 20_000_000) throw new Error('ファイルが大きすぎます（20MBまで）');
   const doc = JSON.parse(text);
-  if (!doc || typeof doc.id !== 'string' || typeof doc.title !== 'string' || typeof doc.markdown !== 'string' || !Array.isArray(doc.flow?.nodes) || !Array.isArray(doc.flow?.edges)) throw new Error('TRPG Canvasのシナリオファイルを選んでください');
+  if (!doc || doc.version!==1 || typeof doc.id !== 'string' || typeof doc.title !== 'string' || typeof doc.markdown !== 'string' || !Array.isArray(doc.flow?.nodes) || !Array.isArray(doc.flow?.edges)) throw new Error('TRPG Canvasのシナリオファイルを選んでください');
   return doc;
 }
 

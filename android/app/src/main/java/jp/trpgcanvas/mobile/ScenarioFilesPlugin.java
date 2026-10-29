@@ -127,10 +127,15 @@ public class ScenarioFilesPlugin extends Plugin {
         io.execute(() -> {
             try {
                 Uri uri = Uri.parse(address);
-                if (!hash(read(uri)).equals(expected)) { call.reject("元ファイルがPCなどで変更されています。端末の下書きは残しています。元ファイルを開き直し、内容を比較してください。"); return; }
+                if (!hash(read(uri)).equals(expected)) { call.reject("元ファイルが変更されています", "CONFLICT"); return; }
                 save(call, uri, text);
             } catch (Exception error) { call.reject("保存できません。端末の下書きは残っています: " + error.getMessage()); }
         });
+    }
+    @PluginMethod public void readFile(PluginCall call) {
+        String address=call.getString("uri");
+        if(address==null || !address.startsWith("content://")){call.reject("保存先が不正です");return;}
+        io.execute(()->{try{Uri uri=Uri.parse(address);byte[] bytes=read(uri);call.resolve(source(uri).put("text",new String(bytes,StandardCharsets.UTF_8)).put("hash",hash(bytes)));}catch(Exception error){call.reject("同期を再試行します。端末の下書きは保持しています: "+error.getMessage());}});
     }
     private void save(PluginCall call, Uri uri, String text) throws Exception {
         byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
