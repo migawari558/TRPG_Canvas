@@ -34,5 +34,18 @@ app.whenReady().then(async()=>{try{
  await js(`document.querySelector('.mobile-document').click()`);await delay(200);
  assert.equal(await js(`document.querySelector('.mobile-title').value`),'スマホ下書き');
  assert.ok(await js(`!!document.querySelector('[aria-label="シナリオ本文"] strong')`));
+ const longDoc={id:'mobile-scroll-test',version:1,title:'スクロール確認',markdown:'# 導入\n\n'+Array(80).fill('スクロールしても、目次とメモを開けます。').join('\n\n'),updatedAt:new Date().toISOString(),flow:{nodes:[],edges:[]}};
+ await label('シナリオ一覧へ戻る');
+ await js(`(()=>{const transfer=new DataTransfer();transfer.items.add(new File([${JSON.stringify(JSON.stringify(longDoc))}],'test.trpg.json'));const input=document.querySelector('input[type=file][accept=".json,.trpg.json"]');input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(400);
+ const expanded=await js(`document.querySelector('.editor-scroll').clientHeight`);
+ await js(`document.querySelector('.editor-scroll').scrollTop=230`);await delay(250);
+ assert.equal(await js(`document.querySelector('.mobile-app').classList.contains('mobile-reading')`),true);
+ assert.ok(await js(`document.querySelector('.editor-scroll').clientHeight`)>expanded);
+ assert.ok(await js(`document.querySelector('[aria-label="目次を開く"]').getBoundingClientRect().width===document.querySelector('[aria-label="目次を開く"]').getBoundingClientRect().height`));
+ await label('執筆メモを開く');await label('パネルを閉じる');
+ assert.ok(await js(`document.querySelector('.editor-toolbar button').getBoundingClientRect().width<=29`));
+ await fs.writeFile(path.join(output,'reading.png'),(await win.webContents.capturePage()).toPNG());
+ await js(`document.querySelector('.editor-scroll').scrollTop=30`);await delay(200);
+ assert.equal(await js(`document.querySelector('.mobile-app').classList.contains('mobile-reading')`),false);
  assert.deepEqual(errors,[]);console.log('PASS: mobile drawers, view-only flow, formatting above keyboard viewport, draft persistence');app.exit(0);
 }catch(error){console.error(error);app.exit(1);}});

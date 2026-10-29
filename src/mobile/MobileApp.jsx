@@ -11,6 +11,16 @@ import { ScenarioFiles, draftStore, parseScenario } from './files.mjs';
 export default function MobileApp() {
   const [entries, setEntries] = useState([]), [entry, setEntry] = useState(null), [tab, setTab] = useState('editor');
   const [drawer, setDrawer] = useState(null);
+  const [reading, setReading] = useState(false);
+  const lastScroll = useRef(0);
+  function trackScroll(event) {
+    if (!event.target.classList.contains('editor-scroll')) return;
+    const top = event.target.scrollTop, delta = top - lastScroll.current;
+    if (top < 16) setReading(false);
+    else if (delta > 12 && top > 70) setReading(true);
+    else if (delta < -12) setReading(false);
+    lastScroll.current = top;
+  }
   const [message, setMessage] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false), [headings, setHeadings] = useState([]);
   const current = useRef(null), editor = useRef(null), version = useRef(0), saved = useRef(0), timer = useRef(null), input = useRef(null), saving = useRef(Promise.resolve());
   const native = Capacitor.getPlatform() === 'android';
@@ -53,7 +63,7 @@ export default function MobileApp() {
   async function run(action) { setBusy(true); setMessage(''); try { await action(); } catch(error) { setMessage(error.message); } finally { setBusy(false); } }
   async function open(value) {
     await localSave(); current.current = value; version.current = saved.current = 0; editor.current = null;
-    setEntry(value); setDirty(false); setTab('editor'); setDrawer(null); setHeadings(outline(value.doc.content));
+    setEntry(value); setDirty(false); setTab('editor'); setDrawer(null); setReading(false); lastScroll.current=0; setHeadings(outline(value.doc.content));
   }
   async function pick() {
     await localSave();
@@ -76,11 +86,11 @@ export default function MobileApp() {
     current.current=next; setEntry(next); await localSave(); setMessage('元ファイルへ保存しました。Drive側の同期完了を確認してください。');
   }
   function navigate(item) {
-    setTab('editor'); setDrawer(null);
+    setTab('editor'); setDrawer(null); setReading(false);
     requestAnimationFrame(() => { const instance=editor.current; if(!instance || instance.isDestroyed)return; const target=outline(instance.getJSON()).find(h=>h.id===item.id); if(!target)return; instance.commands.setTextSelection(target.pos+1); instance.view.dom.children[target.index]?.scrollIntoView({block:'start'}); });
   }
   const doc=entry?.doc;
-  return <div className="mobile-app" style={{...themeVariables('mono'),height:viewportHeight}} onMouseDown={event=>{if(event.target.closest('.editor-toolbar button'))event.preventDefault();}}>
+  return <div className={`mobile-app ${reading && entry && tab==='editor' ? 'mobile-reading' : ''}`} style={{...themeVariables('mono'),height:viewportHeight}} onScrollCapture={trackScroll} onMouseDown={event=>{if(event.target.closest('.editor-toolbar button'))event.preventDefault();}}>
     <header className="mobile-header">{entry ? <button aria-label="シナリオ一覧へ戻る" disabled={busy} onClick={()=>run(async()=>{await localSave(); current.current=null; editor.current=null; setEntry(null); await refresh();})}><ArrowLeft size={21}/></button> : <FileText size={23}/>}<strong>{doc?.title || 'マイシナリオ'}</strong>{entry && <button disabled={busy} aria-label="元ファイルに保存" onClick={()=>run(saveFile)}><Save size={20}/></button>}</header>
     {entry && <div className="mobile-switchbar"><button className="mobile-pill" aria-label="目次を開く" aria-expanded={drawer==='outline'} onClick={()=>{if(editor.current)setHeadings(outline(editor.current.getJSON()));setDrawer(drawer==='outline'?null:'outline');}}><List size={18}/></button><nav aria-label="スマホ編集モード">{[['editor','本文'],['flow','フロー']].map(([id,label])=><button key={id} aria-pressed={tab===id} onClick={()=>{setTab(id);setDrawer(null);}}>{label}</button>)}</nav><button className="mobile-pill" aria-label="執筆メモを開く" aria-expanded={drawer==='notes'} onClick={()=>setDrawer(drawer==='notes'?null:'notes')}><StickyNote size={18}/></button></div>}
     {message && <div className="mobile-message" role="status">{message}<button aria-label="通知を閉じる" onClick={()=>setMessage('')}><X size={16}/></button></div>}
