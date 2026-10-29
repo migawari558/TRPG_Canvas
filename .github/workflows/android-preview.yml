@@ -2,7 +2,7 @@ name: Build Android preview
 on:
   workflow_dispatch:
   push:
-    branches: [codex/android-editor]
+    branches: ['codex/android-*']
 permissions:
   contents: read
 jobs:
