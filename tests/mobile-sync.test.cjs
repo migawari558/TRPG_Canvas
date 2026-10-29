@@ -18,23 +18,23 @@ test('local editing automatically writes using the last remote revision',async()
 });
 test('PC-only changes are pulled without overwriting the remote file',async()=>{
  const remote={...base,markdown:'PCの本文',flow:{nodes:[],edges:[]},writingNotes:'PCのメモ'};
- const {result,writes}=await sync(entry(),{doc:remote,hash:'pc'});
+ const {result,writes}=await sync(entry(),{doc:remote,hash:'pc'},{mode:'open'});
  assert.equal(result.action,'pulled');assert.deepEqual(result.entry.doc,remote);assert.equal(writes.length,0);
 });
-test('both edited: preserve mobile as a distinct conflict copy and adopt PC original',async()=>{
+test('both edited: preserve mobile as a distinct conflict copy and continue editing it like desktop',async()=>{
  const local={...base,markdown:'スマホの編集'},remote={...base,markdown:'PCの編集'};
  const {result,writes}=await sync(entry(local),{doc:remote,hash:'pc'});
- assert.equal(result.action,'conflict');assert.equal(result.copy.doc.markdown,local.markdown);assert.match(result.copy.doc.title,/競合コピー/);assert.notEqual(result.copy.doc.id,base.id);assert.equal(result.copy.uri,undefined);assert.equal(result.entry.doc.markdown,remote.markdown);assert.equal(writes.length,0);
+ assert.equal(result.action,'conflict');assert.equal(result.copy.doc.markdown,local.markdown);assert.match(result.copy.doc.title,/競合コピー/);assert.notEqual(result.copy.doc.id,base.id);assert.equal(result.copy.uri,undefined);assert.equal(result.entry.doc.markdown,local.markdown);assert.equal(result.original.doc.markdown,remote.markdown);assert.equal(writes.length,0);
 });
-test('same content with a changed provider revision simply rebases',async()=>{
+test('changed revision conflicts on save even if text is identical, matching desktop',async()=>{
  const local={...base,markdown:'反映済み'};const {result,writes}=await sync(entry(local),{doc:local,hash:'echo'});
- assert.equal(result.action,'unchanged');assert.equal(result.entry.hash,'echo');assert.equal(result.entry.baseText,JSON.stringify(local));assert.equal(writes.length,0);
+ assert.equal(result.action,'conflict');assert.equal(result.original.hash,'echo');assert.equal(writes.length,0);
 });
-test('provider temporarily returning a superseded revision cannot roll back a successful save',async()=>{
+test('save without local edits never reads or pulls external changes',async()=>{
  const local={...base,markdown:'保存済みの新しい本文'};
  const {result:written}=await sync(entry(local),{doc:base,hash:'old'});
- const {result,writes}=await sync(written.entry,{doc:base,hash:'old'});
- assert.equal(result.action,'postponed');assert.equal(result.entry.doc.markdown,local.markdown);assert.equal(writes.length,0);
+ let reads=0;const {result,writes}=await sync(written.entry,{doc:base,hash:'pc'},{read:async()=>{reads++;throw new Error('must not read');}});
+ assert.equal(result.action,'unchanged');assert.equal(result.entry.doc.markdown,local.markdown);assert.equal(writes.length,0);assert.equal(reads,0);
 });
 test('typing or changing scenes during remote read postpones synchronization',async()=>{
  const {result,writes}=await sync(entry({...base,markdown:'入力中'}),{doc:base,hash:'old'},{canApply:()=>false});
@@ -49,8 +49,13 @@ test('PC changes between read and write become a conflict copy on retry',async()
  let reads=0;
  const local={...base,markdown:'スマホ'},remote={...base,markdown:'直前のPC編集'};
  const {result}=await sync(entry(local),{doc:base,hash:'old'},{read:async()=>({hash:++reads===1?'old':'pc',text:JSON.stringify(reads===1?base:remote)}),write:async()=>{throw Object.assign(new Error('changed'),{code:'CONFLICT'});}});
- assert.equal(result.action,'conflict');assert.equal(result.copy.doc.markdown,local.markdown);assert.equal(result.entry.doc.markdown,remote.markdown);
+ assert.equal(result.action,'conflict');assert.equal(result.copy.doc.markdown,local.markdown);assert.equal(result.entry.doc.markdown,local.markdown);assert.equal(result.original.doc.markdown,remote.markdown);
 });
 test('unlinked drafts never open a file picker from automatic synchronization',async()=>{
  const value={...entry(),uri:null};const {result,writes}=await sync(value,{doc:base,hash:'old'},{read:()=>{throw new Error('must not read');}});assert.equal(result.action,'unlinked');assert.equal(writes.length,0);
+});
+test('an unreadable externally changed original still produces a conflict copy like desktop',async()=>{
+ const local={...base,markdown:'保護すべき本文'};
+ const {result,writes}=await sync(entry(local),{doc:base,hash:'broken'},{parse:()=>{throw new Error('invalid JSON');}});
+ assert.equal(result.action,'conflict');assert.equal(result.entry.doc.markdown,local.markdown);assert.equal(result.original,undefined);assert.equal(writes.length,0);
 });
