@@ -43,6 +43,15 @@
 .app .editor-toolbar button.active { background: var(--theme-soft); color: var(--theme-accent); }
 .app .toolbar-label, .app .markdown-badge, .app .paper-eyebrow, .app .paper-end { display: none; }
 .app .editor-scroll { padding: 20px 24px 32px; }
+.app .editor-area:not(:has(.find-bar, .image-size-toolbar, .image-status, .image-error)) .editor-toolbar {
+  position: relative;
+  z-index: 1;
+  margin-bottom: -18px;
+}
+.app .editor-area:not(:has(.find-bar, .image-size-toolbar, .image-status, .image-error)) .editor-scroll {
+  padding-top: 8px;
+  scroll-padding-top: 24px;
+}
 .app .paper { border-radius: 16px; border: 1px solid var(--theme-border); box-shadow: 0 4px 20px #00000008; padding: 32px 40px; }
 .app .writing-notes { margin: 4px 16px 16px 0; border: 1px solid var(--theme-border); border-radius: 16px; background: var(--theme-paper); }
 .app .writing-notes-description, .app .writing-notes-heading > small { display: none; }

@@ -31,6 +31,12 @@ app.whenReady().then(async () => {
       assert.ok(await js(`document.querySelector('.outline-list').getBoundingClientRect().height > 0`));
       assert.ok(await js(`(()=>{const t=document.querySelector('.editor-toolbar').getBoundingClientRect(),p=document.querySelector('.editor-area').getBoundingClientRect();return t.left>p.left&&t.right<p.right&&t.height>0})()`));
       assert.equal(await js(`getComputedStyle(document.querySelector('.editor-toolbar')).backgroundColor`), await js(`getComputedStyle(document.querySelector('.paper')).backgroundColor`));
+      assert.ok(await js(`(() => {
+        const toolbar = document.querySelector('.editor-toolbar').getBoundingClientRect();
+        const paper = document.querySelector('.paper').getBoundingClientRect();
+        const content = document.querySelector('.paper').firstElementChild.getBoundingClientRect();
+        return toolbar.top < paper.top && toolbar.bottom > paper.top && toolbar.bottom < content.top;
+      })()`), 'Toolbar overlaps the paper edge without covering the content');
       assert.ok(await js(`document.documentElement.scrollWidth<=innerWidth`));
       await fs.writeFile(path.join(output, `${theme.id}.png`), (await win.webContents.capturePage()).toPNG());
     }
