@@ -99,6 +99,6 @@ test('HTML escapes executable input, includes optional copy controls and flow', 
   assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
   const plain = exportHtml(doc, { copyButtons: false, includeFlow: false });
   assert.ok(!plain.includes('<script>'));
-  assert.ok(!plain.includes('<svg'));
+  assert.ok(!plain.includes('aria-label="シナリオのフローチャート"'));
   assert.ok(!plain.includes('class="copy-button"'));
 });

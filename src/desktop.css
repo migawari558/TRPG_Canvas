@@ -74,26 +74,34 @@
 .app .top-ui-toggle span { display: none; }
 .app .export-button { border: 1px solid var(--theme-border); background: var(--theme-paper); color: var(--theme-text); }
 .app .save-state { font-size: calc(11px * var(--ui-scale)); color: var(--theme-muted); }
-.app .view-tabs { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 16px; min-height: 52px; padding: 8px 24px; border: 0; }
+.app .document-stage { position: relative; display: flex; flex: 1; min-height: 0; }
+.app .view-tabs { position: absolute; top: 8px; left: 24px; right: calc(88px + 48px * var(--ui-scale)); z-index: 6; display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 0; border: 0; background: transparent; pointer-events: none; }
+.app .view-tabs > * { pointer-events: auto; }
+.app .left-mode-controls { display: flex; align-items: center; flex: none; gap: 4px; }
+.app .format-toolbar-slot { display: flex; flex: 0 1 auto; min-width: 0; }
+.app .format-toolbar-slot[hidden] { display: none; }
 .app .view-tabs > button, .app .outline-switch { min-height: 32px; padding: 4px 12px; border: 1px solid transparent; border-radius: var(--control-radius); background: transparent; color: var(--theme-muted); font-size: calc(12px * var(--ui-scale)); }
 .app .outline-switch-slot { display: flex; }
 .app .outline-switch[hidden] { display: none; }
 .app .mode-switch { display: flex; gap: 4px; padding: 4px; border: 1px solid var(--theme-border); border-radius: 8px; background: var(--theme-panel); }
-.app .mode-switch button { min-height: 28px; padding: 4px 20px; gap: 8px; border-radius: 4px; font-size: calc(12px * var(--ui-scale)); color: var(--theme-muted); }
-.app .mode-switch button.active { background: var(--theme-paper); color: var(--theme-text); box-shadow: 0 1px 3px #0000000a; }
+.app .mode-switch button { min-height: 28px; padding: 4px 12px; gap: 8px; border: 0; border-radius: 4px; background: transparent; font-size: calc(12px * var(--ui-scale)); color: var(--theme-muted); }
+.app .mode-switch button.active { background: var(--theme-paper); color: var(--theme-text); box-shadow: none; }
 .app .mode-switch button span { font-size: calc(11px * var(--ui-scale)); color: var(--theme-muted); }
-.app .view-tabs .notes-toggle { margin-left: auto; font-weight: 400; }
-.app .view-tabs .notes-toggle.open { background: var(--theme-soft); color: var(--theme-accent); }
+.app .document-stage > .notes-toggle { position: absolute; top: 8px; right: 24px; z-index: 6; min-height: 36px; padding: 6px 12px; border: 1px solid var(--theme-border); border-radius: 6px; background: var(--theme-paper); color: var(--theme-muted); font-size: calc(12px * var(--ui-scale)); font-weight: 400; white-space: nowrap; }
+.app .document-stage > .notes-toggle.open { background: var(--theme-soft); color: var(--theme-accent); }
 .app .view-tabs button::after { display: none; }
 .app .work-area { position: relative; }
-.app .editor-area { background: var(--theme-bg); }
+.app .editor-area { position: relative; background: var(--theme-bg); }
+.app .editor-controls { position: absolute; top: 64px; left: 0; right: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.app .editor-controls > * { pointer-events: auto; }
+.app .editor-controls > :is(.find-bar, .image-size-toolbar, .image-status, .image-error) { width: calc(100% - 48px); border: 1px solid var(--theme-border); border-radius: 6px; }
 .app .editor-toolbar {
   position: relative;
   z-index: 1;
   align-self: center;
   max-width: calc(100% - 48px);
   min-height: 38px;
-  margin: 4px 24px 0;
+  margin: 0 24px;
   padding: 2px 8px;
   gap: 2px;
   border: 1px solid var(--theme-border);
@@ -105,11 +113,10 @@
 .app .editor-toolbar button svg { width: 16px; height: 16px; }
 .app .editor-toolbar button.active { background: var(--theme-soft); color: var(--theme-accent); }
 .app .editor-toolbar::-webkit-scrollbar { height: 4px; }
+.app .format-toolbar-slot .editor-toolbar { flex: 0 1 auto; width: max-content; min-width: 0; max-width: 100%; align-self: auto; margin: 0; padding: 2px 8px; border: 1px solid var(--theme-border); border-radius: 8px; background: var(--theme-paper); box-shadow: 0 3px 12px #00000014; }
 .app .toolbar-divider, .app .toolbar-label, .app .markdown-badge { display: none; }
-.app .editor-scroll { padding: 24px 32px 40px; scroll-padding-top: 32px; }
-.app .editor-area:not(:has(.find-bar, .image-size-toolbar, .image-status, .image-error)) .editor-toolbar { margin-bottom: -16px; }
-.app .editor-area:not(:has(.find-bar, .image-size-toolbar, .image-status, .image-error)) .editor-scroll { padding-top: 8px; }
-.app .paper { max-width: 880px; padding: 48px 56px; border: 1px solid var(--theme-border); border-radius: 4px; box-shadow: 0 2px 8px #00000004; }
+.app .editor-scroll { padding: 0 32px 40px; scroll-padding-top: calc(var(--editor-controls-height, 38px) + 80px); }
+.app .paper { max-width: 880px; padding: calc(var(--editor-controls-height, 38px) + 88px) 56px 48px; border: 1px solid var(--theme-border); border-top: 0; border-radius: 0 0 4px 4px; box-shadow: 0 2px 8px #00000004; }
 .app .document-header { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 24px; padding: 16px 24px; margin: 0; border-bottom: 1px solid var(--theme-border); background: transparent; }
 .app .title-input { display: block; flex: 1 1 240px; width: auto; min-width: 160px; padding: 0; font-size: calc(24px * var(--ui-scale)); font-weight: 500; line-height: 1.5; letter-spacing: .02em; }
 .app .document-subline { gap: 8px; margin-top: 0; font-size: calc(11px * var(--ui-scale)); color: var(--theme-muted); line-height: 1.8; }
@@ -125,7 +132,8 @@
 .app .tiptap blockquote::before { display: none; }
 .app .tiptap .gm-note { padding: 32px 20px 16px; border-radius: 4px; background-image: none; }
 .app .tiptap .gm-note::before { content: 'GMメモ'; left: 20px; top: 12px; letter-spacing: 0; }
-.app .writing-notes { margin: 0; padding: 20px 16px 16px; border: 0; border-left: 1px solid var(--theme-border); border-radius: 0; background: var(--theme-panel); }
+.app .writing-notes { margin: 0; padding: 68px 16px 16px; border: 0; border-left: 1px solid var(--theme-border); border-radius: 0; background: var(--theme-panel); }
+.app .flow-view { margin-top: 56px; }
 .app .writing-notes-heading > span { gap: 8px; font-size: calc(12px * var(--ui-scale)); font-weight: 500; }
 .app .writing-notes-description, .app .writing-notes-heading > small { display: none; }
 .app .notes-close { color: var(--theme-muted); }
@@ -166,7 +174,7 @@
   .app.sidebar-hidden { grid-template-columns: 56px 0 minmax(0, 1fr); }
   .app .topbar { padding-left: 16px; padding-right: 16px; }
   .app .breadcrumb strong { max-width: 140px; }
-  .app .paper { padding: 40px 32px; }
+  .app .paper { padding: calc(var(--editor-controls-height, 38px) + 80px) 32px 40px; }
   .app .editor-scroll { padding-left: 20px; padding-right: 20px; }
   .app .dashboard { padding: 32px; }
 }
@@ -180,10 +188,10 @@
   .app .topbar { padding: 4px 12px; }
   .app .topbar-actions { gap: 4px; }
   .app .breadcrumb { display: none; }
-  .app .view-tabs { padding-left: 12px; padding-right: 12px; gap: 4px; }
+  .app .view-tabs { left: 12px; right: 64px; gap: 8px; }
   .app .mode-switch button { padding: 4px 12px; }
-  .app .view-tabs .notes-toggle { font-size: 0; padding: 4px 8px; }
-  .app .paper { padding: 36px 24px; }
+  .app .document-stage > .notes-toggle { right: 12px; font-size: 0; padding: 6px 10px; }
+  .app .paper { padding: calc(var(--editor-controls-height, 38px) + 80px) 24px 36px; }
   .app .editor-scroll { padding-left: 12px; padding-right: 12px; }
   .app .title-input { font-size: calc(24px * var(--ui-scale)); }
   .app .dashboard { padding: 24px; }

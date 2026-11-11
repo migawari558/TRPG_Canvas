@@ -14,7 +14,7 @@ test('GM note Markdown renders rich text without exposing its marker', async () 
   assert.ok(!html.includes('[!GM]'));
   assert.equal((html.match(/<aside /g) || []).length, (html.match(/<\/aside>/g) || []).length);
   const exported = exportHtml(newDocument('GMテスト', source));
-  assert.ok(exported.includes('repeating-linear-gradient'));
+  assert.ok(exported.includes("content:'GMメモ'"));
   assert.ok(exported.includes('class="gm-note"'));
 });
 

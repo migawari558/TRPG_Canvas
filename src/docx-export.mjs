@@ -4,7 +4,8 @@ import {
   UnderlineType, VerticalAlign, WidthType
 } from 'docx';
 import { flowSvg } from './export.mjs';
-import { normalizeDesign, getTheme } from './themes.mjs';
+import { normalizeDesign } from './themes.mjs';
+import { documentTheme } from './desktop-themes.mjs';
 import { normalizeImageWidth } from './image-size.mjs';
 import { outline } from './model.mjs';
 
@@ -21,7 +22,7 @@ const noBorders = { top: noneBorder, bottom: noneBorder, left: noneBorder, right
 const dataBytes = source => Uint8Array.from(atob(source.slice(source.indexOf(',') + 1)), character => character.charCodeAt(0));
 
 function typography(options) {
-  const design = normalizeDesign(options), theme = getTheme(design.theme);
+  const design = normalizeDesign(options), theme = documentTheme(design.theme);
   const body = wordFont(design.fontFamily, 'Yu Gothic'), themeHeading = theme.serif ? 'Yu Mincho' : body;
   const choose = (value, fallback) => value === 'body' ? body : wordFont(value, fallback);
   return {
@@ -108,7 +109,7 @@ async function blocks(nodes, context, depth = 0) {
         result.push(...await blocks(rest, context, depth + 1));
       }
     } else if (node.type === 'gmNote') {
-      const children = [new Paragraph({ children: [new TextRun({ text: 'GM MEMO', bold: true, font: context.fonts.body, size: Math.max(14, context.bodySize - 5), color: context.colors.accent })], spacing: { after: 100 } }), ...await blocks(node.content, context)];
+      const children = [new Paragraph({ children: [new TextRun({ text: 'GMメモ', bold: true, font: context.fonts.body, size: Math.max(14, context.bodySize - 5), color: context.colors.accent })], spacing: { after: 100 } }), ...await blocks(node.content, context)];
       result.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, borders: { ...noBorders, left: { style: BorderStyle.SINGLE, color: context.colors.accent, size: 20 } }, rows: [new TableRow({ cantSplit: true, children: [new TableCell({ children, shading: { type: ShadingType.CLEAR, fill: context.colors.note, color: 'auto' }, margins: { top: 160, bottom: 160, left: 220, right: 220 }, verticalAlign: VerticalAlign.CENTER })] })] }));
       result.push(new Paragraph({ spacing: { after: 80 } }));
     } else if (node.type === 'dialogue') {
@@ -137,7 +138,7 @@ export async function exportDocx(doc, options = {}) {
   const bodyChildren = await blocks(doc.content?.content || [], context);
   const systemName = String(doc.systemName || '').trim();
   const titleChildren = [
-    new Paragraph({ children: [new TextRun({ text: `${systemName ? `${systemName} / ` : ''}SCENARIO`, font: body, size: Math.max(14, bodySize - 6), color: colors.accent, allCaps: true })], spacing: { after: 100 } }),
+    ...(systemName ? [new Paragraph({ children: [new TextRun({ text: systemName, font: body, size: Math.max(14, bodySize - 6), color: colors.accent })], spacing: { after: 100 } })] : []),
     new Paragraph({ text: doc.title || '無題のシナリオ', style: 'Title' }),
     ...(doc.subtitle ? [new Paragraph({ children: [new TextRun({ text: doc.subtitle, font: body, size: bodySize, color: colors.muted })], spacing: { after: 260 } })] : []),
     new Paragraph({ text: '目次', heading: HeadingLevel.HEADING_1, keepNext: true }),
@@ -149,13 +150,14 @@ export async function exportDocx(doc, options = {}) {
     ? [{ properties: baseProperties, children: titleChildren }, { properties: { ...baseProperties, type: SectionType.CONTINUOUS, column: { count: 2, space: twips(gap), equalWidth: true } }, children: bodyChildren }]
     : [{ properties: baseProperties, children: [...titleChildren, ...bodyChildren] }];
   if (options.includeFlow !== false && doc.flow?.nodes?.length && typeof document !== 'undefined') {
-    const flow = await svgPng(flowSvg(doc.flow, outline(doc.content), design.theme), usableWidth * 96 / 25.4, (page.height - margin * 2) * 96 / 25.4);
+    const flow = await svgPng(flowSvg(doc.flow, outline(doc.content), design.theme, theme.colors), usableWidth * 96 / 25.4, (page.height - margin * 2) * 96 / 25.4);
     sections.push({ properties: { ...baseProperties, type: SectionType.NEXT_PAGE }, children: [
       new Paragraph({ text: 'シナリオフロー', heading: HeadingLevel.HEADING_1, keepNext: true }),
       new Paragraph({ children: [new ImageRun({ type: 'png', data: flow.bytes, transformation: { width: flow.width, height: flow.height }, altText: { title: 'シナリオフロー', description: 'シナリオのフローチャート', name: 'シナリオフロー' } })], alignment: AlignmentType.CENTER })
     ] });
   }
   const file = new Document({
+    background: { color: colors.paper },
     title: doc.title || '無題のシナリオ', subject: 'TRPGシナリオ', creator: '', lastModifiedBy: '', features: { updateFields: true },
     styles: { default: {
       document: { run: { font: body, size: bodySize, color: colors.text }, paragraph: { spacing: { line: 360, after: 0 } } },

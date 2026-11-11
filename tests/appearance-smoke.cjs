@@ -48,7 +48,7 @@ app.whenReady().then(async () => {
   await range('書き出しの文字サイズ',7);await delay(100);
   assert.ok(await js(`document.querySelector('iframe').srcdoc.includes('font-size:7px')`));
   await range('書き出しの文字サイズ',20);await delay(250);
-  assert.ok(await js(`document.querySelector('iframe').srcdoc.includes('font-size:20px') && document.querySelector('iframe').srcdoc.includes('background:#fff6e5')`));
+  assert.ok(await js(`document.querySelector('iframe').srcdoc.includes('font-size:20px') && document.querySelector('iframe').srcdoc.includes('background:#fbf8f0')`));
   assert.ok(await js(`document.querySelector('iframe').srcdoc.includes(${JSON.stringify(`font-family:"${installedFont}"`)})`));
   assert.ok(await js(`document.querySelector('iframe').srcdoc.includes(${JSON.stringify(`h1,h2,h3{font-family:"${headingFont}"`)})`));
   assert.ok(await js(`document.querySelector('iframe').srcdoc.includes(${JSON.stringify(`.dialogue-speaker{font-family:"${dialogueFont}"`)})`));

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Check, RefreshCw, RotateCcw } from 'lucide-react';
-import { themes, getThemes, getTheme, getCustomTheme, normalizeFontFamily, previewCustomTheme, saveCustomTheme, removeCustomTheme, themeVariables, defaultAppearance } from './themes.mjs';
+import { desktopThemeVariables } from './desktop-themes.mjs';
+import { themes, getThemes, getTheme, getCustomTheme, normalizeFontFamily, previewCustomTheme, saveCustomTheme, removeCustomTheme, defaultAppearance } from './themes.mjs';
 
 export function ThemePicker({ value, onChange, label = 'テーマ' }) {
   const [draft, setDraft] = useState(null), [error, setError] = useState('');
@@ -24,7 +25,7 @@ export function ThemePicker({ value, onChange, label = 'テーマ' }) {
     catch (reason) { setError(reason.message); }
   }
   return <fieldset className="theme-picker"><legend>{label}</legend><div className="theme-grid">{getThemes().map(theme => <button key={theme.id} type="button" className={`theme-choice ${value === theme.id ? 'chosen' : ''}`} aria-label={`${label}：${theme.name}`} aria-pressed={value === theme.id} onClick={() => onChange(theme.id)}>
-    <span className="theme-swatch" style={themeVariables(theme.id)}><span>Aa</span><i/><i/>{value === theme.id && <Check size={15}/>}</span><strong>{theme.name}</strong><small>{theme.description}</small>
+    <span className="theme-swatch" style={desktopThemeVariables(theme.id)}><span>Aa</span><i/><i/>{value === theme.id && <Check size={15}/>}</span><strong>{theme.name}</strong><small>{theme.description}</small>
   </button>)}</div><button type="button" className="secondary-button theme-create" onClick={startEditing}>{selectedCustom ? 'このテーマを編集' : 'このテーマをもとに作る'}</button>
     {draft && <div className="theme-studio"><label>テーマ名<input aria-label="自作テーマ名" type="text" maxLength="30" value={draft.name} onChange={event => setDraft({ ...draft, name: event.target.value })}/></label>
       <label>土台のテーマ<select aria-label="土台のテーマ" value={draft.baseId} onChange={event => selectBase(event.target.value)}>{themes.map(theme => <option key={theme.id} value={theme.id}>{theme.name}</option>)}</select></label>

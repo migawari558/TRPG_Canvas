@@ -1,4 +1,4 @@
-import { themeVariables } from './themes.mjs';
+import { getTheme, themeVariables } from './themes.mjs';
 
 // Desktop surfaces stay quiet so the manuscript carries the theme's character.
 const palettes = {
@@ -40,8 +40,13 @@ const palettes = {
   }
 };
 
+export function documentTheme(id) {
+  const theme = getTheme(id);
+  return { ...theme, colors: { ...theme.colors, ...palettes[theme.id] } };
+}
+
 export function desktopThemeVariables(id, settings) {
-  const palette = palettes[id] || {};
+  const palette = documentTheme(id).colors;
   return {
     ...themeVariables(id, settings),
     ...Object.fromEntries(Object.entries(palette).map(([key, value]) => [`--theme-${key}`, value]))
