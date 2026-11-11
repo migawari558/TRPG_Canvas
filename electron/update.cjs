@@ -59,7 +59,14 @@ async function availablePath(folder, fileName) {
 
 async function downloadUpdate({ net, downloadsFolder, asset, onProgress = () => {} }) {
   if (!asset?.url || !/^https:\/\/github\.com\//.test(asset.url)) throw new Error('更新ファイルのURLが不正です');
-  const response = await net.fetch(asset.url, { redirect: 'follow', headers: { 'User-Agent': 'TRPG-Canvas-Updater' } });
+  const options = { redirect: 'follow', headers: { 'User-Agent': 'TRPG-Canvas-Updater' } };
+  let response = await net.fetch(asset.url, options);
+  if ([502, 503, 504].includes(response.status)) {
+    await response.body?.cancel();
+    const retryUrl = new URL(asset.url);
+    retryUrl.searchParams.set('download', '1');
+    response = await net.fetch(retryUrl.href, { ...options, cache: 'reload' });
+  }
   if (!response.ok || !response.body) throw new Error(`更新ファイルを取得できませんでした（${response.status}）`);
   const destination = await availablePath(downloadsFolder, asset.name), file = await fs.open(destination, 'wx');
   const total = Number(response.headers.get('content-length')) || Number(asset.size) || 0;
