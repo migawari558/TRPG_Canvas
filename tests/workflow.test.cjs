@@ -6,9 +6,9 @@ test('scene generation uses H1 groups and H2 scenes, including empty groups and 
  const scene=flow.nodes.find(n=>n.data.headingId==='scene'),parents=flow.nodes.filter(n=>n.type==='sceneGroup').map(n=>n.id),pos=absolutePosition(scene,flow.nodes);flow.edges=[{id:'edge',source:parents[0],target:scene.id}];
  const removed=removeFlowSelection(flow,parents);assert.equal(removed.nodes.length,1);assert.equal(removed.nodes[0].parentId,undefined);assert.deepEqual(removed.nodes[0].position,pos);assert.equal(removed.edges.length,0);assert.equal(flow.nodes.length,4);
 });
-test('export preserves explicit blank lines, limits contents to H2 and gives every heading an anchor',async()=>{
+test('export preserves explicit blank lines and includes all heading levels in collapsible contents with anchors',async()=>{
  const {markdown,exportHtml}=await import('../src/export.mjs');
  const source='#! Chapter\n\n# Group\n\n## Scene\n\nBefore\n\n<!-- trpg-blank -->\n\n<!-- trpg-blank -->\n\nAfter\n\n### Detail';
  const html=exportHtml({title:'Test',markdown:source,flow:{nodes:[],edges:[]}}),toc=html.match(/<nav[\s\S]*?<\/nav>/)[0];
- assert.equal((html.match(/<p class="blank-line">/g)||[]).length,2);assert.equal((toc.match(/<a /g)||[]).length,3);assert.ok(!toc.includes('Detail'));assert.match(html,/<h3 id="section-3">Detail/);assert.doesNotMatch(markdown.render('```\n<!-- trpg-blank -->\n```'),/class="blank-line"/);
+ assert.equal((html.match(/<p class="blank-line">/g)||[]).length,2);assert.equal((toc.match(/<a /g)||[]).length,4);assert.equal((toc.match(/<details class="toc-group" open>/g)||[]).length,3);assert.match(toc,/<div class="toc-children"><a href="#section-3" class="level-3"><span>Detail<\/span><\/a><\/div>/);assert.match(html,/<h3 id="section-3">Detail/);assert.doesNotMatch(markdown.render('```\n<!-- trpg-blank -->\n```'),/class="blank-line"/);
 });
