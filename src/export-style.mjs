@@ -85,20 +85,27 @@ export function exportStyle(options) {
     .flow-section h2{font-family:${fonts.heading};font-size:1.4em;font-weight:500;color:${c.heading};margin:0 0 24px}
     .export-navigation{position:sticky;top:0;width:248px;height:100dvh;align-self:start;background:${c.paper};border-right:1px solid ${c.border};font-family:'Yu Gothic UI','Meiryo',sans-serif;font-size:13px;z-index:10}
     .export-navigation:not([open]){width:0;border:0}
-    .export-navigation summary{position:absolute;left:16px;top:16px;display:flex;align-items:center;gap:8px;width:216px;min-height:40px;padding:8px 12px;border:1px solid ${c.border};border-radius:6px;background:${c.paper};color:${c.text};cursor:pointer;list-style:none;font-size:13px}
-    .export-navigation summary::-webkit-details-marker{display:none}
-    .export-navigation summary svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5}
+    .export-navigation > summary{position:absolute;left:16px;top:16px;z-index:1;display:flex;align-items:center;gap:8px;width:216px;min-height:40px;padding:8px 12px;border:1px solid ${c.border};border-radius:6px;background:${c.paper};color:${c.text};cursor:pointer;list-style:none;font-size:13px}
+    .export-navigation > summary::-webkit-details-marker{display:none}
+    .export-navigation > summary svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5}
     .export-navigation .toc-open-label{display:none}
     .export-navigation .toc-close-icon{margin-left:auto;color:${c.muted}}
-    .export-navigation:not([open]) summary{position:fixed;width:auto;box-shadow:0 2px 8px #00000012}
+    .export-navigation:not([open]) > summary{position:fixed;width:auto;box-shadow:0 2px 8px #00000012}
     .export-navigation:not([open]) .toc-open-label{display:inline}
     .export-navigation:not([open]) :is(.toc-close-label,.toc-close-icon){display:none}
-    .export-toc{height:100%;padding:72px 16px 24px;overflow:auto}
+    .export-toc{position:absolute;top:72px;bottom:0;left:0;right:0;padding:0 16px 24px;overflow-y:auto;overscroll-behavior-y:contain;scrollbar-gutter:stable}
     .toc-links a{display:flex;gap:8px;align-items:baseline;min-height:36px;padding:8px 12px;border-left:2px solid transparent;border-radius:0 4px 4px 0;color:${c.muted};text-decoration:none;line-height:1.6;overflow-wrap:anywhere}
     .toc-links a:hover,.toc-links a:focus-visible{background:${c.soft};border-left-color:${c.accent};color:${c.text}}
     .toc-links .level-0{margin-top:12px;color:${c.chapter};font-weight:500}
     .toc-links .level-1{color:${c.heading};font-weight:500}
-    .toc-links .level-2{padding-left:24px}
+    .toc-group > summary{display:flex;align-items:center;list-style:none;cursor:pointer;border-radius:4px}
+    .toc-group > summary::-webkit-details-marker{display:none}
+    .toc-group > summary:hover{background:${c.soft}}
+    .toc-group > summary a{flex:1;min-width:0}
+    .toc-children{padding-left:12px}
+    .toc-chevron{display:grid;place-items:center;flex:none;width:32px;min-height:36px;color:${c.muted}}
+    .toc-chevron svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5}
+    .toc-group[open] > summary .toc-chevron svg{transform:rotate(90deg)}
     .toc-links .toc-flow{margin-top:20px;border-top:1px solid ${c.border};padding-top:16px}
     @media(max-width:900px){
       .export-shell.has-navigation{display:block}

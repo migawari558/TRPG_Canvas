@@ -52,13 +52,25 @@ export function exportHtml(doc, options = {}) {
   let html = (doc.content ? contentHtml(doc.content) : markdown.render(doc.markdown)), index = 0;
   const toc = [];
   const headings = outline(doc.content);
-  html = html.replace(/<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/g, (_, level, attrs, title) => { const id = `section-${index++}`, chapter = attrs.includes('data-chapter'); if (Number(level) <= 2) toc.push(`<a href="#${id}" class="level-${chapter ? 0 : level}"><span>${title}</span></a>`); return `<h${level}${attrs} id="${id}">${title}</h${level}>`; });
+  const tocStack = [];
+  html = html.replace(/<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/g, (_, level, attrs, title) => {
+    const id = `section-${index++}`, depth = attrs.includes('data-chapter') ? 0 : Number(level);
+    const item = { id, level: depth, title, children: [] };
+    while (tocStack.length && tocStack.at(-1).level >= depth) tocStack.pop();
+    (tocStack.at(-1)?.children || toc).push(item);
+    tocStack.push(item);
+    return `<h${level}${attrs} id="${id}">${title}</h${level}>`;
+  });
+  const tocHtml = items => items.map(item => {
+    const link = `<a href="#${item.id}" class="level-${item.level}"><span>${item.title}</span></a>`;
+    return item.children.length ? `<details class="toc-group" open><summary title="配下の見出しを開閉">${link}<span class="toc-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></span></summary><div class="toc-children">${tocHtml(item.children)}</div></details>` : link;
+  }).join('');
   if (copyButtons) html = html.replace(/<(blockquote|pre)>([\s\S]*?)<\/\1>/g, (_, tag, content) => `<div class="copy-block"><button type="button" class="copy-button">コピー</button><${tag}>${content}</${tag}></div>`);
   const script = copyButtons && interactive ? `<script>document.querySelectorAll('.copy-button').forEach(button=>button.addEventListener('click',async()=>{const text=button.nextElementSibling.innerText;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);}else{const area=document.createElement('textarea');area.value=text;area.style.position='fixed';area.style.opacity='0';document.body.append(area);area.select();const ok=document.execCommand('copy');area.remove();if(!ok)throw new Error('copy');}button.textContent='コピーしました';}catch{button.textContent='選択してコピーしてください';const range=document.createRange();range.selectNodeContents(button.nextElementSibling);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);}setTimeout(()=>button.textContent='コピー',2000);}));</script>` : '';
   const hasFlow = includeFlow && doc.flow.nodes.length > 0;
   const navigation = toc.length ? `<details class="export-navigation" open>
     <summary aria-controls="export-toc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01"/></svg><span class="toc-open-label">目次を開く</span><span class="toc-close-label">目次を閉じる</span><svg class="toc-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></summary>
-    <nav id="export-toc" class="export-toc" aria-label="シナリオの目次"><div class="toc-links">${toc.join('')}${hasFlow ? '<a href="#scenario-flow" class="toc-flow">シナリオフロー</a>' : ''}</div></nav>
+    <nav id="export-toc" class="export-toc" aria-label="シナリオの目次"><div class="toc-links">${tocHtml(toc)}${hasFlow ? '<a href="#scenario-flow" class="toc-flow">シナリオフロー</a>' : ''}</div></nav>
   </details>` : '';
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:"><title>${escapeHtml(doc.title)}</title><style>${exportStyle(options)}</style></head>
   <body><div class="export-shell${toc.length ? ' has-navigation' : ''}">${navigation}<main>
