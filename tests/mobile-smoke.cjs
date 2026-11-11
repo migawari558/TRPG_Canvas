@@ -18,9 +18,30 @@ app.whenReady().then(async()=>{try{
  await js(`(()=>{const input=document.querySelector('[aria-label="スマホ本文サイズ"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,12);input.dispatchEvent(new Event('input',{bubbles:true}));})()`);
  await js(`(()=>{const select=document.querySelector('[aria-label="スマホ配色テーマ"]');select.value='forest';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
  await label('設定を閉じる');
+ for (const theme of ['mono','midnight','parchment','tahoe-light','tahoe-dark','forest']) {
+  await label('スマホの設定');
+  await js(`(()=>{const select=document.querySelector('[aria-label="スマホ配色テーマ"]');select.value=${JSON.stringify(theme)};select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
+  await label('設定を閉じる');
+  const colors=await js(`(()=>{const style=getComputedStyle(document.querySelector('.mobile-library .mobile-primary'));return [style.color,style.backgroundColor]})()`);
+  const luminance=color=>color.match(/[\d.]+/g).slice(0,3).map(Number).map(channel=>{channel/=255;return channel<=.04045?channel/12.92:((channel+.055)/1.055)**2.4;}).reduce((sum,value,index)=>sum+value*[.2126,.7152,.0722][index],0);
+  const values=colors.map(luminance).sort((a,b)=>b-a);
+  assert.ok((values[0]+.05)/(values[1]+.05)>=4.5,`${theme} primary button has insufficient contrast`);
+ }
  await js(`Array.from(document.querySelectorAll('button')).find(button=>button.textContent.includes('新しいシナリオ')).click()`);await delay(300);
  assert.ok(await js(`!!document.querySelector('[aria-label="シナリオ本文"]')`));
  assert.equal(await js(`getComputedStyle(document.querySelector('[aria-label="シナリオ本文"]')).fontSize`),'12px');
+ assert.equal(await js(`document.querySelectorAll('[aria-label="シナリオタイトル"]').length`),1);
+ assert.equal(await js(`document.querySelector('.editor-toolbar').scrollWidth<=document.querySelector('.editor-toolbar').clientWidth`),true);
+ await js(`document.querySelector('.mobile-format-menu summary').click()`);
+ assert.equal(await js(`document.querySelector('.mobile-format-menu').open`),true);
+ assert.ok(await js(`document.querySelector('[aria-label="斜体（Ctrl+I）"]').getBoundingClientRect().height>=43`));
+ await label('斜体（Ctrl+I）');
+ assert.equal(await js(`document.querySelector('.mobile-format-menu').open`),false);
+ await js(`document.querySelector('.mobile-format-menu summary').click()`);
+ await label('斜体（Ctrl+I）');
+ await label('保存状況を表示');
+ assert.ok(await js(`document.querySelector('[aria-label="保存状況"]').textContent.includes('初回は保存先を選択')`));
+ await label('保存状況を閉じる');
  await label('シナリオ情報を編集');
  await js(`(()=>{const input=document.querySelector('[aria-label="システム名"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'テストシステム');input.dispatchEvent(new Event('input',{bubbles:true}));})()`);
  await label('シナリオ情報を閉じる');
@@ -28,7 +49,7 @@ app.whenReady().then(async()=>{try{
  await js(`document.querySelector('.mobile-outline-link').click()`);assert.equal(await js(`!!document.querySelector('.mobile-drawer')`),false);
  await label('執筆メモを開く');assert.equal(await js(`document.querySelector('.mobile-drawer').classList.contains('notes')`),true);
  assert.equal(await js(`getComputedStyle(document.querySelector('.writing-notes-description')).display`),'none');
- assert.ok(await js(`parseFloat(getComputedStyle(document.querySelector('.mobile-drawer')).borderTopLeftRadius)>=20`));
+ assert.equal(await js(`parseFloat(getComputedStyle(document.querySelector('.mobile-drawer')).borderTopLeftRadius)`),12);
  assert.ok(await js(`Math.abs(document.querySelector('.mobile-drawer').getBoundingClientRect().right-innerWidth)<2`));
  assert.equal(await js(`getComputedStyle(document.querySelector('.writing-notes')).backgroundColor`),await js(`getComputedStyle(document.querySelector('.mobile-drawer')).backgroundColor`));
  assert.ok(await js(`(()=>{const heading=document.querySelector('.writing-notes-heading').getBoundingClientRect(),close=document.querySelector('.writing-notes-heading .mobile-drawer-close').getBoundingClientRect();return close.top>=heading.top&&close.bottom<=heading.bottom+1;})()`));
@@ -36,6 +57,7 @@ app.whenReady().then(async()=>{try{
  await label('パネルを閉じる');
  await js(`Array.from(document.querySelectorAll('.mobile-switchbar nav button')).find(button=>button.textContent==='フロー').click()`);
  assert.equal(await js(`document.querySelectorAll('.node-edit,.flow-actions').length`),0);
+ assert.ok(await js(`document.querySelector('.mobile-flow-empty').textContent.includes('シーンがありません')`));
  await js(`Array.from(document.querySelectorAll('.mobile-switchbar nav button')).find(button=>button.textContent==='本文').click()`);
  await js(`(()=>{const input=document.querySelector('.mobile-title');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'スマホ下書き');input.dispatchEvent(new Event('input',{bubbles:true}));})()`);
  await js(`(()=>{const node=document.querySelector('[aria-label="シナリオ本文"] p'),range=document.createRange();range.selectNodeContents(node);getSelection().removeAllRanges();getSelection().addRange(range);node.closest('.tiptap').focus();})()`);
@@ -56,9 +78,17 @@ app.whenReady().then(async()=>{try{
  assert.equal(await js(`document.querySelector('.mobile-title').value`),'スマホ下書き');
  await label('シナリオ情報を編集');assert.equal(await js(`document.querySelector('[aria-label="システム名"]').value`),'テストシステム');await label('シナリオ情報を閉じる');
  assert.ok(await js(`!!document.querySelector('[aria-label="シナリオ本文"] strong')`));
- const longDoc={id:'mobile-scroll-test',version:1,title:'スクロール確認',markdown:'# 導入\n\n## 子シーン\n\n### 詳細\n\n'+Array(80).fill('スクロールしても、目次とメモを開けます。').join('\n\n'),updatedAt:new Date().toISOString(),flow:{nodes:[],edges:[]}};
+ const longDoc={id:'mobile-scroll-test',version:1,title:'スクロール確認',markdown:'# 導入\n\n## 子シーン\n\n### 詳細\n\n'+Array(80).fill('スクロールしても、目次とメモを開けます。').join('\n\n'),updatedAt:new Date().toISOString(),flow:{nodes:[{id:'scene',position:{x:0,y:0},data:{label:'導入'}}],edges:[]}};
  await label('シナリオ一覧へ戻る');
  await js(`(()=>{const transfer=new DataTransfer();transfer.items.add(new File([${JSON.stringify(JSON.stringify(longDoc))}],'test.trpg.json'));const input=document.querySelector('input[type=file][accept=".json,.trpg.json"]');input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(400);
+ await js(`document.querySelectorAll('.mobile-switchbar nav button')[1].click()`);
+ assert.equal(await js(`document.querySelector('.mobile-flow rect').getAttribute('fill')`),'#e6eedc');
+ await label('フローを拡大');
+ assert.equal(await js(`document.querySelector('.mobile-flow-tools output').textContent`),'150%');
+ assert.ok(await js(`document.querySelector('.mobile-flow').scrollWidth>document.querySelector('.mobile-flow').clientWidth`));
+ await label('フロー全体を表示');
+ assert.equal(await js(`document.querySelector('.mobile-flow-tools output').textContent`),'100%');
+ await js(`document.querySelectorAll('.mobile-switchbar nav button')[0].click()`);
  await label('目次を開く');
  assert.equal(await js(`document.querySelectorAll('.mobile-outline-row').length`),3);
  await label('導入を折りたたむ');assert.equal(await js(`document.querySelectorAll('.mobile-outline-row').length`),1);
@@ -78,9 +108,9 @@ app.whenReady().then(async()=>{try{
  assert.ok(Math.abs(await js(`document.querySelector('.editor-scroll').scrollTop`)-230)<1);
  assert.equal(await js(`getComputedStyle(document.querySelector('[aria-label="目次を開く"]')).visibility`),'visible');
  assert.equal(await js(`getComputedStyle(document.querySelector('[aria-label="執筆メモを開く"]')).visibility`),'visible');
- assert.ok(await js(`document.querySelector('[aria-label="目次を開く"]').getBoundingClientRect().width===document.querySelector('[aria-label="目次を開く"]').getBoundingClientRect().height`));
+ assert.ok(await js(`document.querySelector('[aria-label="目次を開く"]').getBoundingClientRect().height>=43`));
  await label('執筆メモを開く');await label('パネルを閉じる');
- assert.ok(await js(`document.querySelector('.editor-toolbar button').getBoundingClientRect().width<=35`));
+ assert.ok(await js(`document.querySelector('.editor-toolbar button').getBoundingClientRect().width>=43`));
  await fs.writeFile(path.join(output,'reading.png'),(await win.webContents.capturePage()).toPNG());
  await js(`document.querySelector('.editor-scroll').scrollTop=30`);await delay(200);
  assert.equal(await js(`document.querySelector('.mobile-app').classList.contains('mobile-reading')`),false);

@@ -7,7 +7,7 @@ app.whenReady().then(async()=>{try{
  const js=code=>win.webContents.executeJavaScript(code,true);
  const until=async code=>{for(let i=0;i<70;i++){if(await js(code))return;await delay(100);}throw new Error(`timeout: ${code}`);};
  await win.loadFile(path.resolve('.test-output/mobile-dist/index.html'));await delay(500);
- await js(`Array.from(document.querySelectorAll('button')).find(button=>button.textContent==='Drive・端末から開く').click()`);
+ await js(`Array.from(document.querySelectorAll('button')).find(button=>button.textContent==='ファイルを開く').click()`);
  await until(`!!document.querySelector('[aria-label="シナリオ本文"]')`);await delay(2200);
  async function type(text){await js(`(()=>{const instance=document.querySelector('[aria-label="シナリオ本文"]'),p=instance.querySelector('p'),range=document.createRange();instance.focus();range.selectNodeContents(p);range.collapse(false);getSelection().removeAllRanges();getSelection().addRange(range);document.execCommand('insertText',false,${JSON.stringify(text)});})()`);}
  await type('スマホで追記');
