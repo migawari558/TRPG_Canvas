@@ -25,8 +25,15 @@ test('update check compares semantic versions and selects the correct platform p
 test('update download writes the selected release asset and reports progress', async () => {
   const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-update-')), progress = [];
   try {
-    const net = { fetch: async () => new Response(new Uint8Array([1, 2, 3, 4]), { headers: { 'content-length': '4' } }) };
+    const requested = [];
+    const net = { fetch: async url => {
+      requested.push(url);
+      return requested.length === 1
+        ? new Response('Gateway Timeout', { status: 504 })
+        : new Response(new Uint8Array([1, 2, 3, 4]), { headers: { 'content-length': '4' } });
+    } };
     const file = await downloadUpdate({ net, downloadsFolder: folder, asset: { name: 'TRPG-Canvas-0.12.24-windows-x64-setup.exe', url: 'https://github.com/example/setup', size: 4 }, onProgress: value => progress.push(value) });
     assert.deepEqual([...await fs.readFile(file)], [1, 2, 3, 4]); assert.equal(progress.at(-1).percent, 100);
+    assert.deepEqual(requested, ['https://github.com/example/setup', 'https://github.com/example/setup?download=1']);
   } finally { await fs.rm(folder, { recursive: true, force: true }); }
 });

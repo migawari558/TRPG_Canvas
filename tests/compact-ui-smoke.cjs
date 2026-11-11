@@ -21,15 +21,25 @@ app.whenReady().then(async () => {
     const toolbarHeight = await js(`document.querySelector('.editor-toolbar').getBoundingClientRect().height`);
     assert.ok(topbarHeight <= 44, `topbar is ${topbarHeight}px`);
     assert.ok(toolbarHeight <= 40, `editor toolbar is ${toolbarHeight}px`);
-    const expandedHeight = await js(`document.querySelector('.work-area').getBoundingClientRect().height`);
+    const expandedContentTop = await js(`document.querySelector('.work-area').getBoundingClientRect().top`);
     await js(`document.querySelector('[aria-label="上部UIを折りたたむ"]').click()`);
     assert.equal(await js(`document.querySelector('.app').classList.contains('top-ui-collapsed')`), true);
-    assert.ok(await js(`document.querySelector('.work-area').getBoundingClientRect().height`) > expandedHeight + 25);
+    assert.ok(await js(`document.querySelector('.work-area').getBoundingClientRect().top`) < expandedContentTop - 25);
     assert.equal(await js(`localStorage.getItem('trpg-top-ui-collapsed')`), 'true');
 
     await win.webContents.reload(); await delay(1000);
     assert.equal(await js(`document.querySelector('.app').classList.contains('top-ui-collapsed')`), true);
     await js(`document.querySelector('[aria-label="上部UIを表示"]').click()`);
+    assert.equal(await js(`getComputedStyle(document.querySelector('.document-header')).display`), 'flex');
+    assert.equal(await js(`document.querySelector('.document-header').parentElement.className`), 'main');
+    const titleLayout = await js(`(()=>{const header=document.querySelector('.document-header');const title=header.querySelector('.title-input').getBoundingClientRect();const system=header.querySelector('.system-name-input').getBoundingClientRect();return {headerTop:header.getBoundingClientRect().top,titleTop:title.top,systemTop:system.top,sideBySide:system.left>=title.right}})()`);
+    assert.equal(titleLayout.sideBySide, true);
+    await js(`document.querySelectorAll('.mode-switch button')[1].click()`);
+    assert.equal(await js(`document.querySelectorAll('.document-header').length`), 1);
+    assert.equal(await js(`getComputedStyle(document.querySelector('.document-header')).display`), 'flex');
+    assert.equal(await js(`document.querySelector('.document-header').getBoundingClientRect().top`), titleLayout.headerTop);
+    await js(`document.querySelectorAll('.mode-switch button')[0].click()`);
+    assert.equal(await js(`getComputedStyle(document.querySelector('.document-header')).display`), 'flex');
     await js(`Array.from(document.querySelectorAll('button')).find(button => button.textContent.trim() === '表示設定').click()`);
     assert.equal(await js(`document.querySelector('[aria-label="メニュー・目次の文字サイズ"]').min`), '70');
     await js(`(()=>{const input=document.querySelector('[aria-label="メニュー・目次の文字サイズ"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,75);input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));})()`);

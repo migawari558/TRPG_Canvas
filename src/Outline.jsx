@@ -27,7 +27,7 @@ export default function Outline({ headings, content, activeHeading, onNavigate, 
   function toggle(id) { setCollapsed(current => { const next = new Set(current); next.has(id) ? next.delete(id) : next.add(id); return next; }); }
   return <aside className="outline-panel" aria-label="シナリオの目次">
     <div className="outline-fixed">
-      <div className="outline-title"><span>目次</span><span>{headings.length.toString().padStart(2, '0')}</span>{headerAction}</div>
+      <div className="outline-title"><span>目次</span><span>{headings.length}</span>{headerAction}</div>
       <div className="outline-bulk"><button disabled={!parents.size} onClick={() => setCollapsed(new Set(parents))}><ChevronsUp size={14}/>すべて閉じる</button><button disabled={!collapsed.size} onClick={() => setCollapsed(new Set())}><ChevronsDown size={14}/>すべて開く</button></div>
     </div>
     <div className="outline-list">
