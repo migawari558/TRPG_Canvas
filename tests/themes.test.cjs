@@ -2,8 +2,9 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 test('all themes apply to standalone exports; invalid preferences cannot inject CSS',async()=>{
  const {themes,normalizeAppearance,normalizeDesign,resolvedFonts}=await import('../src/themes.mjs');
+ const {documentTheme}=await import('../src/desktop-themes.mjs');
  const {exportHtml}=await import('../src/export.mjs');const {sampleDocument}=await import('../src/model.mjs');
- for(const theme of themes){const html=exportHtml(sampleDocument(),{theme:theme.id,fontSize:23,interactive:false});assert.ok(html.includes(`background:${theme.colors.paper}`));assert.ok(html.includes(`fill="${theme.colors.text}"`));assert.ok(html.includes('font-size:23px'));assert.ok(!html.includes('<script>'));}
+ for(const theme of themes){const html=exportHtml(sampleDocument(),{theme:theme.id,fontSize:23,interactive:false});assert.ok(html.includes(`background:${documentTheme(theme.id).colors.paper}`));assert.ok(html.includes(`fill="${documentTheme(theme.id).colors.text}"`));assert.ok(html.includes('font-size:23px'));assert.ok(!html.includes('<script>'));}
  const fontDefaults={fontAdvanced:false,headingFontFamily:'system',chapterFontFamily:'system',dialogueFontFamily:'body'};
  assert.deepEqual(normalizeAppearance({theme:'</style><script>',fontSize:999,uiScale:-1,fontFamily:'</style>'}),{theme:'forest',fontSize:28,fontFamily:'system',uiScale:70,...fontDefaults});
  assert.deepEqual(normalizeAppearance(null),{theme:'forest',fontSize:17,fontFamily:'system',uiScale:100,...fontDefaults});

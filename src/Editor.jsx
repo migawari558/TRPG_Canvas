@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import MobileEditorToolbar from './mobile/MobileEditorToolbar.jsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
@@ -40,7 +41,8 @@ converter.addRule('embeddedImage', { filter: node => node.nodeName === 'IMG' && 
 export const serializeEditorMarkdown = editor => converter.turndown(editor.getHTML());
 const blankParagraphCount = content => (content?.content || []).filter(node => node.type === 'paragraph' && !node.content?.length).length;
 const blankMarkerCount = source => (source?.match(/<!-- trpg-blank -->/g) || []).length;
-export default function ScenarioEditor({ doc, onChange, onEdit, onReady, documentHeader, compactToolbar = false }) {
+export default function ScenarioEditor({ doc, onChange, onEdit, onReady, documentHeader, compactToolbar = false, toolbarContainer }) {
+  const controlsRef = useRef(null);
   const imageInput = useRef(), importingImage = useRef(false), onEditRef = useRef(onEdit);
   onEditRef.current = onEdit;
   const [findOpen, setFindOpen] = useState(false), [findRequest, setFindRequest] = useState(0);
@@ -91,6 +93,20 @@ export default function ScenarioEditor({ doc, onChange, onEdit, onReady, documen
     window.addEventListener('keydown', keydown);
     return () => window.removeEventListener('keydown', keydown);
   }, [editor, findOpen]);
+  useEffect(() => {
+    if (!editor || compactToolbar) return;
+    const controls = controlsRef.current;
+    const area = controls?.closest('.editor-area');
+    if (!area) return;
+    const measure = () => area.style.setProperty('--editor-controls-height', `${controls.offsetHeight}px`);
+    const observer = new ResizeObserver(measure);
+    observer.observe(controls);
+    measure();
+    return () => {
+      observer.disconnect();
+      area.style.removeProperty('--editor-controls-height');
+    };
+  }, [editor, compactToolbar]);
   if (!editor) return null;
   const syntax = ['**文字**', '*文字*', '<u>文字</u>', 'Ctrl+F / Ctrl+H', '#! ＋ Space', '# ＋ Space', '## ＋ Space', '### ＋ Space', '- ＋ Space', '1. ＋ Space', '[] ＋ Space（完了: [x] ＋ Space）', '> ＋ Space', '!!! ＋ Spaceで開始 / Ctrl+Enterで終了（Markdown: :::gm ～ :::）', '::話者名 ＋ Space / Ctrl+Shift+D / Ctrl+Enterで終了', '画像ファイルを選択・貼り付け', '\`\`\` ＋ Space', '---', 'Ctrl+Z', 'Ctrl+Shift+Z'];
   const controls = [
@@ -114,5 +130,6 @@ export default function ScenarioEditor({ doc, onChange, onEdit, onReady, documen
     [Undo2, '元に戻す（Ctrl+Z）', () => editor.chain().focus().undo().run()],
     [Redo2, 'やり直す（Ctrl+Shift+Z）', () => editor.chain().focus().redo().run()]
   ];
-  return <>{compactToolbar ? <MobileEditorToolbar controls={controls} syntax={syntax} disabled={imageBusy}/> : <div className="editor-toolbar"><span className="toolbar-label">本文</span><span className="toolbar-divider"/>{controls.map(([Icon, label, action, active], index) => <button key={label} disabled={imageBusy} title={`${label}\n記法: ${syntax[index]}`} aria-label={label} aria-pressed={!!active} className={active ? 'active' : ''} onClick={action}><Icon size={16}/></button>)}<span className="markdown-badge">Markdown</span></div>}{selectedImageWidth && <div className="image-size-toolbar" role="toolbar" aria-label="画像サイズ"><strong>画像サイズ</strong>{imageWidths.map(width => <button key={width} type="button" aria-label={`画像サイズ${width}%`} aria-pressed={selectedImageWidth === width} onMouseDown={event => event.preventDefault()} onClick={() => { if (editor.commands.updateAttributes('image', { width })) setSelectedImageWidth(width); editor.commands.focus(); }}>{({25:'小',50:'中',75:'大',100:'本文幅'})[width]} <span>{width}%</span></button>)}</div>}{findOpen && <FindBar editor={editor} request={findRequest} onClose={() => setFindOpen(false)}/>}<input className="hidden" ref={imageInput} type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple aria-label="挿入する画像" onChange={event => { const files = [...event.target.files]; event.target.value = ''; insertImages(files); }}/>{imageBusy && <div className="image-status" role="status">画像を読み込み中…</div>}{imageError && <div className="image-error" role="alert">{imageError}<button aria-label="画像エラーを閉じる" onClick={() => setImageError('')}><X size={16}/></button></div>}<div className="editor-scroll" onPaste={e => { if (e.defaultPrevented || e.clipboardData.files.length) return; const text = e.clipboardData.getData('text/plain'); if (!e.clipboardData.getData('text/html') && /^(:::gm|:::dialogue|#! |#{1,6} |```|> |\- |\[\] |\[[ xX]\] )/m.test(text)) { e.preventDefault(); editor.commands.insertContent(markdown.render(text)); } }}><article className="paper">{documentHeader}<EditorContent editor={editor}/></article></div></>;
+  const formattingToolbar = <div className="editor-toolbar" role="toolbar" aria-label="本文の書式"><span className="toolbar-label">本文</span><span className="toolbar-divider"/>{controls.map(([Icon, label, action, active], index) => <button key={label} disabled={imageBusy} title={`${label}\n記法: ${syntax[index]}`} aria-label={label} aria-pressed={!!active} className={active ? 'active' : ''} onClick={action}><Icon size={16}/></button>)}<span className="markdown-badge">Markdown</span></div>;
+  return <><div ref={controlsRef} className={compactToolbar ? "mobile-editor-controls" : "editor-controls"}>{compactToolbar ? <MobileEditorToolbar controls={controls} syntax={syntax} disabled={imageBusy}/> : (toolbarContainer ? createPortal(formattingToolbar, toolbarContainer) : formattingToolbar)}{selectedImageWidth && <div className="image-size-toolbar" role="toolbar" aria-label="画像サイズ"><strong>画像サイズ</strong>{imageWidths.map(width => <button key={width} type="button" aria-label={`画像サイズ${width}%`} aria-pressed={selectedImageWidth === width} onMouseDown={event => event.preventDefault()} onClick={() => { if (editor.commands.updateAttributes('image', { width })) setSelectedImageWidth(width); editor.commands.focus(); }}>{({25:'小',50:'中',75:'大',100:'本文幅'})[width]} <span>{width}%</span></button>)}</div>}{findOpen && <FindBar editor={editor} request={findRequest} onClose={() => setFindOpen(false)}/>}<input className="hidden" ref={imageInput} type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple aria-label="挿入する画像" onChange={event => { const files = [...event.target.files]; event.target.value = ''; insertImages(files); }}/>{imageBusy && <div className="image-status" role="status">画像を読み込み中…</div>}{imageError && <div className="image-error" role="alert">{imageError}<button aria-label="画像エラーを閉じる" onClick={() => setImageError('')}><X size={16}/></button></div>}</div><div className="editor-scroll" onPaste={e => { if (e.defaultPrevented || e.clipboardData.files.length) return; const text = e.clipboardData.getData('text/plain'); if (!e.clipboardData.getData('text/html') && /^(:::gm|:::dialogue|#! |#{1,6} |```|> |\- |\[\] |\[[ xX]\] )/m.test(text)) { e.preventDefault(); editor.commands.insertContent(markdown.render(text)); } }}><article className="paper">{documentHeader}<EditorContent editor={editor}/></article></div></>;
 }

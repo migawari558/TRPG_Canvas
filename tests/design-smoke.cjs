@@ -22,6 +22,8 @@ app.whenReady().then(async () => {
       await js(`localStorage.setItem('trpg-appearance', JSON.stringify({theme:${JSON.stringify(theme.id)},fontSize:17,uiScale:100}))`);
       await win.webContents.reload(); await delay(650);
       assert.equal(await js(`document.querySelector('.app').dataset.theme`), theme.id);
+      assert.equal(await js(`document.querySelector('.view-tabs').contains(document.querySelector('.notes-toggle'))`), false);
+      assert.ok(await js(`document.querySelector('.view-tabs').getBoundingClientRect().right < document.querySelector('.notes-toggle').getBoundingClientRect().left`));
       const before = await js(`document.querySelector('.editor-area').getBoundingClientRect().width`);
       await js(`document.querySelector('[aria-label="目次を閉じる"]').click()`);
       assert.equal(await js(`getComputedStyle(document.querySelector('.sidebar')).display`), 'none');
@@ -29,14 +31,15 @@ app.whenReady().then(async () => {
       assert.ok(await js(`document.querySelector('.editor-area').getBoundingClientRect().width`) > before + 150);
       await js(`document.querySelector('[aria-label="目次を開く"]').click()`);
       assert.ok(await js(`document.querySelector('.outline-list').getBoundingClientRect().height > 0`));
-      assert.ok(await js(`(()=>{const t=document.querySelector('.editor-toolbar').getBoundingClientRect(),p=document.querySelector('.editor-area').getBoundingClientRect();return t.left>p.left&&t.right<p.right&&t.height>0})()`));
+      assert.ok(await js(`(()=>{const t=document.querySelector('.editor-toolbar').getBoundingClientRect(),p=document.querySelector('.document-stage').getBoundingClientRect(),mode=document.querySelector('.mode-switch').getBoundingClientRect();return t.left>p.left&&t.right<p.right&&t.height>0&&mode.right<=t.left&&Math.abs((mode.top+mode.bottom-t.top-t.bottom)/2)<4})()`));
       assert.equal(await js(`getComputedStyle(document.querySelector('.editor-toolbar')).backgroundColor`), await js(`getComputedStyle(document.querySelector('.paper')).backgroundColor`));
       assert.ok(await js(`(() => {
         const toolbar = document.querySelector('.editor-toolbar').getBoundingClientRect();
         const paper = document.querySelector('.paper').getBoundingClientRect();
         const content = document.querySelector('.paper').firstElementChild.getBoundingClientRect();
-        return toolbar.top < paper.top && toolbar.bottom > paper.top && toolbar.bottom < content.top;
-      })()`), 'Toolbar overlaps the paper edge without covering the content');
+        const tabs = document.querySelector('.view-tabs').getBoundingClientRect();
+        return paper.top <= tabs.top && toolbar.top > paper.top && toolbar.bottom < content.top;
+      })()`), 'Paper extends behind the mode tabs and toolbar without covering the content');
       assert.ok(await js(`document.documentElement.scrollWidth<=innerWidth`));
       await fs.writeFile(path.join(output, `${theme.id}.png`), (await win.webContents.capturePage()).toPNG());
     }

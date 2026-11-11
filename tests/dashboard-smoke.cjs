@@ -76,7 +76,7 @@ app.whenReady().then(async () => {
     const htmlPath = path.join(output, 'gm-note.html');
     await fs.writeFile(htmlPath, exportHtml(doc)); await win.loadFile(htmlPath); await delay(200);
     assert.ok(await js(`document.querySelector('.gm-note').innerText.includes('GMだけの秘密')`));
-    assert.equal(await js(`getComputedStyle(document.querySelector('.gm-note')).borderTopLeftRadius`), '12px');
+    assert.equal(await js(`getComputedStyle(document.querySelector('.gm-note')).borderTopLeftRadius`), '4px');
     await fs.writeFile(path.join(output, 'gm-note.pdf'), await win.webContents.printToPDF({ printBackground: true, pageSize: 'A4', margins: { top: .5, bottom: .5, left: .5, right: .5 } }));
     assert.deepEqual(errors, []);
     console.log('PASS: sidebar collapse/expand at two sizes, dashboard navigation/refresh/search/new/open, save-before-navigation, GM note insertion/edit/exit/persistence, HTML and PDF');

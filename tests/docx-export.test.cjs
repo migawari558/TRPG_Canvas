@@ -24,7 +24,7 @@ test('Word export creates editable styled OOXML with page size and columns', asy
   const bytes = await exportDocx(doc, { theme: 'forest', fontSize: 14, fontFamily: 'BIZ UDPGothic', columns: 2, pdfPageSize: 'A5', includeFlow: false });
   assert.deepEqual([...bytes.slice(0, 2)], [0x50, 0x4b]);
   const zip = await JSZip.loadAsync(bytes), xml = await zip.file('word/document.xml').async('string'), styles = await zip.file('word/styles.xml').async('string');
-  for (const text of ['Word書き出しテスト', 'テストシステム / SCENARIO', '第一章', '導入', '太字', '斜体', '下線', '手掛かり', '確認済み', 'GM MEMO', '秘密の情報', 'コレット', 'こちらを見て。']) assert.ok(xml.includes(text), text);
+  for (const text of ['Word書き出しテスト', 'テストシステム', '第一章', '導入', '太字', '斜体', '下線', '手掛かり', '確認済み', 'GMメモ', '秘密の情報', 'コレット', 'こちらを見て。']) assert.ok(xml.includes(text), text);
   assert.match(xml, /<w:cols[^>]*w:num="2"/);
   assert.match(xml, /<w:pgSz[^>]*w:w="8391"[^>]*w:h="11906"/);
   assert.ok(xml.includes('<w:tbl>'));

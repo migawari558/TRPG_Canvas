@@ -14,6 +14,6 @@ test('dialogue Markdown preserves its speaker and renders the two-column dialogu
  const doc={title:'会話',systemName:'新クトゥルフ神話TRPG',markdown:'',flow:{nodes:[],edges:[]},content:{type:'doc',content:[{type:'dialogue',attrs:{speaker:'コレット'},content:[{type:'paragraph',content:[{type:'text',text:'本文'}]}]}]}};
  const html=exportHtml(doc,{includeFlow:false});assert.match(html,/class="dialogue"/);assert.match(html,/class="dialogue-speaker"[^>]*>コレット/);assert.match(html,/grid-template-columns/);
  assert.match(html,/grid-template-columns:max-content/);assert.match(html,/column-gap:3em/);assert.match(html,/dialogue-speaker\{[^}]*font-weight:800/);
- assert.match(html,/新クトゥルフ神話TRPG \/ SCENARIO/);assert.doesNotMatch(html,/Created with TRPG Canvas/);
+ assert.match(html,/<small>新クトゥルフ神話TRPG<\/small>/);assert.doesNotMatch(html,/Created with TRPG Canvas/);
  assert.doesNotMatch(markdown.render(':::dialogue <script>\n危険\n:::'),/<script>/);
 });

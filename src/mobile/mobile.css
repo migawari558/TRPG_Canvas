@@ -86,6 +86,7 @@
 }
 .mobile-app .mobile-save-state > button { min-width: 44px; padding: 0 4px; gap: 4px; font-size: inherit; color: var(--theme-muted); }
 .mobile-app .mobile-body { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.mobile-app .mobile-editor-controls { display: contents; }
 .mobile-app .editor-scroll { flex: 1; min-height: 0; padding: 20px 20px 32px; scroll-padding-top: 68px; scroll-padding-bottom: 24px; scroll-behavior: auto; }
 .mobile-app .paper { padding: 0; border: 0; border-radius: 0; box-shadow: none; min-height: 100%; background: var(--theme-paper); }
 .mobile-app .paper-eyebrow, .mobile-app .paper-end, .mobile-app .toolbar-label, .mobile-app .toolbar-divider, .mobile-app .markdown-badge { display: none; }
