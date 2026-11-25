@@ -1,0 +1,1244 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-25T11:06:47.275Z",
+  "title": "Design System: TRPG Canvas Desktop",
+  "extensions": {
+    "colorMeta": {
+      "forest-accent": {
+        "role": "primary",
+        "displayName": "Forest Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0310 163.62)",
+          "oklch(26.43% 0.0547 163.62)",
+          "oklch(37.86% 0.0724 163.62)",
+          "oklch(49.29% 0.0724 163.62)",
+          "oklch(60.71% 0.0724 163.62)",
+          "oklch(72.14% 0.0724 163.62)",
+          "oklch(83.57% 0.0476 163.62)",
+          "oklch(95.00% 0.0145 163.62)"
+        ]
+      },
+      "forest-on-accent": {
+        "role": "neutral",
+        "displayName": "Forest Action foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "forest-bg": {
+        "role": "neutral",
+        "displayName": "Forest Workspace",
+        "tonalRamp": [
+          "oklch(15.00% 0.0037 145.51)",
+          "oklch(26.43% 0.0064 145.51)",
+          "oklch(37.86% 0.0085 145.51)",
+          "oklch(49.29% 0.0085 145.51)",
+          "oklch(60.71% 0.0085 145.51)",
+          "oklch(72.14% 0.0085 145.51)",
+          "oklch(83.57% 0.0056 145.51)",
+          "oklch(95.00% 0.0017 145.51)"
+        ]
+      },
+      "forest-paper": {
+        "role": "neutral",
+        "displayName": "Forest Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0012 128.49)",
+          "oklch(26.43% 0.0021 128.49)",
+          "oklch(37.86% 0.0028 128.49)",
+          "oklch(49.29% 0.0028 128.49)",
+          "oklch(60.71% 0.0028 128.49)",
+          "oklch(72.14% 0.0028 128.49)",
+          "oklch(83.57% 0.0019 128.49)",
+          "oklch(95.00% 0.0006 128.49)"
+        ]
+      },
+      "forest-panel": {
+        "role": "neutral",
+        "displayName": "Forest Structural panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0034 139.44)",
+          "oklch(26.43% 0.0059 139.44)",
+          "oklch(37.86% 0.0078 139.44)",
+          "oklch(49.29% 0.0078 139.44)",
+          "oklch(60.71% 0.0078 139.44)",
+          "oklch(72.14% 0.0078 139.44)",
+          "oklch(83.57% 0.0052 139.44)",
+          "oklch(95.00% 0.0016 139.44)"
+        ]
+      },
+      "forest-text": {
+        "role": "neutral",
+        "displayName": "Forest Reading text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0146 168.63)",
+          "oklch(26.43% 0.0258 168.63)",
+          "oklch(37.86% 0.0341 168.63)",
+          "oklch(49.29% 0.0341 168.63)",
+          "oklch(60.71% 0.0341 168.63)",
+          "oklch(72.14% 0.0341 168.63)",
+          "oklch(83.57% 0.0224 168.63)",
+          "oklch(95.00% 0.0068 168.63)"
+        ]
+      },
+      "forest-muted": {
+        "role": "neutral",
+        "displayName": "Forest Secondary text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0159 160.19)",
+          "oklch(26.43% 0.0280 160.19)",
+          "oklch(37.86% 0.0370 160.19)",
+          "oklch(49.29% 0.0370 160.19)",
+          "oklch(60.71% 0.0370 160.19)",
+          "oklch(72.14% 0.0370 160.19)",
+          "oklch(83.57% 0.0243 160.19)",
+          "oklch(95.00% 0.0074 160.19)"
+        ]
+      },
+      "forest-border": {
+        "role": "neutral",
+        "displayName": "Forest Divider",
+        "tonalRamp": [
+          "oklch(15.00% 0.0080 150.52)",
+          "oklch(26.43% 0.0142 150.52)",
+          "oklch(37.86% 0.0188 150.52)",
+          "oklch(49.29% 0.0188 150.52)",
+          "oklch(60.71% 0.0188 150.52)",
+          "oklch(72.14% 0.0188 150.52)",
+          "oklch(83.57% 0.0123 150.52)",
+          "oklch(95.00% 0.0038 150.52)"
+        ]
+      },
+      "forest-soft": {
+        "role": "neutral",
+        "displayName": "Forest Selection tint",
+        "tonalRamp": [
+          "oklch(15.00% 0.0094 149.70)",
+          "oklch(26.43% 0.0166 149.70)",
+          "oklch(37.86% 0.0219 149.70)",
+          "oklch(49.29% 0.0219 149.70)",
+          "oklch(60.71% 0.0219 149.70)",
+          "oklch(72.14% 0.0219 149.70)",
+          "oklch(83.57% 0.0144 149.70)",
+          "oklch(95.00% 0.0044 149.70)"
+        ]
+      },
+      "forest-rail": {
+        "role": "neutral",
+        "displayName": "Forest Binding",
+        "tonalRamp": [
+          "oklch(15.00% 0.0222 166.52)",
+          "oklch(26.43% 0.0392 166.52)",
+          "oklch(37.86% 0.0519 166.52)",
+          "oklch(49.29% 0.0519 166.52)",
+          "oklch(60.71% 0.0519 166.52)",
+          "oklch(72.14% 0.0519 166.52)",
+          "oklch(83.57% 0.0341 166.52)",
+          "oklch(95.00% 0.0104 166.52)"
+        ]
+      },
+      "forest-on-rail": {
+        "role": "neutral",
+        "displayName": "Forest Navigation foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0043 145.50)",
+          "oklch(26.43% 0.0076 145.50)",
+          "oklch(37.86% 0.0101 145.50)",
+          "oklch(49.29% 0.0101 145.50)",
+          "oklch(60.71% 0.0101 145.50)",
+          "oklch(72.14% 0.0101 145.50)",
+          "oklch(83.57% 0.0067 145.50)",
+          "oklch(95.00% 0.0020 145.50)"
+        ]
+      },
+      "forest-rail-muted": {
+        "role": "neutral",
+        "displayName": "Forest Secondary navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0144 149.47)",
+          "oklch(26.43% 0.0254 149.47)",
+          "oklch(37.86% 0.0337 149.47)",
+          "oklch(49.29% 0.0337 149.47)",
+          "oklch(60.71% 0.0337 149.47)",
+          "oklch(72.14% 0.0337 149.47)",
+          "oklch(83.57% 0.0221 149.47)",
+          "oklch(95.00% 0.0067 149.47)"
+        ]
+      },
+      "forest-rail-active": {
+        "role": "neutral",
+        "displayName": "Forest Active navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0251 161.27)",
+          "oklch(26.43% 0.0443 161.27)",
+          "oklch(37.86% 0.0586 161.27)",
+          "oklch(49.29% 0.0586 161.27)",
+          "oklch(60.71% 0.0586 161.27)",
+          "oklch(72.14% 0.0586 161.27)",
+          "oklch(83.57% 0.0385 161.27)",
+          "oklch(95.00% 0.0117 161.27)"
+        ]
+      },
+      "tahoe-light-accent": {
+        "role": "primary",
+        "displayName": "Tahoe Light Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0403 252.17)",
+          "oklch(26.43% 0.0711 252.17)",
+          "oklch(37.86% 0.0941 252.17)",
+          "oklch(49.29% 0.0941 252.17)",
+          "oklch(60.71% 0.0941 252.17)",
+          "oklch(72.14% 0.0941 252.17)",
+          "oklch(83.57% 0.0618 252.17)",
+          "oklch(95.00% 0.0188 252.17)"
+        ]
+      },
+      "tahoe-light-on-accent": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Action foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "tahoe-light-bg": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Workspace",
+        "tonalRamp": [
+          "oklch(15.00% 0.0044 247.94)",
+          "oklch(26.43% 0.0078 247.94)",
+          "oklch(37.86% 0.0104 247.94)",
+          "oklch(49.29% 0.0104 247.94)",
+          "oklch(60.71% 0.0104 247.94)",
+          "oklch(72.14% 0.0104 247.94)",
+          "oklch(83.57% 0.0068 247.94)",
+          "oklch(95.00% 0.0021 247.94)"
+        ]
+      },
+      "tahoe-light-paper": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "tahoe-light-panel": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Structural panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0029 247.90)",
+          "oklch(26.43% 0.0052 247.90)",
+          "oklch(37.86% 0.0069 247.90)",
+          "oklch(49.29% 0.0069 247.90)",
+          "oklch(60.71% 0.0069 247.90)",
+          "oklch(72.14% 0.0069 247.90)",
+          "oklch(83.57% 0.0045 247.90)",
+          "oklch(95.00% 0.0014 247.90)"
+        ]
+      },
+      "tahoe-light-text": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Reading text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0200 251.56)",
+          "oklch(26.43% 0.0352 251.56)",
+          "oklch(37.86% 0.0466 251.56)",
+          "oklch(49.29% 0.0466 251.56)",
+          "oklch(60.71% 0.0466 251.56)",
+          "oklch(72.14% 0.0466 251.56)",
+          "oklch(83.57% 0.0306 251.56)",
+          "oklch(95.00% 0.0093 251.56)"
+        ]
+      },
+      "tahoe-light-muted": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Secondary text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0179 248.64)",
+          "oklch(26.43% 0.0316 248.64)",
+          "oklch(37.86% 0.0418 248.64)",
+          "oklch(49.29% 0.0418 248.64)",
+          "oklch(60.71% 0.0418 248.64)",
+          "oklch(72.14% 0.0418 248.64)",
+          "oklch(83.57% 0.0275 248.64)",
+          "oklch(95.00% 0.0084 248.64)"
+        ]
+      },
+      "tahoe-light-border": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Divider",
+        "tonalRamp": [
+          "oklch(15.00% 0.0086 245.67)",
+          "oklch(26.43% 0.0151 245.67)",
+          "oklch(37.86% 0.0200 245.67)",
+          "oklch(49.29% 0.0200 245.67)",
+          "oklch(60.71% 0.0200 245.67)",
+          "oklch(72.14% 0.0200 245.67)",
+          "oklch(83.57% 0.0132 245.67)",
+          "oklch(95.00% 0.0040 245.67)"
+        ]
+      },
+      "tahoe-light-soft": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Selection tint",
+        "tonalRamp": [
+          "oklch(15.00% 0.0089 248.05)",
+          "oklch(26.43% 0.0157 248.05)",
+          "oklch(37.86% 0.0208 248.05)",
+          "oklch(49.29% 0.0208 248.05)",
+          "oklch(60.71% 0.0208 248.05)",
+          "oklch(72.14% 0.0208 248.05)",
+          "oklch(83.57% 0.0137 248.05)",
+          "oklch(95.00% 0.0042 248.05)"
+        ]
+      },
+      "tahoe-light-rail": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Binding",
+        "tonalRamp": [
+          "oklch(15.00% 0.0251 247.09)",
+          "oklch(26.43% 0.0443 247.09)",
+          "oklch(37.86% 0.0586 247.09)",
+          "oklch(49.29% 0.0586 247.09)",
+          "oklch(60.71% 0.0586 247.09)",
+          "oklch(72.14% 0.0586 247.09)",
+          "oklch(83.57% 0.0385 247.09)",
+          "oklch(95.00% 0.0117 247.09)"
+        ]
+      },
+      "tahoe-light-on-rail": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Navigation foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0053 255.50)",
+          "oklch(26.43% 0.0094 255.50)",
+          "oklch(37.86% 0.0125 255.50)",
+          "oklch(49.29% 0.0125 255.50)",
+          "oklch(60.71% 0.0125 255.50)",
+          "oklch(72.14% 0.0125 255.50)",
+          "oklch(83.57% 0.0082 255.50)",
+          "oklch(95.00% 0.0025 255.50)"
+        ]
+      },
+      "tahoe-light-rail-muted": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Secondary navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0132 246.64)",
+          "oklch(26.43% 0.0232 246.64)",
+          "oklch(37.86% 0.0307 246.64)",
+          "oklch(49.29% 0.0307 246.64)",
+          "oklch(60.71% 0.0307 246.64)",
+          "oklch(72.14% 0.0307 246.64)",
+          "oklch(83.57% 0.0202 246.64)",
+          "oklch(95.00% 0.0061 246.64)"
+        ]
+      },
+      "tahoe-light-rail-active": {
+        "role": "neutral",
+        "displayName": "Tahoe Light Active navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0270 245.42)",
+          "oklch(26.43% 0.0476 245.42)",
+          "oklch(37.86% 0.0630 245.42)",
+          "oklch(49.29% 0.0630 245.42)",
+          "oklch(60.71% 0.0630 245.42)",
+          "oklch(72.14% 0.0630 245.42)",
+          "oklch(83.57% 0.0414 245.42)",
+          "oklch(95.00% 0.0126 245.42)"
+        ]
+      },
+      "tahoe-dark-accent": {
+        "role": "primary",
+        "displayName": "Tahoe Dark Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0356 252.67)",
+          "oklch(26.43% 0.0626 252.67)",
+          "oklch(37.86% 0.0830 252.67)",
+          "oklch(49.29% 0.0830 252.67)",
+          "oklch(60.71% 0.0830 252.67)",
+          "oklch(72.14% 0.0830 252.67)",
+          "oklch(83.57% 0.0545 252.67)",
+          "oklch(95.00% 0.0166 252.67)"
+        ]
+      },
+      "tahoe-dark-on-accent": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Action foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0263 251.56)",
+          "oklch(26.43% 0.0463 251.56)",
+          "oklch(37.86% 0.0613 251.56)",
+          "oklch(49.29% 0.0613 251.56)",
+          "oklch(60.71% 0.0613 251.56)",
+          "oklch(72.14% 0.0613 251.56)",
+          "oklch(83.57% 0.0403 251.56)",
+          "oklch(95.00% 0.0123 251.56)"
+        ]
+      },
+      "tahoe-dark-bg": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Workspace",
+        "tonalRamp": [
+          "oklch(15.00% 0.0126 255.27)",
+          "oklch(26.43% 0.0221 255.27)",
+          "oklch(37.86% 0.0293 255.27)",
+          "oklch(49.29% 0.0293 255.27)",
+          "oklch(60.71% 0.0293 255.27)",
+          "oklch(72.14% 0.0293 255.27)",
+          "oklch(83.57% 0.0193 255.27)",
+          "oklch(95.00% 0.0059 255.27)"
+        ]
+      },
+      "tahoe-dark-paper": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0151 252.34)",
+          "oklch(26.43% 0.0266 252.34)",
+          "oklch(37.86% 0.0352 252.34)",
+          "oklch(49.29% 0.0352 252.34)",
+          "oklch(60.71% 0.0352 252.34)",
+          "oklch(72.14% 0.0352 252.34)",
+          "oklch(83.57% 0.0232 252.34)",
+          "oklch(95.00% 0.0070 252.34)"
+        ]
+      },
+      "tahoe-dark-panel": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Structural panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0161 253.86)",
+          "oklch(26.43% 0.0283 253.86)",
+          "oklch(37.86% 0.0375 253.86)",
+          "oklch(49.29% 0.0375 253.86)",
+          "oklch(60.71% 0.0375 253.86)",
+          "oklch(72.14% 0.0375 253.86)",
+          "oklch(83.57% 0.0247 253.86)",
+          "oklch(95.00% 0.0075 253.86)"
+        ]
+      },
+      "tahoe-dark-text": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Reading text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0056 251.56)",
+          "oklch(26.43% 0.0099 251.56)",
+          "oklch(37.86% 0.0132 251.56)",
+          "oklch(49.29% 0.0132 251.56)",
+          "oklch(60.71% 0.0132 251.56)",
+          "oklch(72.14% 0.0132 251.56)",
+          "oklch(83.57% 0.0087 251.56)",
+          "oklch(95.00% 0.0026 251.56)"
+        ]
+      },
+      "tahoe-dark-muted": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Secondary text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0157 250.94)",
+          "oklch(26.43% 0.0277 250.94)",
+          "oklch(37.86% 0.0367 250.94)",
+          "oklch(49.29% 0.0367 250.94)",
+          "oklch(60.71% 0.0367 250.94)",
+          "oklch(72.14% 0.0367 250.94)",
+          "oklch(83.57% 0.0241 250.94)",
+          "oklch(95.00% 0.0073 250.94)"
+        ]
+      },
+      "tahoe-dark-border": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Divider",
+        "tonalRamp": [
+          "oklch(15.00% 0.0204 250.16)",
+          "oklch(26.43% 0.0360 250.16)",
+          "oklch(37.86% 0.0476 250.16)",
+          "oklch(49.29% 0.0476 250.16)",
+          "oklch(60.71% 0.0476 250.16)",
+          "oklch(72.14% 0.0476 250.16)",
+          "oklch(83.57% 0.0313 250.16)",
+          "oklch(95.00% 0.0095 250.16)"
+        ]
+      },
+      "tahoe-dark-soft": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Selection tint",
+        "tonalRamp": [
+          "oklch(15.00% 0.0238 254.89)",
+          "oklch(26.43% 0.0420 254.89)",
+          "oklch(37.86% 0.0556 254.89)",
+          "oklch(49.29% 0.0556 254.89)",
+          "oklch(60.71% 0.0556 254.89)",
+          "oklch(72.14% 0.0556 254.89)",
+          "oklch(83.57% 0.0365 254.89)",
+          "oklch(95.00% 0.0111 254.89)"
+        ]
+      },
+      "tahoe-dark-rail": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Binding",
+        "tonalRamp": [
+          "oklch(15.00% 0.0135 256.89)",
+          "oklch(26.43% 0.0237 256.89)",
+          "oklch(37.86% 0.0314 256.89)",
+          "oklch(49.29% 0.0314 256.89)",
+          "oklch(60.71% 0.0314 256.89)",
+          "oklch(72.14% 0.0314 256.89)",
+          "oklch(83.57% 0.0206 256.89)",
+          "oklch(95.00% 0.0063 256.89)"
+        ]
+      },
+      "tahoe-dark-on-rail": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Navigation foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0100 256.10)",
+          "oklch(26.43% 0.0177 256.10)",
+          "oklch(37.86% 0.0234 256.10)",
+          "oklch(49.29% 0.0234 256.10)",
+          "oklch(60.71% 0.0234 256.10)",
+          "oklch(72.14% 0.0234 256.10)",
+          "oklch(83.57% 0.0154 256.10)",
+          "oklch(95.00% 0.0047 256.10)"
+        ]
+      },
+      "tahoe-dark-rail-muted": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Secondary navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0178 251.84)",
+          "oklch(26.43% 0.0313 251.84)",
+          "oklch(37.86% 0.0414 251.84)",
+          "oklch(49.29% 0.0414 251.84)",
+          "oklch(60.71% 0.0414 251.84)",
+          "oklch(72.14% 0.0414 251.84)",
+          "oklch(83.57% 0.0272 251.84)",
+          "oklch(95.00% 0.0083 251.84)"
+        ]
+      },
+      "tahoe-dark-rail-active": {
+        "role": "neutral",
+        "displayName": "Tahoe Dark Active navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0252 252.96)",
+          "oklch(26.43% 0.0445 252.96)",
+          "oklch(37.86% 0.0589 252.96)",
+          "oklch(49.29% 0.0589 252.96)",
+          "oklch(60.71% 0.0589 252.96)",
+          "oklch(72.14% 0.0589 252.96)",
+          "oklch(83.57% 0.0387 252.96)",
+          "oklch(95.00% 0.0118 252.96)"
+        ]
+      },
+      "parchment-accent": {
+        "role": "primary",
+        "displayName": "Parchment Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0323 56.71)",
+          "oklch(26.43% 0.0570 56.71)",
+          "oklch(37.86% 0.0755 56.71)",
+          "oklch(49.29% 0.0755 56.71)",
+          "oklch(60.71% 0.0755 56.71)",
+          "oklch(72.14% 0.0755 56.71)",
+          "oklch(83.57% 0.0496 56.71)",
+          "oklch(95.00% 0.0151 56.71)"
+        ]
+      },
+      "parchment-on-accent": {
+        "role": "neutral",
+        "displayName": "Parchment Action foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "parchment-bg": {
+        "role": "neutral",
+        "displayName": "Parchment Workspace",
+        "tonalRamp": [
+          "oklch(15.00% 0.0084 80.11)",
+          "oklch(26.43% 0.0147 80.11)",
+          "oklch(37.86% 0.0195 80.11)",
+          "oklch(49.29% 0.0195 80.11)",
+          "oklch(60.71% 0.0195 80.11)",
+          "oklch(72.14% 0.0195 80.11)",
+          "oklch(83.57% 0.0128 80.11)",
+          "oklch(95.00% 0.0039 80.11)"
+        ]
+      },
+      "parchment-paper": {
+        "role": "neutral",
+        "displayName": "Parchment Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0047 89.72)",
+          "oklch(26.43% 0.0083 89.72)",
+          "oklch(37.86% 0.0110 89.72)",
+          "oklch(49.29% 0.0110 89.72)",
+          "oklch(60.71% 0.0110 89.72)",
+          "oklch(72.14% 0.0110 89.72)",
+          "oklch(83.57% 0.0073 89.72)",
+          "oklch(95.00% 0.0022 89.72)"
+        ]
+      },
+      "parchment-panel": {
+        "role": "neutral",
+        "displayName": "Parchment Structural panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0071 79.35)",
+          "oklch(26.43% 0.0125 79.35)",
+          "oklch(37.86% 0.0165 79.35)",
+          "oklch(49.29% 0.0165 79.35)",
+          "oklch(60.71% 0.0165 79.35)",
+          "oklch(72.14% 0.0165 79.35)",
+          "oklch(83.57% 0.0109 79.35)",
+          "oklch(95.00% 0.0033 79.35)"
+        ]
+      },
+      "parchment-text": {
+        "role": "neutral",
+        "displayName": "Parchment Reading text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0111 57.34)",
+          "oklch(26.43% 0.0195 57.34)",
+          "oklch(37.86% 0.0258 57.34)",
+          "oklch(49.29% 0.0258 57.34)",
+          "oklch(60.71% 0.0258 57.34)",
+          "oklch(72.14% 0.0258 57.34)",
+          "oklch(83.57% 0.0170 57.34)",
+          "oklch(95.00% 0.0052 57.34)"
+        ]
+      },
+      "parchment-muted": {
+        "role": "neutral",
+        "displayName": "Parchment Secondary text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0180 61.13)",
+          "oklch(26.43% 0.0317 61.13)",
+          "oklch(37.86% 0.0420 61.13)",
+          "oklch(49.29% 0.0420 61.13)",
+          "oklch(60.71% 0.0420 61.13)",
+          "oklch(72.14% 0.0420 61.13)",
+          "oklch(83.57% 0.0276 61.13)",
+          "oklch(95.00% 0.0084 61.13)"
+        ]
+      },
+      "parchment-border": {
+        "role": "neutral",
+        "displayName": "Parchment Divider",
+        "tonalRamp": [
+          "oklch(15.00% 0.0127 77.52)",
+          "oklch(26.43% 0.0224 77.52)",
+          "oklch(37.86% 0.0296 77.52)",
+          "oklch(49.29% 0.0296 77.52)",
+          "oklch(60.71% 0.0296 77.52)",
+          "oklch(72.14% 0.0296 77.52)",
+          "oklch(83.57% 0.0195 77.52)",
+          "oklch(95.00% 0.0059 77.52)"
+        ]
+      },
+      "parchment-soft": {
+        "role": "neutral",
+        "displayName": "Parchment Selection tint",
+        "tonalRamp": [
+          "oklch(15.00% 0.0140 80.99)",
+          "oklch(26.43% 0.0246 80.99)",
+          "oklch(37.86% 0.0326 80.99)",
+          "oklch(49.29% 0.0326 80.99)",
+          "oklch(60.71% 0.0326 80.99)",
+          "oklch(72.14% 0.0326 80.99)",
+          "oklch(83.57% 0.0214 80.99)",
+          "oklch(95.00% 0.0065 80.99)"
+        ]
+      },
+      "parchment-rail": {
+        "role": "neutral",
+        "displayName": "Parchment Binding",
+        "tonalRamp": [
+          "oklch(15.00% 0.0193 60.99)",
+          "oklch(26.43% 0.0340 60.99)",
+          "oklch(37.86% 0.0451 60.99)",
+          "oklch(49.29% 0.0451 60.99)",
+          "oklch(60.71% 0.0451 60.99)",
+          "oklch(72.14% 0.0451 60.99)",
+          "oklch(83.57% 0.0296 60.99)",
+          "oklch(95.00% 0.0090 60.99)"
+        ]
+      },
+      "parchment-on-rail": {
+        "role": "neutral",
+        "displayName": "Parchment Navigation foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0082 80.12)",
+          "oklch(26.43% 0.0145 80.12)",
+          "oklch(37.86% 0.0192 80.12)",
+          "oklch(49.29% 0.0192 80.12)",
+          "oklch(60.71% 0.0192 80.12)",
+          "oklch(72.14% 0.0192 80.12)",
+          "oklch(83.57% 0.0126 80.12)",
+          "oklch(95.00% 0.0038 80.12)"
+        ]
+      },
+      "parchment-rail-muted": {
+        "role": "neutral",
+        "displayName": "Parchment Secondary navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0172 70.96)",
+          "oklch(26.43% 0.0303 70.96)",
+          "oklch(37.86% 0.0401 70.96)",
+          "oklch(49.29% 0.0401 70.96)",
+          "oklch(60.71% 0.0401 70.96)",
+          "oklch(72.14% 0.0401 70.96)",
+          "oklch(83.57% 0.0263 70.96)",
+          "oklch(95.00% 0.0080 70.96)"
+        ]
+      },
+      "parchment-rail-active": {
+        "role": "neutral",
+        "displayName": "Parchment Active navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0242 60.21)",
+          "oklch(26.43% 0.0427 60.21)",
+          "oklch(37.86% 0.0566 60.21)",
+          "oklch(49.29% 0.0566 60.21)",
+          "oklch(60.71% 0.0566 60.21)",
+          "oklch(72.14% 0.0566 60.21)",
+          "oklch(83.57% 0.0372 60.21)",
+          "oklch(95.00% 0.0113 60.21)"
+        ]
+      },
+      "midnight-accent": {
+        "role": "primary",
+        "displayName": "Midnight Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0244 324.19)",
+          "oklch(26.43% 0.0430 324.19)",
+          "oklch(37.86% 0.0569 324.19)",
+          "oklch(49.29% 0.0569 324.19)",
+          "oklch(60.71% 0.0569 324.19)",
+          "oklch(72.14% 0.0569 324.19)",
+          "oklch(83.57% 0.0374 324.19)",
+          "oklch(95.00% 0.0114 324.19)"
+        ]
+      },
+      "midnight-on-accent": {
+        "role": "neutral",
+        "displayName": "Midnight Action foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0207 313.93)",
+          "oklch(26.43% 0.0364 313.93)",
+          "oklch(37.86% 0.0482 313.93)",
+          "oklch(49.29% 0.0482 313.93)",
+          "oklch(60.71% 0.0482 313.93)",
+          "oklch(72.14% 0.0482 313.93)",
+          "oklch(83.57% 0.0317 313.93)",
+          "oklch(95.00% 0.0096 313.93)"
+        ]
+      },
+      "midnight-bg": {
+        "role": "neutral",
+        "displayName": "Midnight Workspace",
+        "tonalRamp": [
+          "oklch(15.00% 0.0090 297.31)",
+          "oklch(26.43% 0.0159 297.31)",
+          "oklch(37.86% 0.0211 297.31)",
+          "oklch(49.29% 0.0211 297.31)",
+          "oklch(60.71% 0.0211 297.31)",
+          "oklch(72.14% 0.0211 297.31)",
+          "oklch(83.57% 0.0139 297.31)",
+          "oklch(95.00% 0.0042 297.31)"
+        ]
+      },
+      "midnight-paper": {
+        "role": "neutral",
+        "displayName": "Midnight Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0103 298.96)",
+          "oklch(26.43% 0.0182 298.96)",
+          "oklch(37.86% 0.0241 298.96)",
+          "oklch(49.29% 0.0241 298.96)",
+          "oklch(60.71% 0.0241 298.96)",
+          "oklch(72.14% 0.0241 298.96)",
+          "oklch(83.57% 0.0158 298.96)",
+          "oklch(95.00% 0.0048 298.96)"
+        ]
+      },
+      "midnight-panel": {
+        "role": "neutral",
+        "displayName": "Midnight Structural panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0105 298.79)",
+          "oklch(26.43% 0.0186 298.79)",
+          "oklch(37.86% 0.0246 298.79)",
+          "oklch(49.29% 0.0246 298.79)",
+          "oklch(60.71% 0.0246 298.79)",
+          "oklch(72.14% 0.0246 298.79)",
+          "oklch(83.57% 0.0162 298.79)",
+          "oklch(95.00% 0.0049 298.79)"
+        ]
+      },
+      "midnight-text": {
+        "role": "neutral",
+        "displayName": "Midnight Reading text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0058 314.76)",
+          "oklch(26.43% 0.0103 314.76)",
+          "oklch(37.86% 0.0136 314.76)",
+          "oklch(49.29% 0.0136 314.76)",
+          "oklch(60.71% 0.0136 314.76)",
+          "oklch(72.14% 0.0136 314.76)",
+          "oklch(83.57% 0.0089 314.76)",
+          "oklch(95.00% 0.0027 314.76)"
+        ]
+      },
+      "midnight-muted": {
+        "role": "neutral",
+        "displayName": "Midnight Secondary text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0157 315.69)",
+          "oklch(26.43% 0.0277 315.69)",
+          "oklch(37.86% 0.0366 315.69)",
+          "oklch(49.29% 0.0366 315.69)",
+          "oklch(60.71% 0.0366 315.69)",
+          "oklch(72.14% 0.0366 315.69)",
+          "oklch(83.57% 0.0241 315.69)",
+          "oklch(95.00% 0.0073 315.69)"
+        ]
+      },
+      "midnight-border": {
+        "role": "neutral",
+        "displayName": "Midnight Divider",
+        "tonalRamp": [
+          "oklch(15.00% 0.0174 308.31)",
+          "oklch(26.43% 0.0307 308.31)",
+          "oklch(37.86% 0.0406 308.31)",
+          "oklch(49.29% 0.0406 308.31)",
+          "oklch(60.71% 0.0406 308.31)",
+          "oklch(72.14% 0.0406 308.31)",
+          "oklch(83.57% 0.0267 308.31)",
+          "oklch(95.00% 0.0081 308.31)"
+        ]
+      },
+      "midnight-soft": {
+        "role": "neutral",
+        "displayName": "Midnight Selection tint",
+        "tonalRamp": [
+          "oklch(15.00% 0.0197 309.67)",
+          "oklch(26.43% 0.0347 309.67)",
+          "oklch(37.86% 0.0459 309.67)",
+          "oklch(49.29% 0.0459 309.67)",
+          "oklch(60.71% 0.0459 309.67)",
+          "oklch(72.14% 0.0459 309.67)",
+          "oklch(83.57% 0.0302 309.67)",
+          "oklch(95.00% 0.0092 309.67)"
+        ]
+      },
+      "midnight-rail": {
+        "role": "neutral",
+        "displayName": "Midnight Binding",
+        "tonalRamp": [
+          "oklch(15.00% 0.0122 303.68)",
+          "oklch(26.43% 0.0215 303.68)",
+          "oklch(37.86% 0.0285 303.68)",
+          "oklch(49.29% 0.0285 303.68)",
+          "oklch(60.71% 0.0285 303.68)",
+          "oklch(72.14% 0.0285 303.68)",
+          "oklch(83.57% 0.0187 303.68)",
+          "oklch(95.00% 0.0057 303.68)"
+        ]
+      },
+      "midnight-on-rail": {
+        "role": "neutral",
+        "displayName": "Midnight Navigation foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0101 319.45)",
+          "oklch(26.43% 0.0179 319.45)",
+          "oklch(37.86% 0.0237 319.45)",
+          "oklch(49.29% 0.0237 319.45)",
+          "oklch(60.71% 0.0237 319.45)",
+          "oklch(72.14% 0.0237 319.45)",
+          "oklch(83.57% 0.0156 319.45)",
+          "oklch(95.00% 0.0047 319.45)"
+        ]
+      },
+      "midnight-rail-muted": {
+        "role": "neutral",
+        "displayName": "Midnight Secondary navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0220 316.50)",
+          "oklch(26.43% 0.0387 316.50)",
+          "oklch(37.86% 0.0513 316.50)",
+          "oklch(49.29% 0.0513 316.50)",
+          "oklch(60.71% 0.0513 316.50)",
+          "oklch(72.14% 0.0513 316.50)",
+          "oklch(83.57% 0.0337 316.50)",
+          "oklch(95.00% 0.0103 316.50)"
+        ]
+      },
+      "midnight-rail-active": {
+        "role": "neutral",
+        "displayName": "Midnight Active navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0256 313.57)",
+          "oklch(26.43% 0.0450 313.57)",
+          "oklch(37.86% 0.0596 313.57)",
+          "oklch(49.29% 0.0596 313.57)",
+          "oklch(60.71% 0.0596 313.57)",
+          "oklch(72.14% 0.0596 313.57)",
+          "oklch(83.57% 0.0392 313.57)",
+          "oklch(95.00% 0.0119 313.57)"
+        ]
+      },
+      "mono-accent": {
+        "role": "primary",
+        "displayName": "Monochrome Ink",
+        "tonalRamp": [
+          "oklch(15.00% 0.0042 207.07)",
+          "oklch(26.43% 0.0073 207.07)",
+          "oklch(37.86% 0.0097 207.07)",
+          "oklch(49.29% 0.0097 207.07)",
+          "oklch(60.71% 0.0097 207.07)",
+          "oklch(72.14% 0.0097 207.07)",
+          "oklch(83.57% 0.0064 207.07)",
+          "oklch(95.00% 0.0019 207.07)"
+        ]
+      },
+      "mono-on-accent": {
+        "role": "neutral",
+        "displayName": "Monochrome Action foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "mono-bg": {
+        "role": "neutral",
+        "displayName": "Monochrome Workspace",
+        "tonalRamp": [
+          "oklch(15.00% 0.0005 197.14)",
+          "oklch(26.43% 0.0008 197.14)",
+          "oklch(37.86% 0.0011 197.14)",
+          "oklch(49.29% 0.0011 197.14)",
+          "oklch(60.71% 0.0011 197.14)",
+          "oklch(72.14% 0.0011 197.14)",
+          "oklch(83.57% 0.0007 197.14)",
+          "oklch(95.00% 0.0002 197.14)"
+        ]
+      },
+      "mono-paper": {
+        "role": "neutral",
+        "displayName": "Monochrome Paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "mono-panel": {
+        "role": "neutral",
+        "displayName": "Monochrome Structural panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0005 197.14)",
+          "oklch(26.43% 0.0008 197.14)",
+          "oklch(37.86% 0.0011 197.14)",
+          "oklch(49.29% 0.0011 197.14)",
+          "oklch(60.71% 0.0011 197.14)",
+          "oklch(72.14% 0.0011 197.14)",
+          "oklch(83.57% 0.0007 197.14)",
+          "oklch(95.00% 0.0002 197.14)"
+        ]
+      },
+      "mono-text": {
+        "role": "neutral",
+        "displayName": "Monochrome Reading text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0020 219.63)",
+          "oklch(26.43% 0.0035 219.63)",
+          "oklch(37.86% 0.0047 219.63)",
+          "oklch(49.29% 0.0047 219.63)",
+          "oklch(60.71% 0.0047 219.63)",
+          "oklch(72.14% 0.0047 219.63)",
+          "oklch(83.57% 0.0031 219.63)",
+          "oklch(95.00% 0.0009 219.63)"
+        ]
+      },
+      "mono-muted": {
+        "role": "neutral",
+        "displayName": "Monochrome Secondary text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0033 208.76)",
+          "oklch(26.43% 0.0058 208.76)",
+          "oklch(37.86% 0.0076 208.76)",
+          "oklch(49.29% 0.0076 208.76)",
+          "oklch(60.71% 0.0076 208.76)",
+          "oklch(72.14% 0.0076 208.76)",
+          "oklch(83.57% 0.0050 208.76)",
+          "oklch(95.00% 0.0015 208.76)"
+        ]
+      },
+      "mono-border": {
+        "role": "neutral",
+        "displayName": "Monochrome Divider",
+        "tonalRamp": [
+          "oklch(15.00% 0.0019 197.08)",
+          "oklch(26.43% 0.0033 197.08)",
+          "oklch(37.86% 0.0044 197.08)",
+          "oklch(49.29% 0.0044 197.08)",
+          "oklch(60.71% 0.0044 197.08)",
+          "oklch(72.14% 0.0044 197.08)",
+          "oklch(83.57% 0.0029 197.08)",
+          "oklch(95.00% 0.0009 197.08)"
+        ]
+      },
+      "mono-soft": {
+        "role": "neutral",
+        "displayName": "Monochrome Selection tint",
+        "tonalRamp": [
+          "oklch(15.00% 0.0018 197.08)",
+          "oklch(26.43% 0.0033 197.08)",
+          "oklch(37.86% 0.0043 197.08)",
+          "oklch(49.29% 0.0043 197.08)",
+          "oklch(60.71% 0.0043 197.08)",
+          "oklch(72.14% 0.0043 197.08)",
+          "oklch(83.57% 0.0028 197.08)",
+          "oklch(95.00% 0.0009 197.08)"
+        ]
+      },
+      "mono-rail": {
+        "role": "neutral",
+        "displayName": "Monochrome Binding",
+        "tonalRamp": [
+          "oklch(15.00% 0.0042 207.07)",
+          "oklch(26.43% 0.0073 207.07)",
+          "oklch(37.86% 0.0097 207.07)",
+          "oklch(49.29% 0.0097 207.07)",
+          "oklch(60.71% 0.0097 207.07)",
+          "oklch(72.14% 0.0097 207.07)",
+          "oklch(83.57% 0.0064 207.07)",
+          "oklch(95.00% 0.0019 207.07)"
+        ]
+      },
+      "mono-on-rail": {
+        "role": "neutral",
+        "displayName": "Monochrome Navigation foreground",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "mono-rail-muted": {
+        "role": "neutral",
+        "displayName": "Monochrome Secondary navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0042 196.97)",
+          "oklch(26.43% 0.0075 196.97)",
+          "oklch(37.86% 0.0099 196.97)",
+          "oklch(49.29% 0.0099 196.97)",
+          "oklch(60.71% 0.0099 196.97)",
+          "oklch(72.14% 0.0099 196.97)",
+          "oklch(83.57% 0.0065 196.97)",
+          "oklch(95.00% 0.0020 196.97)"
+        ]
+      },
+      "mono-rail-active": {
+        "role": "neutral",
+        "displayName": "Monochrome Active navigation",
+        "tonalRamp": [
+          "oklch(15.00% 0.0069 202.28)",
+          "oklch(26.43% 0.0122 202.28)",
+          "oklch(37.86% 0.0162 202.28)",
+          "oklch(49.29% 0.0162 202.28)",
+          "oklch(60.71% 0.0162 202.28)",
+          "oklch(72.14% 0.0162 202.28)",
+          "oklch(83.57% 0.0107 202.28)",
+          "oklch(95.00% 0.0032 202.28)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Library headline",
+        "purpose": "Operational library heading."
+      },
+      "title": {
+        "displayName": "Scenario title",
+        "purpose": "Shared scenario header."
+      },
+      "body": {
+        "displayName": "Manuscript",
+        "purpose": "Author-selected reading typography."
+      },
+      "label": {
+        "displayName": "Control label",
+        "purpose": "Compact Japanese UI controls."
+      }
+    },
+    "shadows": [
+      {
+        "name": "floating-tool",
+        "value": "0 4px 14px #00000014",
+        "purpose": "Formatting toolbar, flow search and inspector."
+      },
+      {
+        "name": "outline-overlay",
+        "value": "8px 8px 24px #00000018",
+        "purpose": "Narrow desktop outline overlay."
+      },
+      {
+        "name": "notes-overlay",
+        "value": "-8px 0 24px #00000018",
+        "purpose": "Narrow desktop notes overlay."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "150ms ease-out",
+        "purpose": "Background, text and border transitions; disabled under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-outline",
+        "value": "1150px"
+      },
+      {
+        "name": "overlay-panels",
+        "value": "900px"
+      },
+      {
+        "name": "compact-controls",
+        "value": "680px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Selected mode",
+      "kind": "button",
+      "refersTo": "mode-selected",
+      "description": "Solid ink marks the current body or flow mode.",
+      "html": "<button class=\"ds-mode\" aria-pressed=\"true\">本文</button>",
+      "css": ".ds-mode{font-family:'Yu Gothic UI','Meiryo',sans-serif;font-size:12px;transition:background-color 150ms ease-out,color 150ms ease-out,border-color 150ms ease-out;background:#2d664e;color:#ffffff;border:0;border-radius:5px;min-height:28px;padding:4px 12px}.ds-mode:hover{background:#dae8dc;color:#243c33}.ds-mode:focus-visible{outline:2px solid #2d664e;outline-offset:3px}@media(prefers-reduced-motion:reduce){.ds-mode{transition:none}}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Paper action for flow tools.",
+      "html": "<button class=\"ds-action\">左→右に整列</button>",
+      "css": ".ds-action{font-family:'Yu Gothic UI','Meiryo',sans-serif;font-size:12px;transition:background-color 150ms ease-out,color 150ms ease-out,border-color 150ms ease-out;min-height:32px;padding:6px 10px;border:1px solid #cbd7cd;border-radius:6px;background:#fcfdfb;color:#243c33}.ds-action:hover{background:#dae8dc}.ds-action:focus-visible{outline:2px solid #2d664e;outline-offset:3px}@media(prefers-reduced-motion:reduce){.ds-action{transition:none}}"
+    },
+    {
+      "name": "Outline search",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Compact search field for structural navigation.",
+      "html": "<label class=\"ds-search\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input aria-label=\"目次を検索\" placeholder=\"見出しを検索\" type=\"search\"/></label>",
+      "css": ".ds-search{display:flex;align-items:center;gap:8px;min-height:36px;padding:0 10px;border:1px solid #cbd7cd;border-radius:6px;background:#fcfdfb;color:#526b5d}.ds-search input{font-family:'Yu Gothic UI','Meiryo',sans-serif;font-size:12px;border:0;background:transparent;color:#243c33;padding:8px 0;outline:none}.ds-search input::placeholder{color:#526b5d;opacity:1}.ds-search:hover{border-color:#2d664e}.ds-search:focus-within{outline:2px solid #2d664e;outline-offset:2px}"
+    },
+    {
+      "name": "Outline count",
+      "kind": "chip",
+      "description": "Quiet count metadata in the outline title.",
+      "html": "<span class=\"ds-count\">12</span>",
+      "css": ".ds-count{font-family:'Yu Gothic UI','Meiryo',sans-serif;font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#dae8dc;color:#2d664e}"
+    },
+    {
+      "name": "Rail navigation",
+      "kind": "nav",
+      "description": "Dark binding with a contained current destination.",
+      "html": "<nav class=\"ds-rail\" aria-label=\"アプリメニュー\"><button class=\"ds-rail-button\" aria-label=\"マイシナリオ\" aria-current=\"page\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M3 7h6l2 2h10v11H3z\"/></svg></button></nav>",
+      "css": ".ds-rail{display:flex;width:60px;justify-content:center;background:#244b3c;padding:16px 0}.ds-rail-button{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:8px;background:#3c6651;color:#f2f8f2;transition:background-color 150ms ease-out}.ds-rail-button:hover{background:#3c6651;color:#f2f8f2}.ds-rail-button:focus-visible{outline:2px solid #f2f8f2;outline-offset:3px}@media(prefers-reduced-motion:reduce){.ds-rail-button{transition:none}}"
+    },
+    {
+      "name": "Scene card",
+      "kind": "card",
+      "refersTo": "scene-card",
+      "description": "Flat flow card; selection adds a visible outline.",
+      "html": "<article class=\"ds-scene\"><strong>導入のシーン</strong><p>本文あり</p><button>本文を開く</button></article>",
+      "css": ".ds-scene{font-family:'Yu Gothic UI','Meiryo',sans-serif;padding:16px;border:1px solid #cbd7cd;border-radius:10px;background:#fcfdfb;color:#243c33;max-width:260px}.ds-scene strong{font-size:15px;font-weight:600;line-height:1.6}.ds-scene p{font-size:12px;color:#2d664e}.ds-scene button{font-family:'Yu Gothic UI','Meiryo',sans-serif;font-size:12px;transition:background-color 150ms ease-out,color 150ms ease-out,border-color 150ms ease-out;padding:7px 10px;border:0;border-radius:5px;background:#dae8dc;color:#2d664e;width:100%}.ds-scene button:hover{background:#dae8dc}.ds-scene button:focus-visible{outline:2px solid #2d664e;outline-offset:3px}@media(prefers-reduced-motion:reduce){.ds-scene button{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Bound Manuscript and Structural Index",
+    "overview": "The desktop workspace pairs a readable manuscript with a persistent structural index. A deep navigation rail anchors tinted working panels and a quiet paper surface. Japanese system UI lettering keeps operational controls familiar; manuscript fonts remain an author preference.\n\nThis system describes the desktop implementation in `src/desktop.css` and `src/desktop-themes.mjs`, together with its inherited document typography. Android retains its separate interface and styles. The six color families share component geometry and semantic roles, with custom themes supplying their own computed colors.",
+    "keyCharacteristics": [
+      "Dark binding, tinted structure, legible manuscript.",
+      "Compact operational controls with visible focus and selection.",
+      "Independent outline, formatting and writing notes.",
+      "Flat document and library surfaces; restrained floating tools."
+    ],
+    "rules": [
+      {
+        "name": "The Bound Surface Rule",
+        "body": "Keep navigation, structural panels and manuscript paper as distinct semantic color roles in every theme.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contained Selection Rule",
+        "body": "Active outline rows use a full soft tint; the selected body or flow mode uses solid accent and its paired foreground.",
+        "section": "colors"
+      },
+      {
+        "name": "The Working Depth Rule",
+        "body": "Reserve workspace elevation for floating tools and responsive overlays; regular manuscript and library surfaces remain flat.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep manuscript colors, structural panels and navigation roles distinct across all six palettes and custom themes.",
+      "Do preserve author-selected manuscript fonts while using familiar Japanese system lettering for operational controls.",
+      "Do retain visible keyboard focus, ancestry in outline search and differentiated scene, information and group geometry.",
+      "Do keep outline, formatting and writing notes independently accessible."
+    ],
+    "donts": [
+      "Don't hide the application rail when closing the outline.",
+      "Don't turn active outline selection into a decorative side stripe.",
+      "Don't apply this desktop system to Android's separate interface.",
+      "Don't replace readable theme roles with incidental decorative colors."
+    ]
+  }
+}

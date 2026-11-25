@@ -60,7 +60,7 @@ app.whenReady().then(async () => {
     assert.equal(await js(`document.querySelectorAll('.gm-note blockquote, .gm-note h2').length`), 0);
     await js(`document.execCommand('insertText',false,'GMだけの秘密の手がかり。')`); await delay(150);
     assert.ok(await js(`document.querySelector('.gm-note').innerText.includes('GMだけの秘密の手がかり。')`));
-    assert.equal(await js(`getComputedStyle(document.querySelector('.gm-note')).borderTopLeftRadius`), '4px');
+    assert.equal(await js(`getComputedStyle(document.querySelector('.gm-note')).borderTopLeftRadius`), '8px');
     assert.equal(await js(`getComputedStyle(document.querySelector('.gm-note')).backgroundImage`), 'none');
     win.webContents.sendInputEvent({ type: 'keyDown', keyCode: 'Enter', modifiers: ['control'] });
     win.webContents.sendInputEvent({ type: 'keyUp', keyCode: 'Enter', modifiers: ['control'] });
