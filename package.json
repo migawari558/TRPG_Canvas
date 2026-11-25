@@ -1,6 +1,6 @@
 {
   "name": "trpg-canvas",
-  "version": "0.12.34",
+  "version": "1.0.0",
   "private": true,
   "description": "TRPGシナリオのためのローカル執筆アプリ",
   "main": "electron/main.cjs",

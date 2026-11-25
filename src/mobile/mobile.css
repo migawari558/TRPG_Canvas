@@ -225,7 +225,7 @@
 .mobile-app button, .mobile-app summary { min-height: 48px; border-radius: 8px; }
 .mobile-app .mobile-header { min-height: 60px; gap: 4px; padding: 6px 12px; background: var(--theme-panel); }
 .mobile-app .mobile-header > strong { font-size: 19px; font-weight: 600; padding-left: 4px; }
-.mobile-app .mobile-header > svg { color: var(--theme-accent); }
+.mobile-app .mobile-brand-mark { width: 34px; height: 34px; flex: none; }
 .mobile-app .mobile-header > button { min-width: 48px; }
 .mobile-app .mobile-header .mobile-settings-open { font-size: 13px; padding: 0 8px; }
 .mobile-app .mobile-title { font-weight: 600; padding: 8px 0; }

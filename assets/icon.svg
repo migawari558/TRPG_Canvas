@@ -1,4 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
- <rect x="8" y="8" width="240" height="240" rx="54" fill="#4d713e"/>
- <path d="M51 70Q88 61 120 80V190Q88 173 51 182Z M136 80Q168 61 205 70V182Q168 173 136 190Z" fill="#fffef9"/>
+  <rect x="8" y="8" width="240" height="240" rx="54" fill="#171615"/>
+  <rect x="16" y="16" width="224" height="224" rx="47" fill="none" stroke="#806735" stroke-width="2"/>
+  <g id="dice">
+    <path d="M128 43 201 84v87l-73 42-73-42V84Z" fill="#26221b" stroke="#e8bc62" stroke-width="8" stroke-linejoin="round"/>
+    <path d="m128 43 17 60 56-19m-56 19 56 68-73 42m17-110-50 56-40-75m40 75 33 54m-33-54-40 12" fill="none" stroke="#e8bc62" stroke-width="6" stroke-linejoin="round"/>
+    <path d="m128 43 17 60-90-19Z" fill="#e8bc62"/>
+    <path d="m145 103 56 68-106-12Z" fill="#b5873c"/>
+    <path d="M128 213 95 159l106 12Z" fill="#d9a74f"/>
+  </g>
 </svg>
