@@ -3,6 +3,8 @@ const path = require('node:path');
 const { createHash, randomUUID } = require('node:crypto');
 const sharedLibraryName = 'trpg-canvas-library-v1.json';
 const revision = text => createHash('sha256').update(text).digest('hex');
+let summaryCache = { folder: null, entries: new Map() };
+const summaryCacheLimit = 512;
 function characterCount(doc) {
   if (doc.content) {
     let text = '';
@@ -77,13 +79,30 @@ async function list(folder) {
   const migrationErrors = await restoreSharedLibrary(folder);
   const names = await fs.readdir(folder);
   const documents = [], errors = [...migrationErrors];
+  const previous = summaryCache.folder === folder ? summaryCache.entries : new Map();
+  const entries = new Map();
   for (const name of names.filter(n => n.endsWith('.trpg.json'))) {
     try {
-      const result = await read(folder, name.slice(0, -10));
-      documents.push({ id: result.doc.id, title: result.doc.title, systemName: result.doc.systemName || '', subtitle: result.doc.subtitle || '', updatedAt: result.doc.updatedAt, characterCount: characterCount(result.doc), sceneCount: result.doc.flow.nodes.filter(node => node.type !== 'sceneGroup' && node.type !== 'sceneInfo').length });
+      const id = name.slice(0, -10), file = filePath(folder, id);
+      const before = fileSignature(await fs.stat(file, { bigint: true }));
+      let cached = previous.get(name);
+      if (cached?.signature !== before) {
+        const doc = JSON.parse(await fs.readFile(file, 'utf8'));
+        validate(doc);
+        const summary = { id, title: doc.title, systemName: doc.systemName || '', subtitle: doc.subtitle || '', updatedAt: doc.updatedAt, characterCount: characterCount(doc), sceneCount: doc.flow.nodes.filter(node => node.type !== 'sceneGroup' && node.type !== 'sceneInfo').length };
+        const after = fileSignature(await fs.stat(file, { bigint: true }));
+        // A Drive or Dropbox update during the read must not populate the cache.
+        cached = { summary, signature: before === after ? after : null };
+      }
+      documents.push(cached.summary);
+      if (cached.signature && entries.size < summaryCacheLimit) entries.set(name, cached);
     } catch { errors.push(name); }
   }
+  summaryCache = { folder, entries };
   return { documents: documents.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')), errors };
+}
+function fileSignature(stat) {
+  return `${stat.dev}:${stat.ino}:${stat.size}:${stat.mtimeNs}:${stat.ctimeNs}`;
 }
 async function save(folder, doc, baseRevision) {
   validate(doc);

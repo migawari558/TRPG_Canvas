@@ -39,11 +39,24 @@ app.whenReady().then(async () => {
     assert.equal(after, before - removals, 'Backspace入力がすべて反映されませんでした');
     assert.ok(elapsed < 3000, `Backspace ${removals}回の反映に${elapsed}msかかりました`);
     assert.ok((await js(`document.querySelector('.save-state').textContent`)).includes('未保存'));
+    assert.ok(await js(`document.querySelector('.tiptap>p:last-child').contains(getSelection().anchorNode)`), '連続入力後にカーソルが別の段落へ移動しました');
     await delay(1200);
-    const saved = await js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).find(value=>value.doc.title==='入力性能テスト')?.doc`);
+    const savedDocument = () => js(`Object.values(JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))).find(value=>value.doc.title==='入力性能テスト')?.doc`);
+    const saved = await savedDocument();
     assert.ok(saved?.markdown.endsWith('削'.repeat(300 - removals)), '連続入力後の本文が自動保存されていません');
+    const client = win.webContents.debugger;
+    client.attach('1.3');
+    try {
+      await client.sendCommand('Input.imeSetComposition', { text: 'にほんご', selectionStart: 4, selectionEnd: 4 });
+      assert.ok(await js(`document.querySelector('.tiptap>p:last-child').textContent.endsWith('にほんご')`));
+      await client.sendCommand('Input.insertText', { text: '日本語' });
+    } finally { client.detach(); }
+    const endingAfterComposition = '削'.repeat(300 - removals) + '日本語';
+    assert.equal(await js(`document.querySelector('.tiptap>p:last-child').textContent`), endingAfterComposition);
+    await delay(1200);
+    assert.ok((await savedDocument())?.markdown.endsWith(endingAfterComposition), '日本語の確定後に本文が自動保存されていません');
     assert.deepEqual(errors, []);
-    console.log(`PASS: ${removals} rapid Backspaces in ${elapsed}ms; derived UI and autosave remain correct`);
+    console.log(`PASS: ${removals} rapid Backspaces in ${elapsed}ms; caret, Japanese composition and autosave remain correct`);
     app.exit(0);
   } catch (error) { console.error(error); app.exit(1); }
 });

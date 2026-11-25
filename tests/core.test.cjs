@@ -51,6 +51,25 @@ test('storage roundtrip, conflict preservation, list and path validation', async
     assert.equal(deleted.conflict, true);
   } finally { await fs.rm(folder, { recursive: true, force: true }); }
 });
+test('library summaries follow external overwrites, corruption and deletion', async () => {
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-library-summary-'));
+  try {
+    const { newDocument } = await import('../src/model.mjs');
+    const doc = newDocument('Before', '本文');
+    const file = storage.filePath(folder, doc.id);
+    await fs.writeFile(file, JSON.stringify(doc));
+    const originalStat = await fs.stat(file);
+    const originalList = await storage.list(folder);
+    assert.deepEqual(await storage.list(folder), originalList);
+    await fs.writeFile(file, JSON.stringify({ ...doc, title: 'After!' }));
+    await fs.utimes(file, originalStat.atime, originalStat.mtime);
+    assert.equal((await storage.list(folder)).documents[0].title, 'After!');
+    await fs.writeFile(file, '{malformed');
+    assert.deepEqual(await storage.list(folder), { documents: [], errors: [path.basename(file)] });
+    await fs.unlink(file);
+    assert.deepEqual(await storage.list(folder), { documents: [], errors: [] });
+  } finally { await fs.rm(folder, { recursive: true, force: true }); }
+});
 test('shared library rollback restores current documents without reviving deletions', async () => {
   const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-library-rollback-'));
   try {

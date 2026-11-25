@@ -41,6 +41,12 @@ jobs:
       - run: npm run test:startup
       - run: npm run test:desktop
       - run: npm run test:pdf-page-sizes
+      - name: Check heading spacing
+        if: runner.os == 'Windows'
+        run: npm run test:chapters
+      - name: Check compact toolbar
+        if: runner.os == 'Windows'
+        run: npm run test:compact-ui
       - name: Build Windows installer and portable app
         if: runner.os == 'Windows'
         run: npx --no-install electron-builder --win nsis portable --x64 --publish never

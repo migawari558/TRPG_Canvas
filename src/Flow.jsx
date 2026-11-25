@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ReactFlow, Background, BaseEdge, getBezierPath, Controls, MiniMap, Handle, Position, SelectionMode, addEdge, applyNodeChanges, applyEdgeChanges, MarkerType } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { Plus, Trash2, X, Link2, Layers, Ungroup, FileText, Keyboard, Search, ChevronDown, ChevronRight, AlignHorizontalJustifyStart, Info } from 'lucide-react';
@@ -129,7 +129,11 @@ const edgeTypes = { parallelBranch: ParallelBranch, informationLink: Information
 export default function Flow({ flow, headings, onChange: persistFlow, onNavigate, onWrite }) {
   const latestFlow = useRef(flow), dragStartFlow = useRef(null);
   latestFlow.current = flow;
-  function onChange(next) { const fitted = fitFlowGroups(next); latestFlow.current = fitted; persistFlow(fitted); }
+  const onChange = useCallback(next => {
+    const fitted = fitFlowGroups(next);
+    latestFlow.current = fitted;
+    persistFlow(fitted);
+  }, [persistFlow]);
   const [connecting, setConnecting] = useState(false);
   const [connectionSource, setConnectionSource] = useState(null);
   const [selected, setSelected] = useState(null);
@@ -148,22 +152,48 @@ export default function Flow({ flow, headings, onChange: persistFlow, onNavigate
   const canvasRef = useRef(null), searchRef = useRef(null);
   const normalizationChecked = useRef(false);
   useEffect(() => { if (normalizationChecked.current) return; normalizationChecked.current = true; const normalized = normalizeFlowScenes(flow); onChange(normalized); }, [flow, onChange]);
-  const byHeading = new Map(headings.map(heading => [heading.id, heading]));
-  function updateNodeById(id, patch) { onChange({ ...flow, nodes: flow.nodes.map(node => node.id === id ? { ...node, data: { ...node.data, ...patch } } : node) }); }
-  const projected = projectFlowGroups({ ...flow, edges: [...flow.edges, ...informationEdges(flow)] });
-  const nodes = projected.nodes.map(node => ({
-    ...node, type: node.type === 'sceneGroup' ? 'sceneGroup' : node.type === 'sceneInfo' ? 'sceneInfo' : 'scene',
-    selected: selection.nodes.includes(node.id) || (selected?.type === 'node' && selected.id === node.id),
-    data: {
-      ...node.data,
-      ownerLabel: flow.nodes.find(scene => scene.id === node.data.sceneId)?.data.label,
-      informationCount: flow.nodes.filter(info => info.type === 'sceneInfo' && info.data.sceneId === node.id).length,
-      heading: byHeading.get(node.data.headingId),
-      childCount: flow.nodes.filter(child => child.parentId === node.id).length,
-      toggleCollapsed: () => updateNodeById(node.id, { collapsed: !node.data.collapsed }),
+  const projected = useMemo(() => projectFlowGroups({ ...flow, edges: [...flow.edges, ...informationEdges(flow)] }), [flow]);
+  const byHeading = useMemo(() => new Map(headings.map(heading => [heading.id, heading])), [headings]);
+  const graphNodes = useMemo(() => {
+    const byId = new Map(), infoCounts = new Map(), childCounts = new Map();
+    for (const node of flow.nodes) {
+      byId.set(node.id, node);
+      if (node.type === 'sceneInfo') infoCounts.set(node.data.sceneId, (infoCounts.get(node.data.sceneId) || 0) + 1);
+      if (node.parentId) childCounts.set(node.parentId, (childCounts.get(node.parentId) || 0) + 1);
     }
-  }));
-  const edges = projected.edges.map(edge => ({ ...edge, selected: selection.edges.includes(edge.id) || (selected?.type === 'edge' && selected.id === edge.id), markerEnd: edge.data?.informationId ? undefined : { type: MarkerType.ArrowClosed }, selectable: !edge.data?.informationId, style: { stroke: 'var(--theme-muted)', strokeWidth: 1.6, ...(edge.data?.informationId ? { strokeDasharray: '5 4' } : {}) } }));
+    return projected.nodes.map(node => ({
+      ...node,
+      type: node.type === 'sceneGroup' ? 'sceneGroup' : node.type === 'sceneInfo' ? 'sceneInfo' : 'scene',
+      selected: false,
+      data: {
+        ...node.data,
+        ownerLabel: byId.get(node.data.sceneId)?.data.label,
+        informationCount: infoCounts.get(node.id) || 0,
+        heading: byHeading.get(node.data.headingId),
+        childCount: childCounts.get(node.id) || 0,
+        toggleCollapsed: () => {
+          const current = latestFlow.current;
+          onChange({ ...current, nodes: current.nodes.map(item => item.id === node.id ? { ...item, data: { ...item.data, collapsed: !item.data.collapsed } } : item) });
+        },
+      },
+    }));
+  }, [byHeading, flow.nodes, onChange, projected.nodes]);
+  const graphEdges = useMemo(() => projected.edges.map(edge => ({
+    ...edge, selected: false,
+    markerEnd: edge.data?.informationId ? undefined : { type: MarkerType.ArrowClosed },
+    selectable: !edge.data?.informationId,
+    style: { stroke: 'var(--theme-muted)', strokeWidth: 1.6, ...(edge.data?.informationId ? { strokeDasharray: '5 4' } : {}) },
+  })), [projected.edges]);
+  const nodes = useMemo(() => {
+    const ids = new Set(selection.nodes);
+    if (selected?.type === 'node') ids.add(selected.id);
+    return graphNodes.map(node => ids.has(node.id) ? { ...node, selected: true } : node);
+  }, [graphNodes, selection.nodes, selected]);
+  const edges = useMemo(() => {
+    const ids = new Set(selection.edges);
+    if (selected?.type === 'edge') ids.add(selected.id);
+    return graphEdges.map(edge => ids.has(edge.id) ? { ...edge, selected: true } : edge);
+  }, [graphEdges, selection.edges, selected]);
   const item = selected?.type === 'node' ? flow.nodes.find(node => node.id === selected.id) : flow.edges.find(edge => edge.id === selected?.id);
   function change(patch) { onChange({ ...flow, ...patch }); }
   function updateNode(patch) { change({ nodes: flow.nodes.map(node => node.id === item.id ? { ...node, data: { ...node.data, ...patch } } : node) }); }
