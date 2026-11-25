@@ -9,6 +9,7 @@ app.whenReady().then(async()=>{try{
  await fs.mkdir(output,{recursive:true});
  const win=new BrowserWindow({width:412,height:820,show:false,webPreferences:{sandbox:true,contextIsolation:true}});
  const errors=[];win.webContents.on('console-message',event=>{if(event.level==='error')errors.push(event.message);});
+ win.webContents.on('console-message',event=>{if(event.level==='error')console.error('RENDERER:',event.message)});
  const js=async code=>{const value=await win.webContents.executeJavaScript(code,true);await delay(120);return value;};
  const label=text=>js(`document.querySelector('[aria-label=${JSON.stringify(text)}]').click()`);
  await win.loadFile(path.resolve('.test-output/mobile-dist/index.html'));await delay(700);win.show();win.focus();
@@ -18,7 +19,7 @@ app.whenReady().then(async()=>{try{
  await js(`(()=>{const input=document.querySelector('[aria-label="スマホ本文サイズ"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,12);input.dispatchEvent(new Event('input',{bubbles:true}));})()`);
  await js(`(()=>{const select=document.querySelector('[aria-label="スマホ配色テーマ"]');select.value='forest';select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
  await label('設定を閉じる');
- for (const theme of ['mono','midnight','parchment','tahoe-light','tahoe-dark','forest']) {
+ for (const theme of ['mono','midnight','parchment','tahoe-light','tahoe-dark','obsidian-gold','sakura','ocean','forest']) {
   await label('スマホの設定');
   await js(`(()=>{const select=document.querySelector('[aria-label="スマホ配色テーマ"]');select.value=${JSON.stringify(theme)};select.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   await label('設定を閉じる');
@@ -31,6 +32,10 @@ app.whenReady().then(async()=>{try{
  assert.ok(await js(`!!document.querySelector('[aria-label="シナリオ本文"]')`));
  assert.equal(await js(`getComputedStyle(document.querySelector('[aria-label="シナリオ本文"]')).fontSize`),'12px');
  assert.equal(await js(`document.querySelectorAll('[aria-label="シナリオタイトル"]').length`),1);
+ await label('H2見出し');
+ await js(`document.execCommand('insertText',false,'導入')`);
+ win.webContents.sendInputEvent({type:'keyDown',keyCode:'Enter'});win.webContents.sendInputEvent({type:'keyUp',keyCode:'Enter'});await delay(120);
+ await js(`document.execCommand('insertText',false,'本文のサンプル')`);
  assert.equal(await js(`document.querySelector('.editor-toolbar').scrollWidth<=document.querySelector('.editor-toolbar').clientWidth`),true);
  await js(`document.querySelector('.mobile-format-menu summary').click()`);
  assert.equal(await js(`document.querySelector('.mobile-format-menu').open`),true);
@@ -82,7 +87,8 @@ app.whenReady().then(async()=>{try{
  await label('シナリオ一覧へ戻る');
  await js(`(()=>{const transfer=new DataTransfer();transfer.items.add(new File([${JSON.stringify(JSON.stringify(longDoc))}],'test.trpg.json'));const input=document.querySelector('input[type=file][accept=".json,.trpg.json"]');input.files=transfer.files;input.dispatchEvent(new Event('change',{bubbles:true}));})()`);await delay(400);
  await js(`document.querySelectorAll('.mobile-switchbar nav button')[1].click()`);
- assert.equal(await js(`document.querySelector('.mobile-flow rect').getAttribute('fill')`),'#e6eedc');
+ const {mobileTheme}=await import('../src/mobile/mobile-themes.mjs');
+ assert.equal(await js(`document.querySelector('.mobile-flow rect').getAttribute('fill')`),mobileTheme('forest').colors.soft);
  await label('フローを拡大');
  assert.equal(await js(`document.querySelector('.mobile-flow-tools output').textContent`),'150%');
  assert.ok(await js(`document.querySelector('.mobile-flow').scrollWidth>document.querySelector('.mobile-flow').clientWidth`));

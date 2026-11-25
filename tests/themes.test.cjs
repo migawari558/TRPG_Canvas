@@ -1,5 +1,19 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
+test('new shared palettes stay readable and apply consistently to desktop theme variables',async()=>{
+ const {getTheme,isDarkTheme,normalizeAppearance,themeVariables}=await import('../src/themes.mjs');
+ const {documentTheme,desktopThemeVariables}=await import('../src/desktop-themes.mjs');
+ const luminance=color=>[1,3,5].map(i=>parseInt(color.slice(i,i+2),16)/255).map(c=>c<=.04045?c/12.92:((c+.055)/1.055)**2.4).reduce((sum,v,i)=>sum+v*[.2126,.7152,.0722][i],0);
+ const contrast=(a,b)=>(Math.max(luminance(a),luminance(b))+.05)/(Math.min(luminance(a),luminance(b))+.05);
+ for(const [id,dark] of [['obsidian-gold',true],['sakura',false],['ocean',true]]){
+  const c=getTheme(id).colors;
+  assert.equal(normalizeAppearance({theme:id}).theme,id);
+  assert.equal(isDarkTheme(id),dark);
+  assert.deepEqual(c,documentTheme(id).colors);
+  for(const role of ['paper','bg','panel','accent','onAccent','heading'])assert.equal(themeVariables(id)[`--theme-${role}`],desktopThemeVariables(id)[`--theme-${role}`]);
+  for(const [foreground,background] of [[c.text,c.paper],[c.muted,c.bg],[c.muted,c.panel],[c.heading,c.paper],[c.accent,c.soft],[c.onAccent,c.accent]])assert.ok(contrast(foreground,background)>=4.5,`${id}: ${foreground} on ${background}`);
+ }
+});
 test('all themes apply to standalone exports; invalid preferences cannot inject CSS',async()=>{
  const {themes,normalizeAppearance,normalizeDesign,resolvedFonts}=await import('../src/themes.mjs');
  const {documentTheme}=await import('../src/desktop-themes.mjs');

@@ -1,0 +1,1714 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-25T13:42:56.278Z",
+  "title": "Design System: TRPG Canvas Android",
+  "extensions": {
+    "colorMeta": {
+      "forest-accent": {
+        "role": "primary",
+        "displayName": "forest accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0310 163.62)",
+          "oklch(26.43% 0.0547 163.62)",
+          "oklch(37.86% 0.0724 163.62)",
+          "oklch(49.29% 0.0724 163.62)",
+          "oklch(60.71% 0.0724 163.62)",
+          "oklch(72.14% 0.0724 163.62)",
+          "oklch(83.57% 0.0476 163.62)",
+          "oklch(95.00% 0.0145 163.62)"
+        ]
+      },
+      "forest-on-accent": {
+        "role": "neutral",
+        "displayName": "forest on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "forest-bg": {
+        "role": "neutral",
+        "displayName": "forest bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0037 145.51)",
+          "oklch(26.43% 0.0064 145.51)",
+          "oklch(37.86% 0.0085 145.51)",
+          "oklch(49.29% 0.0085 145.51)",
+          "oklch(60.71% 0.0085 145.51)",
+          "oklch(72.14% 0.0085 145.51)",
+          "oklch(83.57% 0.0056 145.51)",
+          "oklch(95.00% 0.0017 145.51)"
+        ]
+      },
+      "forest-paper": {
+        "role": "neutral",
+        "displayName": "forest paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0012 128.49)",
+          "oklch(26.43% 0.0021 128.49)",
+          "oklch(37.86% 0.0028 128.49)",
+          "oklch(49.29% 0.0028 128.49)",
+          "oklch(60.71% 0.0028 128.49)",
+          "oklch(72.14% 0.0028 128.49)",
+          "oklch(83.57% 0.0019 128.49)",
+          "oklch(95.00% 0.0006 128.49)"
+        ]
+      },
+      "forest-panel": {
+        "role": "neutral",
+        "displayName": "forest panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0034 139.44)",
+          "oklch(26.43% 0.0059 139.44)",
+          "oklch(37.86% 0.0078 139.44)",
+          "oklch(49.29% 0.0078 139.44)",
+          "oklch(60.71% 0.0078 139.44)",
+          "oklch(72.14% 0.0078 139.44)",
+          "oklch(83.57% 0.0052 139.44)",
+          "oklch(95.00% 0.0016 139.44)"
+        ]
+      },
+      "forest-text": {
+        "role": "neutral",
+        "displayName": "forest text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0146 168.63)",
+          "oklch(26.43% 0.0258 168.63)",
+          "oklch(37.86% 0.0341 168.63)",
+          "oklch(49.29% 0.0341 168.63)",
+          "oklch(60.71% 0.0341 168.63)",
+          "oklch(72.14% 0.0341 168.63)",
+          "oklch(83.57% 0.0224 168.63)",
+          "oklch(95.00% 0.0068 168.63)"
+        ]
+      },
+      "forest-muted": {
+        "role": "neutral",
+        "displayName": "forest muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0159 160.19)",
+          "oklch(26.43% 0.0280 160.19)",
+          "oklch(37.86% 0.0370 160.19)",
+          "oklch(49.29% 0.0370 160.19)",
+          "oklch(60.71% 0.0370 160.19)",
+          "oklch(72.14% 0.0370 160.19)",
+          "oklch(83.57% 0.0243 160.19)",
+          "oklch(95.00% 0.0074 160.19)"
+        ]
+      },
+      "forest-border": {
+        "role": "neutral",
+        "displayName": "forest border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0080 150.52)",
+          "oklch(26.43% 0.0142 150.52)",
+          "oklch(37.86% 0.0188 150.52)",
+          "oklch(49.29% 0.0188 150.52)",
+          "oklch(60.71% 0.0188 150.52)",
+          "oklch(72.14% 0.0188 150.52)",
+          "oklch(83.57% 0.0123 150.52)",
+          "oklch(95.00% 0.0038 150.52)"
+        ]
+      },
+      "forest-soft": {
+        "role": "neutral",
+        "displayName": "forest soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0094 149.70)",
+          "oklch(26.43% 0.0166 149.70)",
+          "oklch(37.86% 0.0219 149.70)",
+          "oklch(49.29% 0.0219 149.70)",
+          "oklch(60.71% 0.0219 149.70)",
+          "oklch(72.14% 0.0219 149.70)",
+          "oklch(83.57% 0.0144 149.70)",
+          "oklch(95.00% 0.0044 149.70)"
+        ]
+      },
+      "forest-heading": {
+        "role": "neutral",
+        "displayName": "forest heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0262 161.23)",
+          "oklch(26.43% 0.0461 161.23)",
+          "oklch(37.86% 0.0610 161.23)",
+          "oklch(49.29% 0.0610 161.23)",
+          "oklch(60.71% 0.0610 161.23)",
+          "oklch(72.14% 0.0610 161.23)",
+          "oklch(83.57% 0.0401 161.23)",
+          "oklch(95.00% 0.0122 161.23)"
+        ]
+      },
+      "forest-quote": {
+        "role": "neutral",
+        "displayName": "forest quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0055 141.81)",
+          "oklch(26.43% 0.0098 141.81)",
+          "oklch(37.86% 0.0129 141.81)",
+          "oklch(49.29% 0.0129 141.81)",
+          "oklch(60.71% 0.0129 141.81)",
+          "oklch(72.14% 0.0129 141.81)",
+          "oklch(83.57% 0.0085 141.81)",
+          "oklch(95.00% 0.0026 141.81)"
+        ]
+      },
+      "forest-note": {
+        "role": "neutral",
+        "displayName": "forest note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0091 100.99)",
+          "oklch(26.43% 0.0161 100.99)",
+          "oklch(37.86% 0.0213 100.99)",
+          "oklch(49.29% 0.0213 100.99)",
+          "oklch(60.71% 0.0213 100.99)",
+          "oklch(72.14% 0.0213 100.99)",
+          "oklch(83.57% 0.0140 100.99)",
+          "oklch(95.00% 0.0043 100.99)"
+        ]
+      },
+      "tahoe-light-accent": {
+        "role": "primary",
+        "displayName": "tahoe light accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0403 252.17)",
+          "oklch(26.43% 0.0711 252.17)",
+          "oklch(37.86% 0.0941 252.17)",
+          "oklch(49.29% 0.0941 252.17)",
+          "oklch(60.71% 0.0941 252.17)",
+          "oklch(72.14% 0.0941 252.17)",
+          "oklch(83.57% 0.0618 252.17)",
+          "oklch(95.00% 0.0188 252.17)"
+        ]
+      },
+      "tahoe-light-on-accent": {
+        "role": "neutral",
+        "displayName": "tahoe light on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "tahoe-light-bg": {
+        "role": "neutral",
+        "displayName": "tahoe light bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0044 247.94)",
+          "oklch(26.43% 0.0078 247.94)",
+          "oklch(37.86% 0.0104 247.94)",
+          "oklch(49.29% 0.0104 247.94)",
+          "oklch(60.71% 0.0104 247.94)",
+          "oklch(72.14% 0.0104 247.94)",
+          "oklch(83.57% 0.0068 247.94)",
+          "oklch(95.00% 0.0021 247.94)"
+        ]
+      },
+      "tahoe-light-paper": {
+        "role": "neutral",
+        "displayName": "tahoe light paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "tahoe-light-panel": {
+        "role": "neutral",
+        "displayName": "tahoe light panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0029 247.90)",
+          "oklch(26.43% 0.0052 247.90)",
+          "oklch(37.86% 0.0069 247.90)",
+          "oklch(49.29% 0.0069 247.90)",
+          "oklch(60.71% 0.0069 247.90)",
+          "oklch(72.14% 0.0069 247.90)",
+          "oklch(83.57% 0.0045 247.90)",
+          "oklch(95.00% 0.0014 247.90)"
+        ]
+      },
+      "tahoe-light-text": {
+        "role": "neutral",
+        "displayName": "tahoe light text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0200 251.56)",
+          "oklch(26.43% 0.0352 251.56)",
+          "oklch(37.86% 0.0466 251.56)",
+          "oklch(49.29% 0.0466 251.56)",
+          "oklch(60.71% 0.0466 251.56)",
+          "oklch(72.14% 0.0466 251.56)",
+          "oklch(83.57% 0.0306 251.56)",
+          "oklch(95.00% 0.0093 251.56)"
+        ]
+      },
+      "tahoe-light-muted": {
+        "role": "neutral",
+        "displayName": "tahoe light muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0179 248.64)",
+          "oklch(26.43% 0.0316 248.64)",
+          "oklch(37.86% 0.0418 248.64)",
+          "oklch(49.29% 0.0418 248.64)",
+          "oklch(60.71% 0.0418 248.64)",
+          "oklch(72.14% 0.0418 248.64)",
+          "oklch(83.57% 0.0275 248.64)",
+          "oklch(95.00% 0.0084 248.64)"
+        ]
+      },
+      "tahoe-light-border": {
+        "role": "neutral",
+        "displayName": "tahoe light border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0086 245.67)",
+          "oklch(26.43% 0.0151 245.67)",
+          "oklch(37.86% 0.0200 245.67)",
+          "oklch(49.29% 0.0200 245.67)",
+          "oklch(60.71% 0.0200 245.67)",
+          "oklch(72.14% 0.0200 245.67)",
+          "oklch(83.57% 0.0132 245.67)",
+          "oklch(95.00% 0.0040 245.67)"
+        ]
+      },
+      "tahoe-light-soft": {
+        "role": "neutral",
+        "displayName": "tahoe light soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0089 248.05)",
+          "oklch(26.43% 0.0157 248.05)",
+          "oklch(37.86% 0.0208 248.05)",
+          "oklch(49.29% 0.0208 248.05)",
+          "oklch(60.71% 0.0208 248.05)",
+          "oklch(72.14% 0.0208 248.05)",
+          "oklch(83.57% 0.0137 248.05)",
+          "oklch(95.00% 0.0042 248.05)"
+        ]
+      },
+      "tahoe-light-heading": {
+        "role": "neutral",
+        "displayName": "tahoe light heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0358 253.42)",
+          "oklch(26.43% 0.0631 253.42)",
+          "oklch(37.86% 0.0836 253.42)",
+          "oklch(49.29% 0.0836 253.42)",
+          "oklch(60.71% 0.0836 253.42)",
+          "oklch(72.14% 0.0836 253.42)",
+          "oklch(83.57% 0.0549 253.42)",
+          "oklch(95.00% 0.0167 253.42)"
+        ]
+      },
+      "tahoe-light-quote": {
+        "role": "neutral",
+        "displayName": "tahoe light quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0044 247.93)",
+          "oklch(26.43% 0.0078 247.93)",
+          "oklch(37.86% 0.0103 247.93)",
+          "oklch(49.29% 0.0103 247.93)",
+          "oklch(60.71% 0.0103 247.93)",
+          "oklch(72.14% 0.0103 247.93)",
+          "oklch(83.57% 0.0068 247.93)",
+          "oklch(95.00% 0.0021 247.93)"
+        ]
+      },
+      "tahoe-light-note": {
+        "role": "neutral",
+        "displayName": "tahoe light note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0047 123.46)",
+          "oklch(26.43% 0.0084 123.46)",
+          "oklch(37.86% 0.0111 123.46)",
+          "oklch(49.29% 0.0111 123.46)",
+          "oklch(60.71% 0.0111 123.46)",
+          "oklch(72.14% 0.0111 123.46)",
+          "oklch(83.57% 0.0073 123.46)",
+          "oklch(95.00% 0.0022 123.46)"
+        ]
+      },
+      "tahoe-dark-accent": {
+        "role": "primary",
+        "displayName": "tahoe dark accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0356 252.67)",
+          "oklch(26.43% 0.0626 252.67)",
+          "oklch(37.86% 0.0830 252.67)",
+          "oklch(49.29% 0.0830 252.67)",
+          "oklch(60.71% 0.0830 252.67)",
+          "oklch(72.14% 0.0830 252.67)",
+          "oklch(83.57% 0.0545 252.67)",
+          "oklch(95.00% 0.0166 252.67)"
+        ]
+      },
+      "tahoe-dark-on-accent": {
+        "role": "neutral",
+        "displayName": "tahoe dark on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0263 251.56)",
+          "oklch(26.43% 0.0463 251.56)",
+          "oklch(37.86% 0.0613 251.56)",
+          "oklch(49.29% 0.0613 251.56)",
+          "oklch(60.71% 0.0613 251.56)",
+          "oklch(72.14% 0.0613 251.56)",
+          "oklch(83.57% 0.0403 251.56)",
+          "oklch(95.00% 0.0123 251.56)"
+        ]
+      },
+      "tahoe-dark-bg": {
+        "role": "neutral",
+        "displayName": "tahoe dark bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0126 255.27)",
+          "oklch(26.43% 0.0221 255.27)",
+          "oklch(37.86% 0.0293 255.27)",
+          "oklch(49.29% 0.0293 255.27)",
+          "oklch(60.71% 0.0293 255.27)",
+          "oklch(72.14% 0.0293 255.27)",
+          "oklch(83.57% 0.0193 255.27)",
+          "oklch(95.00% 0.0059 255.27)"
+        ]
+      },
+      "tahoe-dark-paper": {
+        "role": "neutral",
+        "displayName": "tahoe dark paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0151 252.34)",
+          "oklch(26.43% 0.0266 252.34)",
+          "oklch(37.86% 0.0352 252.34)",
+          "oklch(49.29% 0.0352 252.34)",
+          "oklch(60.71% 0.0352 252.34)",
+          "oklch(72.14% 0.0352 252.34)",
+          "oklch(83.57% 0.0232 252.34)",
+          "oklch(95.00% 0.0070 252.34)"
+        ]
+      },
+      "tahoe-dark-panel": {
+        "role": "neutral",
+        "displayName": "tahoe dark panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0161 253.86)",
+          "oklch(26.43% 0.0283 253.86)",
+          "oklch(37.86% 0.0375 253.86)",
+          "oklch(49.29% 0.0375 253.86)",
+          "oklch(60.71% 0.0375 253.86)",
+          "oklch(72.14% 0.0375 253.86)",
+          "oklch(83.57% 0.0247 253.86)",
+          "oklch(95.00% 0.0075 253.86)"
+        ]
+      },
+      "tahoe-dark-text": {
+        "role": "neutral",
+        "displayName": "tahoe dark text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0056 251.56)",
+          "oklch(26.43% 0.0099 251.56)",
+          "oklch(37.86% 0.0132 251.56)",
+          "oklch(49.29% 0.0132 251.56)",
+          "oklch(60.71% 0.0132 251.56)",
+          "oklch(72.14% 0.0132 251.56)",
+          "oklch(83.57% 0.0087 251.56)",
+          "oklch(95.00% 0.0026 251.56)"
+        ]
+      },
+      "tahoe-dark-muted": {
+        "role": "neutral",
+        "displayName": "tahoe dark muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0157 250.94)",
+          "oklch(26.43% 0.0277 250.94)",
+          "oklch(37.86% 0.0367 250.94)",
+          "oklch(49.29% 0.0367 250.94)",
+          "oklch(60.71% 0.0367 250.94)",
+          "oklch(72.14% 0.0367 250.94)",
+          "oklch(83.57% 0.0241 250.94)",
+          "oklch(95.00% 0.0073 250.94)"
+        ]
+      },
+      "tahoe-dark-border": {
+        "role": "neutral",
+        "displayName": "tahoe dark border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0204 250.16)",
+          "oklch(26.43% 0.0360 250.16)",
+          "oklch(37.86% 0.0476 250.16)",
+          "oklch(49.29% 0.0476 250.16)",
+          "oklch(60.71% 0.0476 250.16)",
+          "oklch(72.14% 0.0476 250.16)",
+          "oklch(83.57% 0.0313 250.16)",
+          "oklch(95.00% 0.0095 250.16)"
+        ]
+      },
+      "tahoe-dark-soft": {
+        "role": "neutral",
+        "displayName": "tahoe dark soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0238 254.89)",
+          "oklch(26.43% 0.0420 254.89)",
+          "oklch(37.86% 0.0556 254.89)",
+          "oklch(49.29% 0.0556 254.89)",
+          "oklch(60.71% 0.0556 254.89)",
+          "oklch(72.14% 0.0556 254.89)",
+          "oklch(83.57% 0.0365 254.89)",
+          "oklch(95.00% 0.0111 254.89)"
+        ]
+      },
+      "tahoe-dark-heading": {
+        "role": "neutral",
+        "displayName": "tahoe dark heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0221 252.94)",
+          "oklch(26.43% 0.0389 252.94)",
+          "oklch(37.86% 0.0515 252.94)",
+          "oklch(49.29% 0.0515 252.94)",
+          "oklch(60.71% 0.0515 252.94)",
+          "oklch(72.14% 0.0515 252.94)",
+          "oklch(83.57% 0.0338 252.94)",
+          "oklch(95.00% 0.0103 252.94)"
+        ]
+      },
+      "tahoe-dark-quote": {
+        "role": "neutral",
+        "displayName": "tahoe dark quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0191 251.63)",
+          "oklch(26.43% 0.0337 251.63)",
+          "oklch(37.86% 0.0446 251.63)",
+          "oklch(49.29% 0.0446 251.63)",
+          "oklch(60.71% 0.0446 251.63)",
+          "oklch(72.14% 0.0446 251.63)",
+          "oklch(83.57% 0.0293 251.63)",
+          "oklch(95.00% 0.0089 251.63)"
+        ]
+      },
+      "tahoe-dark-note": {
+        "role": "neutral",
+        "displayName": "tahoe dark note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0041 207.07)",
+          "oklch(26.43% 0.0072 207.07)",
+          "oklch(37.86% 0.0096 207.07)",
+          "oklch(49.29% 0.0096 207.07)",
+          "oklch(60.71% 0.0096 207.07)",
+          "oklch(72.14% 0.0096 207.07)",
+          "oklch(83.57% 0.0063 207.07)",
+          "oklch(95.00% 0.0019 207.07)"
+        ]
+      },
+      "parchment-accent": {
+        "role": "primary",
+        "displayName": "parchment accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0323 56.71)",
+          "oklch(26.43% 0.0570 56.71)",
+          "oklch(37.86% 0.0755 56.71)",
+          "oklch(49.29% 0.0755 56.71)",
+          "oklch(60.71% 0.0755 56.71)",
+          "oklch(72.14% 0.0755 56.71)",
+          "oklch(83.57% 0.0496 56.71)",
+          "oklch(95.00% 0.0151 56.71)"
+        ]
+      },
+      "parchment-on-accent": {
+        "role": "neutral",
+        "displayName": "parchment on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "parchment-bg": {
+        "role": "neutral",
+        "displayName": "parchment bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0084 80.11)",
+          "oklch(26.43% 0.0147 80.11)",
+          "oklch(37.86% 0.0195 80.11)",
+          "oklch(49.29% 0.0195 80.11)",
+          "oklch(60.71% 0.0195 80.11)",
+          "oklch(72.14% 0.0195 80.11)",
+          "oklch(83.57% 0.0128 80.11)",
+          "oklch(95.00% 0.0039 80.11)"
+        ]
+      },
+      "parchment-paper": {
+        "role": "neutral",
+        "displayName": "parchment paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0047 89.72)",
+          "oklch(26.43% 0.0083 89.72)",
+          "oklch(37.86% 0.0110 89.72)",
+          "oklch(49.29% 0.0110 89.72)",
+          "oklch(60.71% 0.0110 89.72)",
+          "oklch(72.14% 0.0110 89.72)",
+          "oklch(83.57% 0.0073 89.72)",
+          "oklch(95.00% 0.0022 89.72)"
+        ]
+      },
+      "parchment-panel": {
+        "role": "neutral",
+        "displayName": "parchment panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0071 79.35)",
+          "oklch(26.43% 0.0125 79.35)",
+          "oklch(37.86% 0.0165 79.35)",
+          "oklch(49.29% 0.0165 79.35)",
+          "oklch(60.71% 0.0165 79.35)",
+          "oklch(72.14% 0.0165 79.35)",
+          "oklch(83.57% 0.0109 79.35)",
+          "oklch(95.00% 0.0033 79.35)"
+        ]
+      },
+      "parchment-text": {
+        "role": "neutral",
+        "displayName": "parchment text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0111 57.34)",
+          "oklch(26.43% 0.0195 57.34)",
+          "oklch(37.86% 0.0258 57.34)",
+          "oklch(49.29% 0.0258 57.34)",
+          "oklch(60.71% 0.0258 57.34)",
+          "oklch(72.14% 0.0258 57.34)",
+          "oklch(83.57% 0.0170 57.34)",
+          "oklch(95.00% 0.0052 57.34)"
+        ]
+      },
+      "parchment-muted": {
+        "role": "neutral",
+        "displayName": "parchment muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0180 61.13)",
+          "oklch(26.43% 0.0317 61.13)",
+          "oklch(37.86% 0.0420 61.13)",
+          "oklch(49.29% 0.0420 61.13)",
+          "oklch(60.71% 0.0420 61.13)",
+          "oklch(72.14% 0.0420 61.13)",
+          "oklch(83.57% 0.0276 61.13)",
+          "oklch(95.00% 0.0084 61.13)"
+        ]
+      },
+      "parchment-border": {
+        "role": "neutral",
+        "displayName": "parchment border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0127 77.52)",
+          "oklch(26.43% 0.0224 77.52)",
+          "oklch(37.86% 0.0296 77.52)",
+          "oklch(49.29% 0.0296 77.52)",
+          "oklch(60.71% 0.0296 77.52)",
+          "oklch(72.14% 0.0296 77.52)",
+          "oklch(83.57% 0.0195 77.52)",
+          "oklch(95.00% 0.0059 77.52)"
+        ]
+      },
+      "parchment-soft": {
+        "role": "neutral",
+        "displayName": "parchment soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0140 80.99)",
+          "oklch(26.43% 0.0246 80.99)",
+          "oklch(37.86% 0.0326 80.99)",
+          "oklch(49.29% 0.0326 80.99)",
+          "oklch(60.71% 0.0326 80.99)",
+          "oklch(72.14% 0.0326 80.99)",
+          "oklch(83.57% 0.0214 80.99)",
+          "oklch(95.00% 0.0065 80.99)"
+        ]
+      },
+      "parchment-heading": {
+        "role": "neutral",
+        "displayName": "parchment heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0293 55.08)",
+          "oklch(26.43% 0.0516 55.08)",
+          "oklch(37.86% 0.0684 55.08)",
+          "oklch(49.29% 0.0684 55.08)",
+          "oklch(60.71% 0.0684 55.08)",
+          "oklch(72.14% 0.0684 55.08)",
+          "oklch(83.57% 0.0449 55.08)",
+          "oklch(95.00% 0.0137 55.08)"
+        ]
+      },
+      "parchment-quote": {
+        "role": "neutral",
+        "displayName": "parchment quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0097 87.15)",
+          "oklch(26.43% 0.0170 87.15)",
+          "oklch(37.86% 0.0226 87.15)",
+          "oklch(49.29% 0.0226 87.15)",
+          "oklch(60.71% 0.0226 87.15)",
+          "oklch(72.14% 0.0226 87.15)",
+          "oklch(83.57% 0.0148 87.15)",
+          "oklch(95.00% 0.0045 87.15)"
+        ]
+      },
+      "parchment-note": {
+        "role": "neutral",
+        "displayName": "parchment note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0156 87.80)",
+          "oklch(26.43% 0.0275 87.80)",
+          "oklch(37.86% 0.0364 87.80)",
+          "oklch(49.29% 0.0364 87.80)",
+          "oklch(60.71% 0.0364 87.80)",
+          "oklch(72.14% 0.0364 87.80)",
+          "oklch(83.57% 0.0239 87.80)",
+          "oklch(95.00% 0.0073 87.80)"
+        ]
+      },
+      "midnight-accent": {
+        "role": "primary",
+        "displayName": "midnight accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0244 324.19)",
+          "oklch(26.43% 0.0430 324.19)",
+          "oklch(37.86% 0.0569 324.19)",
+          "oklch(49.29% 0.0569 324.19)",
+          "oklch(60.71% 0.0569 324.19)",
+          "oklch(72.14% 0.0569 324.19)",
+          "oklch(83.57% 0.0374 324.19)",
+          "oklch(95.00% 0.0114 324.19)"
+        ]
+      },
+      "midnight-on-accent": {
+        "role": "neutral",
+        "displayName": "midnight on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0207 313.93)",
+          "oklch(26.43% 0.0364 313.93)",
+          "oklch(37.86% 0.0482 313.93)",
+          "oklch(49.29% 0.0482 313.93)",
+          "oklch(60.71% 0.0482 313.93)",
+          "oklch(72.14% 0.0482 313.93)",
+          "oklch(83.57% 0.0317 313.93)",
+          "oklch(95.00% 0.0096 313.93)"
+        ]
+      },
+      "midnight-bg": {
+        "role": "neutral",
+        "displayName": "midnight bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0090 297.31)",
+          "oklch(26.43% 0.0159 297.31)",
+          "oklch(37.86% 0.0211 297.31)",
+          "oklch(49.29% 0.0211 297.31)",
+          "oklch(60.71% 0.0211 297.31)",
+          "oklch(72.14% 0.0211 297.31)",
+          "oklch(83.57% 0.0139 297.31)",
+          "oklch(95.00% 0.0042 297.31)"
+        ]
+      },
+      "midnight-paper": {
+        "role": "neutral",
+        "displayName": "midnight paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0103 298.96)",
+          "oklch(26.43% 0.0182 298.96)",
+          "oklch(37.86% 0.0241 298.96)",
+          "oklch(49.29% 0.0241 298.96)",
+          "oklch(60.71% 0.0241 298.96)",
+          "oklch(72.14% 0.0241 298.96)",
+          "oklch(83.57% 0.0158 298.96)",
+          "oklch(95.00% 0.0048 298.96)"
+        ]
+      },
+      "midnight-panel": {
+        "role": "neutral",
+        "displayName": "midnight panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0105 298.79)",
+          "oklch(26.43% 0.0186 298.79)",
+          "oklch(37.86% 0.0246 298.79)",
+          "oklch(49.29% 0.0246 298.79)",
+          "oklch(60.71% 0.0246 298.79)",
+          "oklch(72.14% 0.0246 298.79)",
+          "oklch(83.57% 0.0162 298.79)",
+          "oklch(95.00% 0.0049 298.79)"
+        ]
+      },
+      "midnight-text": {
+        "role": "neutral",
+        "displayName": "midnight text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0058 314.76)",
+          "oklch(26.43% 0.0103 314.76)",
+          "oklch(37.86% 0.0136 314.76)",
+          "oklch(49.29% 0.0136 314.76)",
+          "oklch(60.71% 0.0136 314.76)",
+          "oklch(72.14% 0.0136 314.76)",
+          "oklch(83.57% 0.0089 314.76)",
+          "oklch(95.00% 0.0027 314.76)"
+        ]
+      },
+      "midnight-muted": {
+        "role": "neutral",
+        "displayName": "midnight muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0157 315.69)",
+          "oklch(26.43% 0.0277 315.69)",
+          "oklch(37.86% 0.0366 315.69)",
+          "oklch(49.29% 0.0366 315.69)",
+          "oklch(60.71% 0.0366 315.69)",
+          "oklch(72.14% 0.0366 315.69)",
+          "oklch(83.57% 0.0241 315.69)",
+          "oklch(95.00% 0.0073 315.69)"
+        ]
+      },
+      "midnight-border": {
+        "role": "neutral",
+        "displayName": "midnight border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0174 308.31)",
+          "oklch(26.43% 0.0307 308.31)",
+          "oklch(37.86% 0.0406 308.31)",
+          "oklch(49.29% 0.0406 308.31)",
+          "oklch(60.71% 0.0406 308.31)",
+          "oklch(72.14% 0.0406 308.31)",
+          "oklch(83.57% 0.0267 308.31)",
+          "oklch(95.00% 0.0081 308.31)"
+        ]
+      },
+      "midnight-soft": {
+        "role": "neutral",
+        "displayName": "midnight soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0197 309.67)",
+          "oklch(26.43% 0.0347 309.67)",
+          "oklch(37.86% 0.0459 309.67)",
+          "oklch(49.29% 0.0459 309.67)",
+          "oklch(60.71% 0.0459 309.67)",
+          "oklch(72.14% 0.0459 309.67)",
+          "oklch(83.57% 0.0302 309.67)",
+          "oklch(95.00% 0.0092 309.67)"
+        ]
+      },
+      "midnight-heading": {
+        "role": "neutral",
+        "displayName": "midnight heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0195 325.97)",
+          "oklch(26.43% 0.0343 325.97)",
+          "oklch(37.86% 0.0454 325.97)",
+          "oklch(49.29% 0.0454 325.97)",
+          "oklch(60.71% 0.0454 325.97)",
+          "oklch(72.14% 0.0454 325.97)",
+          "oklch(83.57% 0.0298 325.97)",
+          "oklch(95.00% 0.0091 325.97)"
+        ]
+      },
+      "midnight-quote": {
+        "role": "neutral",
+        "displayName": "midnight quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0167 306.04)",
+          "oklch(26.43% 0.0294 306.04)",
+          "oklch(37.86% 0.0389 306.04)",
+          "oklch(49.29% 0.0389 306.04)",
+          "oklch(60.71% 0.0389 306.04)",
+          "oklch(72.14% 0.0389 306.04)",
+          "oklch(83.57% 0.0255 306.04)",
+          "oklch(95.00% 0.0078 306.04)"
+        ]
+      },
+      "midnight-note": {
+        "role": "neutral",
+        "displayName": "midnight note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0057 32.57)",
+          "oklch(26.43% 0.0100 32.57)",
+          "oklch(37.86% 0.0133 32.57)",
+          "oklch(49.29% 0.0133 32.57)",
+          "oklch(60.71% 0.0133 32.57)",
+          "oklch(72.14% 0.0133 32.57)",
+          "oklch(83.57% 0.0087 32.57)",
+          "oklch(95.00% 0.0027 32.57)"
+        ]
+      },
+      "mono-accent": {
+        "role": "primary",
+        "displayName": "mono accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0042 207.07)",
+          "oklch(26.43% 0.0073 207.07)",
+          "oklch(37.86% 0.0097 207.07)",
+          "oklch(49.29% 0.0097 207.07)",
+          "oklch(60.71% 0.0097 207.07)",
+          "oklch(72.14% 0.0097 207.07)",
+          "oklch(83.57% 0.0064 207.07)",
+          "oklch(95.00% 0.0019 207.07)"
+        ]
+      },
+      "mono-on-accent": {
+        "role": "neutral",
+        "displayName": "mono on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "mono-bg": {
+        "role": "neutral",
+        "displayName": "mono bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0005 197.14)",
+          "oklch(26.43% 0.0008 197.14)",
+          "oklch(37.86% 0.0011 197.14)",
+          "oklch(49.29% 0.0011 197.14)",
+          "oklch(60.71% 0.0011 197.14)",
+          "oklch(72.14% 0.0011 197.14)",
+          "oklch(83.57% 0.0007 197.14)",
+          "oklch(95.00% 0.0002 197.14)"
+        ]
+      },
+      "mono-paper": {
+        "role": "neutral",
+        "displayName": "mono paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "mono-panel": {
+        "role": "neutral",
+        "displayName": "mono panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0005 197.14)",
+          "oklch(26.43% 0.0008 197.14)",
+          "oklch(37.86% 0.0011 197.14)",
+          "oklch(49.29% 0.0011 197.14)",
+          "oklch(60.71% 0.0011 197.14)",
+          "oklch(72.14% 0.0011 197.14)",
+          "oklch(83.57% 0.0007 197.14)",
+          "oklch(95.00% 0.0002 197.14)"
+        ]
+      },
+      "mono-text": {
+        "role": "neutral",
+        "displayName": "mono text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0020 219.63)",
+          "oklch(26.43% 0.0035 219.63)",
+          "oklch(37.86% 0.0047 219.63)",
+          "oklch(49.29% 0.0047 219.63)",
+          "oklch(60.71% 0.0047 219.63)",
+          "oklch(72.14% 0.0047 219.63)",
+          "oklch(83.57% 0.0031 219.63)",
+          "oklch(95.00% 0.0009 219.63)"
+        ]
+      },
+      "mono-muted": {
+        "role": "neutral",
+        "displayName": "mono muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0033 208.76)",
+          "oklch(26.43% 0.0058 208.76)",
+          "oklch(37.86% 0.0076 208.76)",
+          "oklch(49.29% 0.0076 208.76)",
+          "oklch(60.71% 0.0076 208.76)",
+          "oklch(72.14% 0.0076 208.76)",
+          "oklch(83.57% 0.0050 208.76)",
+          "oklch(95.00% 0.0015 208.76)"
+        ]
+      },
+      "mono-border": {
+        "role": "neutral",
+        "displayName": "mono border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0019 197.08)",
+          "oklch(26.43% 0.0033 197.08)",
+          "oklch(37.86% 0.0044 197.08)",
+          "oklch(49.29% 0.0044 197.08)",
+          "oklch(60.71% 0.0044 197.08)",
+          "oklch(72.14% 0.0044 197.08)",
+          "oklch(83.57% 0.0029 197.08)",
+          "oklch(95.00% 0.0009 197.08)"
+        ]
+      },
+      "mono-soft": {
+        "role": "neutral",
+        "displayName": "mono soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0018 197.08)",
+          "oklch(26.43% 0.0033 197.08)",
+          "oklch(37.86% 0.0043 197.08)",
+          "oklch(49.29% 0.0043 197.08)",
+          "oklch(60.71% 0.0043 197.08)",
+          "oklch(72.14% 0.0043 197.08)",
+          "oklch(83.57% 0.0028 197.08)",
+          "oklch(95.00% 0.0009 197.08)"
+        ]
+      },
+      "mono-heading": {
+        "role": "neutral",
+        "displayName": "mono heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0031 211.05)",
+          "oklch(26.43% 0.0055 211.05)",
+          "oklch(37.86% 0.0073 211.05)",
+          "oklch(49.29% 0.0073 211.05)",
+          "oklch(60.71% 0.0073 211.05)",
+          "oklch(72.14% 0.0073 211.05)",
+          "oklch(83.57% 0.0048 211.05)",
+          "oklch(95.00% 0.0015 211.05)"
+        ]
+      },
+      "mono-quote": {
+        "role": "neutral",
+        "displayName": "mono quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0009 197.12)",
+          "oklch(26.43% 0.0016 197.12)",
+          "oklch(37.86% 0.0021 197.12)",
+          "oklch(49.29% 0.0021 197.12)",
+          "oklch(60.71% 0.0021 197.12)",
+          "oklch(72.14% 0.0021 197.12)",
+          "oklch(83.57% 0.0014 197.12)",
+          "oklch(95.00% 0.0004 197.12)"
+        ]
+      },
+      "mono-note": {
+        "role": "neutral",
+        "displayName": "mono note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0015 174.48)",
+          "oklch(26.43% 0.0026 174.48)",
+          "oklch(37.86% 0.0035 174.48)",
+          "oklch(49.29% 0.0035 174.48)",
+          "oklch(60.71% 0.0035 174.48)",
+          "oklch(72.14% 0.0035 174.48)",
+          "oklch(83.57% 0.0023 174.48)",
+          "oklch(95.00% 0.0007 174.48)"
+        ]
+      },
+      "error-light": {
+        "role": "secondary",
+        "displayName": "error light",
+        "tonalRamp": [
+          "oklch(15.00% 0.0649 28.72)",
+          "oklch(26.43% 0.1143 28.72)",
+          "oklch(37.86% 0.1514 28.72)",
+          "oklch(49.29% 0.1514 28.72)",
+          "oklch(60.71% 0.1514 28.72)",
+          "oklch(72.14% 0.1514 28.72)",
+          "oklch(83.57% 0.0995 28.72)",
+          "oklch(95.00% 0.0303 28.72)"
+        ]
+      },
+      "error-dark": {
+        "role": "secondary",
+        "displayName": "error dark",
+        "tonalRamp": [
+          "oklch(15.00% 0.0382 26.76)",
+          "oklch(26.43% 0.0673 26.76)",
+          "oklch(37.86% 0.0891 26.76)",
+          "oklch(49.29% 0.0891 26.76)",
+          "oklch(60.71% 0.0891 26.76)",
+          "oklch(72.14% 0.0891 26.76)",
+          "oklch(83.57% 0.0585 26.76)",
+          "oklch(95.00% 0.0178 26.76)"
+        ]
+      },
+      "error-reveal": {
+        "role": "secondary",
+        "displayName": "error reveal",
+        "tonalRamp": [
+          "oklch(15.00% 0.0649 28.72)",
+          "oklch(26.43% 0.1143 28.72)",
+          "oklch(37.86% 0.1514 28.72)",
+          "oklch(49.29% 0.1514 28.72)",
+          "oklch(60.71% 0.1514 28.72)",
+          "oklch(72.14% 0.1514 28.72)",
+          "oklch(83.57% 0.0995 28.72)",
+          "oklch(95.00% 0.0303 28.72)"
+        ]
+      },
+      "on-error": {
+        "role": "secondary",
+        "displayName": "on error",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "obsidian-gold-accent": {
+        "role": "primary",
+        "displayName": "obsidian gold accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0433 85.45)",
+          "oklch(26.43% 0.0763 85.45)",
+          "oklch(37.86% 0.1010 85.45)",
+          "oklch(49.29% 0.1010 85.45)",
+          "oklch(60.71% 0.1010 85.45)",
+          "oklch(72.14% 0.1010 85.45)",
+          "oklch(83.57% 0.0664 85.45)",
+          "oklch(95.00% 0.0202 85.45)"
+        ]
+      },
+      "obsidian-gold-on-accent": {
+        "role": "neutral",
+        "displayName": "obsidian gold on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0049 107.38)",
+          "oklch(26.43% 0.0087 107.38)",
+          "oklch(37.86% 0.0115 107.38)",
+          "oklch(49.29% 0.0115 107.38)",
+          "oklch(60.71% 0.0115 107.38)",
+          "oklch(72.14% 0.0115 107.38)",
+          "oklch(83.57% 0.0076 107.38)",
+          "oklch(95.00% 0.0023 107.38)"
+        ]
+      },
+      "obsidian-gold-bg": {
+        "role": "neutral",
+        "displayName": "obsidian gold bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0019 128.74)",
+          "oklch(26.43% 0.0033 128.74)",
+          "oklch(37.86% 0.0043 128.74)",
+          "oklch(49.29% 0.0043 128.74)",
+          "oklch(60.71% 0.0043 128.74)",
+          "oklch(72.14% 0.0043 128.74)",
+          "oklch(83.57% 0.0029 128.74)",
+          "oklch(95.00% 0.0009 128.74)"
+        ]
+      },
+      "obsidian-gold-paper": {
+        "role": "neutral",
+        "displayName": "obsidian gold paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0018 128.69)",
+          "oklch(26.43% 0.0032 128.69)",
+          "oklch(37.86% 0.0042 128.69)",
+          "oklch(49.29% 0.0042 128.69)",
+          "oklch(60.71% 0.0042 128.69)",
+          "oklch(72.14% 0.0042 128.69)",
+          "oklch(83.57% 0.0027 128.69)",
+          "oklch(95.00% 0.0008 128.69)"
+        ]
+      },
+      "obsidian-gold-panel": {
+        "role": "neutral",
+        "displayName": "obsidian gold panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0050 122.30)",
+          "oklch(26.43% 0.0087 122.30)",
+          "oklch(37.86% 0.0116 122.30)",
+          "oklch(49.29% 0.0116 122.30)",
+          "oklch(60.71% 0.0116 122.30)",
+          "oklch(72.14% 0.0116 122.30)",
+          "oklch(83.57% 0.0076 122.30)",
+          "oklch(95.00% 0.0023 122.30)"
+        ]
+      },
+      "obsidian-gold-text": {
+        "role": "neutral",
+        "displayName": "obsidian gold text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0083 90.55)",
+          "oklch(26.43% 0.0147 90.55)",
+          "oklch(37.86% 0.0195 90.55)",
+          "oklch(49.29% 0.0195 90.55)",
+          "oklch(60.71% 0.0195 90.55)",
+          "oklch(72.14% 0.0195 90.55)",
+          "oklch(83.57% 0.0128 90.55)",
+          "oklch(95.00% 0.0039 90.55)"
+        ]
+      },
+      "obsidian-gold-muted": {
+        "role": "neutral",
+        "displayName": "obsidian gold muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0133 87.56)",
+          "oklch(26.43% 0.0234 87.56)",
+          "oklch(37.86% 0.0310 87.56)",
+          "oklch(49.29% 0.0310 87.56)",
+          "oklch(60.71% 0.0310 87.56)",
+          "oklch(72.14% 0.0310 87.56)",
+          "oklch(83.57% 0.0204 87.56)",
+          "oklch(95.00% 0.0062 87.56)"
+        ]
+      },
+      "obsidian-gold-border": {
+        "role": "neutral",
+        "displayName": "obsidian gold border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0138 100.55)",
+          "oklch(26.43% 0.0242 100.55)",
+          "oklch(37.86% 0.0321 100.55)",
+          "oklch(49.29% 0.0321 100.55)",
+          "oklch(60.71% 0.0321 100.55)",
+          "oklch(72.14% 0.0321 100.55)",
+          "oklch(83.57% 0.0211 100.55)",
+          "oklch(95.00% 0.0064 100.55)"
+        ]
+      },
+      "obsidian-gold-soft": {
+        "role": "neutral",
+        "displayName": "obsidian gold soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0099 93.01)",
+          "oklch(26.43% 0.0174 93.01)",
+          "oklch(37.86% 0.0230 93.01)",
+          "oklch(49.29% 0.0230 93.01)",
+          "oklch(60.71% 0.0230 93.01)",
+          "oklch(72.14% 0.0230 93.01)",
+          "oklch(83.57% 0.0151 93.01)",
+          "oklch(95.00% 0.0046 93.01)"
+        ]
+      },
+      "obsidian-gold-heading": {
+        "role": "neutral",
+        "displayName": "obsidian gold heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0371 87.29)",
+          "oklch(26.43% 0.0653 87.29)",
+          "oklch(37.86% 0.0865 87.29)",
+          "oklch(49.29% 0.0865 87.29)",
+          "oklch(60.71% 0.0865 87.29)",
+          "oklch(72.14% 0.0865 87.29)",
+          "oklch(83.57% 0.0568 87.29)",
+          "oklch(95.00% 0.0173 87.29)"
+        ]
+      },
+      "obsidian-gold-quote": {
+        "role": "neutral",
+        "displayName": "obsidian gold quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0080 121.27)",
+          "oklch(26.43% 0.0140 121.27)",
+          "oklch(37.86% 0.0186 121.27)",
+          "oklch(49.29% 0.0186 121.27)",
+          "oklch(60.71% 0.0186 121.27)",
+          "oklch(72.14% 0.0186 121.27)",
+          "oklch(83.57% 0.0122 121.27)",
+          "oklch(95.00% 0.0037 121.27)"
+        ]
+      },
+      "obsidian-gold-note": {
+        "role": "neutral",
+        "displayName": "obsidian gold note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0099 93.01)",
+          "oklch(26.43% 0.0175 93.01)",
+          "oklch(37.86% 0.0231 93.01)",
+          "oklch(49.29% 0.0231 93.01)",
+          "oklch(60.71% 0.0231 93.01)",
+          "oklch(72.14% 0.0231 93.01)",
+          "oklch(83.57% 0.0152 93.01)",
+          "oklch(95.00% 0.0046 93.01)"
+        ]
+      },
+      "sakura-accent": {
+        "role": "primary",
+        "displayName": "sakura accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0509 3.45)",
+          "oklch(26.43% 0.0897 3.45)",
+          "oklch(37.86% 0.1188 3.45)",
+          "oklch(49.29% 0.1188 3.45)",
+          "oklch(60.71% 0.1188 3.45)",
+          "oklch(72.14% 0.1188 3.45)",
+          "oklch(83.57% 0.0781 3.45)",
+          "oklch(95.00% 0.0238 3.45)"
+        ]
+      },
+      "sakura-on-accent": {
+        "role": "neutral",
+        "displayName": "sakura on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0000 89.88)",
+          "oklch(26.43% 0.0000 89.88)",
+          "oklch(37.86% 0.0000 89.88)",
+          "oklch(49.29% 0.0000 89.88)",
+          "oklch(60.71% 0.0000 89.88)",
+          "oklch(72.14% 0.0000 89.88)",
+          "oklch(83.57% 0.0000 89.88)",
+          "oklch(95.00% 0.0000 89.88)"
+        ]
+      },
+      "sakura-bg": {
+        "role": "neutral",
+        "displayName": "sakura bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0043 1.99)",
+          "oklch(26.43% 0.0076 1.99)",
+          "oklch(37.86% 0.0101 1.99)",
+          "oklch(49.29% 0.0101 1.99)",
+          "oklch(60.71% 0.0101 1.99)",
+          "oklch(72.14% 0.0101 1.99)",
+          "oklch(83.57% 0.0066 1.99)",
+          "oklch(95.00% 0.0020 1.99)"
+        ]
+      },
+      "sakura-paper": {
+        "role": "neutral",
+        "displayName": "sakura paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0023 17.25)",
+          "oklch(26.43% 0.0040 17.25)",
+          "oklch(37.86% 0.0053 17.25)",
+          "oklch(49.29% 0.0053 17.25)",
+          "oklch(60.71% 0.0053 17.25)",
+          "oklch(72.14% 0.0053 17.25)",
+          "oklch(83.57% 0.0035 17.25)",
+          "oklch(95.00% 0.0011 17.25)"
+        ]
+      },
+      "sakura-panel": {
+        "role": "neutral",
+        "displayName": "sakura panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0037 8.55)",
+          "oklch(26.43% 0.0066 8.55)",
+          "oklch(37.86% 0.0087 8.55)",
+          "oklch(49.29% 0.0087 8.55)",
+          "oklch(60.71% 0.0087 8.55)",
+          "oklch(72.14% 0.0087 8.55)",
+          "oklch(83.57% 0.0057 8.55)",
+          "oklch(95.00% 0.0017 8.55)"
+        ]
+      },
+      "sakura-text": {
+        "role": "neutral",
+        "displayName": "sakura text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0146 355.38)",
+          "oklch(26.43% 0.0257 355.38)",
+          "oklch(37.86% 0.0340 355.38)",
+          "oklch(49.29% 0.0340 355.38)",
+          "oklch(60.71% 0.0340 355.38)",
+          "oklch(72.14% 0.0340 355.38)",
+          "oklch(83.57% 0.0223 355.38)",
+          "oklch(95.00% 0.0068 355.38)"
+        ]
+      },
+      "sakura-muted": {
+        "role": "neutral",
+        "displayName": "sakura muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0180 354.77)",
+          "oklch(26.43% 0.0317 354.77)",
+          "oklch(37.86% 0.0419 354.77)",
+          "oklch(49.29% 0.0419 354.77)",
+          "oklch(60.71% 0.0419 354.77)",
+          "oklch(72.14% 0.0419 354.77)",
+          "oklch(83.57% 0.0276 354.77)",
+          "oklch(95.00% 0.0084 354.77)"
+        ]
+      },
+      "sakura-border": {
+        "role": "neutral",
+        "displayName": "sakura border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0111 352.58)",
+          "oklch(26.43% 0.0195 352.58)",
+          "oklch(37.86% 0.0258 352.58)",
+          "oklch(49.29% 0.0258 352.58)",
+          "oklch(60.71% 0.0258 352.58)",
+          "oklch(72.14% 0.0258 352.58)",
+          "oklch(83.57% 0.0169 352.58)",
+          "oklch(95.00% 0.0052 352.58)"
+        ]
+      },
+      "sakura-soft": {
+        "role": "neutral",
+        "displayName": "sakura soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0102 354.31)",
+          "oklch(26.43% 0.0180 354.31)",
+          "oklch(37.86% 0.0238 354.31)",
+          "oklch(49.29% 0.0238 354.31)",
+          "oklch(60.71% 0.0238 354.31)",
+          "oklch(72.14% 0.0238 354.31)",
+          "oklch(83.57% 0.0156 354.31)",
+          "oklch(95.00% 0.0048 354.31)"
+        ]
+      },
+      "sakura-heading": {
+        "role": "neutral",
+        "displayName": "sakura heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0459 0.38)",
+          "oklch(26.43% 0.0808 0.38)",
+          "oklch(37.86% 0.1070 0.38)",
+          "oklch(49.29% 0.1070 0.38)",
+          "oklch(60.71% 0.1070 0.38)",
+          "oklch(72.14% 0.1070 0.38)",
+          "oklch(83.57% 0.0703 0.38)",
+          "oklch(95.00% 0.0214 0.38)"
+        ]
+      },
+      "sakura-quote": {
+        "role": "neutral",
+        "displayName": "sakura quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0069 358.05)",
+          "oklch(26.43% 0.0121 358.05)",
+          "oklch(37.86% 0.0160 358.05)",
+          "oklch(49.29% 0.0160 358.05)",
+          "oklch(60.71% 0.0160 358.05)",
+          "oklch(72.14% 0.0160 358.05)",
+          "oklch(83.57% 0.0105 358.05)",
+          "oklch(95.00% 0.0032 358.05)"
+        ]
+      },
+      "sakura-note": {
+        "role": "neutral",
+        "displayName": "sakura note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0105 83.42)",
+          "oklch(26.43% 0.0185 83.42)",
+          "oklch(37.86% 0.0245 83.42)",
+          "oklch(49.29% 0.0245 83.42)",
+          "oklch(60.71% 0.0245 83.42)",
+          "oklch(72.14% 0.0245 83.42)",
+          "oklch(83.57% 0.0161 83.42)",
+          "oklch(95.00% 0.0049 83.42)"
+        ]
+      },
+      "ocean-accent": {
+        "role": "primary",
+        "displayName": "ocean accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0353 190.68)",
+          "oklch(26.43% 0.0622 190.68)",
+          "oklch(37.86% 0.0824 190.68)",
+          "oklch(49.29% 0.0824 190.68)",
+          "oklch(60.71% 0.0824 190.68)",
+          "oklch(72.14% 0.0824 190.68)",
+          "oklch(83.57% 0.0542 190.68)",
+          "oklch(95.00% 0.0165 190.68)"
+        ]
+      },
+      "ocean-on-accent": {
+        "role": "neutral",
+        "displayName": "ocean on accent",
+        "tonalRamp": [
+          "oklch(15.00% 0.0171 192.61)",
+          "oklch(26.43% 0.0302 192.61)",
+          "oklch(37.86% 0.0400 192.61)",
+          "oklch(49.29% 0.0400 192.61)",
+          "oklch(60.71% 0.0400 192.61)",
+          "oklch(72.14% 0.0400 192.61)",
+          "oklch(83.57% 0.0263 192.61)",
+          "oklch(95.00% 0.0080 192.61)"
+        ]
+      },
+      "ocean-bg": {
+        "role": "neutral",
+        "displayName": "ocean bg",
+        "tonalRamp": [
+          "oklch(15.00% 0.0117 220.63)",
+          "oklch(26.43% 0.0207 220.63)",
+          "oklch(37.86% 0.0274 220.63)",
+          "oklch(49.29% 0.0274 220.63)",
+          "oklch(60.71% 0.0274 220.63)",
+          "oklch(72.14% 0.0274 220.63)",
+          "oklch(83.57% 0.0180 220.63)",
+          "oklch(95.00% 0.0055 220.63)"
+        ]
+      },
+      "ocean-paper": {
+        "role": "neutral",
+        "displayName": "ocean paper",
+        "tonalRamp": [
+          "oklch(15.00% 0.0125 218.18)",
+          "oklch(26.43% 0.0220 218.18)",
+          "oklch(37.86% 0.0291 218.18)",
+          "oklch(49.29% 0.0291 218.18)",
+          "oklch(60.71% 0.0291 218.18)",
+          "oklch(72.14% 0.0291 218.18)",
+          "oklch(83.57% 0.0191 218.18)",
+          "oklch(95.00% 0.0058 218.18)"
+        ]
+      },
+      "ocean-panel": {
+        "role": "neutral",
+        "displayName": "ocean panel",
+        "tonalRamp": [
+          "oklch(15.00% 0.0125 222.74)",
+          "oklch(26.43% 0.0219 222.74)",
+          "oklch(37.86% 0.0291 222.74)",
+          "oklch(49.29% 0.0291 222.74)",
+          "oklch(60.71% 0.0291 222.74)",
+          "oklch(72.14% 0.0291 222.74)",
+          "oklch(83.57% 0.0191 222.74)",
+          "oklch(95.00% 0.0058 222.74)"
+        ]
+      },
+      "ocean-text": {
+        "role": "neutral",
+        "displayName": "ocean text",
+        "tonalRamp": [
+          "oklch(15.00% 0.0083 204.85)",
+          "oklch(26.43% 0.0145 204.85)",
+          "oklch(37.86% 0.0193 204.85)",
+          "oklch(49.29% 0.0193 204.85)",
+          "oklch(60.71% 0.0193 204.85)",
+          "oklch(72.14% 0.0193 204.85)",
+          "oklch(83.57% 0.0127 204.85)",
+          "oklch(95.00% 0.0039 204.85)"
+        ]
+      },
+      "ocean-muted": {
+        "role": "neutral",
+        "displayName": "ocean muted",
+        "tonalRamp": [
+          "oklch(15.00% 0.0140 211.58)",
+          "oklch(26.43% 0.0246 211.58)",
+          "oklch(37.86% 0.0326 211.58)",
+          "oklch(49.29% 0.0326 211.58)",
+          "oklch(60.71% 0.0326 211.58)",
+          "oklch(72.14% 0.0326 211.58)",
+          "oklch(83.57% 0.0214 211.58)",
+          "oklch(95.00% 0.0065 211.58)"
+        ]
+      },
+      "ocean-border": {
+        "role": "neutral",
+        "displayName": "ocean border",
+        "tonalRamp": [
+          "oklch(15.00% 0.0152 215.06)",
+          "oklch(26.43% 0.0267 215.06)",
+          "oklch(37.86% 0.0354 215.06)",
+          "oklch(49.29% 0.0354 215.06)",
+          "oklch(60.71% 0.0354 215.06)",
+          "oklch(72.14% 0.0354 215.06)",
+          "oklch(83.57% 0.0232 215.06)",
+          "oklch(95.00% 0.0071 215.06)"
+        ]
+      },
+      "ocean-soft": {
+        "role": "neutral",
+        "displayName": "ocean soft",
+        "tonalRamp": [
+          "oklch(15.00% 0.0163 219.83)",
+          "oklch(26.43% 0.0288 219.83)",
+          "oklch(37.86% 0.0381 219.83)",
+          "oklch(49.29% 0.0381 219.83)",
+          "oklch(60.71% 0.0381 219.83)",
+          "oklch(72.14% 0.0381 219.83)",
+          "oklch(83.57% 0.0251 219.83)",
+          "oklch(95.00% 0.0076 219.83)"
+        ]
+      },
+      "ocean-heading": {
+        "role": "neutral",
+        "displayName": "ocean heading",
+        "tonalRamp": [
+          "oklch(15.00% 0.0323 187.35)",
+          "oklch(26.43% 0.0569 187.35)",
+          "oklch(37.86% 0.0754 187.35)",
+          "oklch(49.29% 0.0754 187.35)",
+          "oklch(60.71% 0.0754 187.35)",
+          "oklch(72.14% 0.0754 187.35)",
+          "oklch(83.57% 0.0495 187.35)",
+          "oklch(95.00% 0.0151 187.35)"
+        ]
+      },
+      "ocean-quote": {
+        "role": "neutral",
+        "displayName": "ocean quote",
+        "tonalRamp": [
+          "oklch(15.00% 0.0143 217.76)",
+          "oklch(26.43% 0.0252 217.76)",
+          "oklch(37.86% 0.0334 217.76)",
+          "oklch(49.29% 0.0334 217.76)",
+          "oklch(60.71% 0.0334 217.76)",
+          "oklch(72.14% 0.0334 217.76)",
+          "oklch(83.57% 0.0219 217.76)",
+          "oklch(95.00% 0.0067 217.76)"
+        ]
+      },
+      "ocean-note": {
+        "role": "neutral",
+        "displayName": "ocean note",
+        "tonalRamp": [
+          "oklch(15.00% 0.0104 166.26)",
+          "oklch(26.43% 0.0184 166.26)",
+          "oklch(37.86% 0.0243 166.26)",
+          "oklch(49.29% 0.0243 166.26)",
+          "oklch(60.71% 0.0243 166.26)",
+          "oklch(72.14% 0.0243 166.26)",
+          "oklch(83.57% 0.0160 166.26)",
+          "oklch(95.00% 0.0049 166.26)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Panel headline",
+        "purpose": "Drawer, flow and dialog hierarchy."
+      },
+      "library-title": {
+        "displayName": "Home header",
+        "purpose": "Current library screen."
+      },
+      "document-title": {
+        "displayName": "Draft title",
+        "purpose": "Wrapping row title."
+      },
+      "body": {
+        "displayName": "Manuscript",
+        "purpose": "Preference-controlled reading size."
+      },
+      "label": {
+        "displayName": "Operational label",
+        "purpose": "Search, outline and settings."
+      },
+      "metadata": {
+        "displayName": "Metadata",
+        "purpose": "Draft and flow context."
+      }
+    },
+    "shadows": [
+      {
+        "name": "format-popover",
+        "value": "0 6px 20px #0000001a",
+        "purpose": "Additional formats above bottom toolbar."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "140ms ease-out",
+        "purpose": "Color feedback; disabled under reduced motion."
+      },
+      {
+        "name": "swipe-surface",
+        "value": "transform 140ms ease-out",
+        "purpose": "Paper foreground translation; disabled under reduced motion."
+      },
+      {
+        "name": "reading-chrome",
+        "value": "180ms ease-out",
+        "purpose": "Header overlay movement; disabled under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "expanded",
+        "value": "600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Phone library open action.",
+      "html": "<button class=\"ds-primary\">ファイルを開く</button>",
+      "css": ".ds-primary{font-family:system-ui,'Meiryo',sans-serif;font-size:14px;min-height:52px;border-radius:10px;padding:12px 16px;transition:background-color 140ms ease-out,color 140ms ease-out;background:#303738;color:#fff;border:1px solid #303738}.ds-primary:hover{filter:brightness(.95)}.ds-primary:focus-visible{outline:2px solid #303738;outline-offset:2px}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Create using a paper action.",
+      "html": "<button class=\"ds-secondary\">新しいシナリオ</button>",
+      "css": ".ds-secondary{font-family:system-ui,'Meiryo',sans-serif;font-size:14px;min-height:52px;border-radius:10px;padding:12px 16px;transition:background-color 140ms ease-out,color 140ms ease-out;background:#fff;color:#303738;border:1px solid #d0d4d4}.ds-secondary:hover{background:#e0e4e4}.ds-secondary:focus-visible{outline:2px solid #303738;outline-offset:2px}@media(prefers-reduced-motion:reduce){.ds-secondary{transition:none}}"
+    },
+    {
+      "name": "Search",
+      "kind": "input",
+      "refersTo": "search-field",
+      "description": "Paper search shared by home and outline.",
+      "html": "<label class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input type=\"search\" aria-label=\"下書きを検索\" placeholder=\"シナリオを検索\"/></label>",
+      "css": ".ds-search{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 12px;border:1px solid #d0d4d4;border-radius:10px;background:#fff;color:#606667}.ds-search input{font-family:system-ui,'Meiryo',sans-serif;font-size:14px;min-height:46px;min-width:0;border:0;background:transparent;color:#292c2d;outline:none;padding:10px 0}.ds-search input::placeholder{color:#606667;opacity:1}.ds-search:hover{border-color:#303738}.ds-search:focus-within{outline:2px solid #303738;outline-offset:2px}"
+    },
+    {
+      "name": "Grouped modes",
+      "kind": "nav",
+      "refersTo": "selected-mode",
+      "description": "Solid selected mode within soft tonal grouping.",
+      "html": "<nav class=\"ds-modes\" aria-label=\"編集モード\"><button aria-pressed=\"true\">本文</button><button aria-pressed=\"false\">フロー</button></nav>",
+      "css": ".ds-modes{display:inline-flex;gap:2px;padding:3px;border-radius:10px;background:#e0e4e4}.ds-modes button{font-family:system-ui,'Meiryo',sans-serif;font-size:13px;min-width:58px;min-height:48px;padding:4px 12px;border:0;border-radius:7px;background:transparent;color:#606667}.ds-modes button[aria-pressed=true]{background:#303738;color:#fff}.ds-modes button:hover{background:#e0e4e4;color:#292c2d}.ds-modes button:focus-visible{outline:2px solid #303738;outline-offset:2px}@media(prefers-reduced-motion:reduce){.ds-modes button{transition:none}}"
+    },
+    {
+      "name": "Draft row",
+      "kind": "card",
+      "refersTo": "draft-row",
+      "description": "Neutral paper row and separate muted deletion control.",
+      "html": "<article class=\"ds-draft\"><button class=\"ds-open\"><strong>灯台のシナリオ</strong><small>この端末の下書き</small></button><button class=\"ds-delete\" aria-label=\"下書きを削除\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"><path d=\"M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6\"/></svg></button></article>",
+      "css": ".ds-draft{display:flex;align-items:stretch;border:1px solid #d0d4d4;border-radius:12px;background:#fff;overflow:hidden;max-width:420px}.ds-open{flex:1;min-width:0;min-height:96px;text-align:left;padding:16px 4px 16px 16px;border:0;border-radius:0;background:transparent;color:#292c2d;font-family:system-ui,'Meiryo',sans-serif}.ds-open strong{display:block;font-size:16px;font-weight:600;line-height:1.6}.ds-open small{display:block;font-size:12px;margin-top:4px;color:#606667}.ds-delete{align-self:center;min-width:48px;height:48px;margin-right:4px;padding:0;border:0;border-radius:8px;background:transparent;color:#606667}.ds-open:hover,.ds-delete:hover{background:#e0e4e4}.ds-open:focus-visible{outline:2px solid #303738;outline-offset:2px}@media(prefers-reduced-motion:reduce){.ds-open{transition:none}}.ds-delete:focus-visible{outline:2px solid #303738;outline-offset:2px}@media(prefers-reduced-motion:reduce){.ds-delete{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Bound Manuscript and Structural Index",
+    "overview": "Android adapts the desktop structural index into a tonal, touch-first library and reading workspace. Paper holds the manuscript and document rows; tinted panels frame navigation and formatting. Japanese system UI lettering keeps operational controls familiar.\n\nThis child system describes Android only. Nine semantic families retain desktop color relationships while navigation becomes a phone header, grouped modes and independent drawers. The manuscript stays geometrically stable as reading hides the header. Destructive color appears only in an intentional swipe reveal or confirmation.",
+    "keyCharacteristics": [
+      "Tonal navigation, readable paper and nine coordinated palettes.",
+      "Primary touch controls sized for Android.",
+      "Neutral draft rows with contained destructive reveal.",
+      "Independent outline and notes; keyboard-aware bottom formatting."
+    ],
+    "rules": [
+      {
+        "name": "The Semantic Family Rule",
+        "body": "Swap the whole theme family together; paper, structural panels, text and selection keep distinct roles.",
+        "section": "colors"
+      },
+      {
+        "name": "The Contained Destruction Rule",
+        "body": "Draft rows and delete icons stay neutral at rest. Red is reserved for the active swipe reveal and destructive confirmation.",
+        "section": "colors"
+      },
+      {
+        "name": "The Stable Manuscript Rule",
+        "body": "Hide reading chrome by overlay transforms and clipping, without changing manuscript padding during the gesture.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do preserve semantic theme roles in light and dark families.",
+      "Do use the observed 48px primary touch targets and retain readable document text.",
+      "Do keep home and outline search available, with ancestry retained in outline results.",
+      "Do keep bottom formatting within the resized visual viewport and respect safe-area padding."
+    ],
+    "donts": [
+      "Don't copy the desktop navigation rail onto the phone.",
+      "Don't expose a red row background at rest or style the ordinary draft delete icon as a danger action.",
+      "Don't reflow the manuscript when the reading header hides.",
+      "Don't imply Android flow cards can be edited or that deleting a device draft deletes its source file."
+    ]
+  }
+}

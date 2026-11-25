@@ -212,3 +212,113 @@
 @media (prefers-reduced-motion: reduce) {
   .mobile-app button, .mobile-app .mobile-document, .mobile-app.mobile-editor-open > .mobile-header, .mobile-app.mobile-editor-open > .mobile-switchbar { transition: none; }
 }
+/* Android adaptation of the desktop structural-index direction. */
+.mobile-app {
+  --mobile-primary-bg: var(--theme-accent);
+  background: var(--theme-bg);
+  accent-color: var(--theme-accent);
+  caret-color: var(--theme-accent);
+}
+.mobile-app[data-theme='tahoe-light'] { --mobile-primary-bg: var(--theme-accent); }
+.mobile-app ::selection { background: var(--theme-soft); color: var(--theme-text); }
+.mobile-app * { scrollbar-width: thin; scrollbar-color: var(--theme-border) transparent; }
+.mobile-app button, .mobile-app summary { min-height: 48px; border-radius: 8px; }
+.mobile-app .mobile-header { min-height: 60px; gap: 4px; padding: 6px 12px; background: var(--theme-panel); }
+.mobile-app .mobile-header > strong { font-size: 19px; font-weight: 600; padding-left: 4px; }
+.mobile-app .mobile-header > svg { color: var(--theme-accent); }
+.mobile-app .mobile-header > button { min-width: 48px; }
+.mobile-app .mobile-header .mobile-settings-open { font-size: 13px; padding: 0 8px; }
+.mobile-app .mobile-title { font-weight: 600; padding: 8px 0; }
+.mobile-app .mobile-library { padding: 24px 16px 32px; background: var(--theme-bg); }
+.mobile-app .mobile-home-actions { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.mobile-app .mobile-home-actions > button { min-height: 52px; justify-content: flex-start; padding: 12px 16px; font-size: 14px; border-radius: 10px; }
+.mobile-app .mobile-secondary { border: 1px solid var(--theme-border); background: var(--theme-paper); color: var(--theme-accent); }
+.mobile-app .mobile-library-heading { display: flex; align-items: center; gap: 10px; margin: 28px 0 14px; }
+.mobile-app .mobile-library-heading h2 { margin: 0; font-size: 15px; font-weight: 600; color: var(--theme-text); }
+.mobile-app .mobile-library-heading > span { font-size: 12px; color: var(--theme-muted); }
+.mobile-app .mobile-draft-search, .mobile-app .mobile-outline-search { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 12px; border: 1px solid var(--theme-border); border-radius: 10px; background: var(--theme-paper); color: var(--theme-muted); }
+.mobile-app .mobile-draft-search { margin-bottom: 16px; }
+.mobile-app .mobile-draft-search:focus-within, .mobile-app .mobile-outline-search:focus-within { outline: 2px solid var(--theme-accent); outline-offset: 2px; }
+.mobile-app .mobile-draft-search input, .mobile-app .mobile-outline-search input { flex: 1; width: 100%; min-width: 0; min-height: 46px; padding: 10px 0; border: 0; background: transparent; color: var(--theme-text); font: inherit; font-size: 14px; outline: none; }
+.mobile-app input::placeholder { color: var(--theme-muted); opacity: 1; }
+.mobile-app input[type='search']::-webkit-search-cancel-button { display: none; }
+.mobile-app .mobile-draft-search button, .mobile-app .mobile-outline-search button { flex: none; min-width: 48px; padding: 0; }
+.mobile-app .mobile-swipe-draft { align-items: stretch; margin: 10px 0; border: 1px solid var(--theme-border); border-radius: 12px; background: var(--theme-paper); }
+.mobile-app .mobile-draft-surface { position: relative; z-index: 1; display: flex; flex: 1; width: 100%; min-width: 0; align-items: stretch; background: var(--theme-paper); border-radius: inherit; transition: transform 140ms ease-out; }
+.mobile-app .mobile-document { width: auto; flex: 1; min-height: 96px; padding: 16px 4px 16px 16px; gap: 12px; border: 0; border-radius: 0; background: transparent; transition: none; }
+.mobile-app .mobile-document > svg { color: var(--theme-accent); }
+.mobile-app .mobile-document strong { font-size: 16px; font-weight: 600; line-height: 1.6; }
+.mobile-app .mobile-document small { font-size: 12px; margin-top: 4px; color: var(--theme-muted); }
+.mobile-app .mobile-document .mobile-document-system { color: var(--theme-accent); }
+.mobile-app .mobile-draft-delete { flex: none; align-self: center; min-width: 48px; width: 48px; height: 48px; margin-right: 4px; padding: 0; color: var(--theme-muted); }
+.mobile-app .mobile-swipe-delete { right: 0; top: 0; bottom: 0; justify-content: center; gap: 6px; overflow: hidden; background: var(--mobile-error-bg); color: var(--mobile-on-error); white-space: nowrap; }
+.mobile-app .mobile-swipe-delete[hidden] { display: none; }
+.mobile-app .mobile-delete-dialog { padding: 24px; border: 0; border-radius: 20px; }
+.mobile-app .mobile-delete-dialog h2 { margin: 0 0 16px; font-size: 20px; font-weight: 600; }
+.mobile-app .mobile-delete-dialog p { color: var(--theme-muted); }
+.mobile-app .mobile-delete-dialog button { min-height: 48px; }
+.mobile-app .mobile-danger { color: var(--mobile-error); font-weight: 600; }
+.mobile-app .mobile-library-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 48px 20px; text-align: center; color: var(--theme-muted); }
+.mobile-app .mobile-library-empty > svg { color: var(--theme-accent); }
+.mobile-app .mobile-library-empty > p { margin: 0; color: var(--theme-text); font-size: 15px; }
+.mobile-app .mobile-library-empty > small { font-size: 12px; line-height: 1.8; }
+.mobile-app .mobile-switchbar { min-height: 64px; padding: 6px 12px; background: var(--theme-panel); }
+.mobile-app .mobile-pill { min-width: 64px; font-size: 12px; color: var(--theme-text); }
+.mobile-app .mobile-switchbar nav { padding: 3px; gap: 2px; border-radius: 10px; background: var(--theme-soft); }
+.mobile-app .mobile-switchbar nav button { min-height: 48px; min-width: 58px; padding: 4px 12px; border-radius: 7px; }
+.mobile-app .mobile-switchbar nav button[aria-pressed=true] { background: var(--theme-accent); color: var(--theme-onAccent); }
+.mobile-app .mobile-save-state { background: var(--theme-panel); }
+.mobile-app .mobile-save-state > button { min-height: 44px; }
+.mobile-app .editor-scroll { padding-left: 22px; padding-right: 22px; background: var(--theme-paper); }
+.mobile-app .tiptap :is(h1,h2,h3,h4) { color: var(--theme-heading); font-weight: 600; letter-spacing: 0; }
+.mobile-app .tiptap h2 { border: 0; padding: 0; margin-top: 30px; }
+.mobile-app .tiptap blockquote { padding: 16px; border: 0; border-radius: 8px; }
+.mobile-app .tiptap .gm-note { border: 1px solid var(--theme-border); border-radius: 8px; }
+.mobile-app .editor-toolbar { min-height: 60px; padding: 6px 8px max(6px, env(safe-area-inset-bottom)); background: var(--theme-panel); }
+.mobile-app .editor-toolbar button { min-width: 48px; width: 48px; min-height: 48px; height: 48px; border-radius: 8px; }
+.mobile-app .mobile-format-menu summary { min-height: 48px; }
+.mobile-app .mobile-format-options { border: 1px solid var(--theme-border); border-radius: 12px; box-shadow: 0 6px 20px #0000001a; }
+.mobile-app .mobile-format-options > button { font-size: 14px; }
+.mobile-app .mobile-outline-header { padding: 12px 16px 8px; background: var(--theme-panel); }
+.mobile-app .mobile-outline-header h1 { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600; }
+.mobile-app .mobile-heading-count { font-size: 12px; font-weight: 400; color: var(--theme-muted); }
+.mobile-app .mobile-outline-search { margin-top: 12px; }
+.mobile-app .mobile-outline-bulk { justify-content: space-between; gap: 16px; }
+.mobile-app .mobile-outline-bulk button { min-height: 48px; }
+.mobile-app .mobile-outline-list { padding: 8px; }
+.mobile-app .mobile-outline-row { min-height: 52px; margin: 2px 0; padding-right: 8px; border: 0; border-radius: 8px; }
+.mobile-app .mobile-outline-toggle, .mobile-app .mobile-outline-spacer { width: 48px; }
+.mobile-app .mobile-outline-link { min-height: 48px; font-size: 14px; padding: 10px 4px; }
+.mobile-app .mobile-panel h1 { font-size: 20px; font-weight: 600; }
+.mobile-app .mobile-panel h2 { font-weight: 600; }
+.mobile-app .mobile-flow-panel { padding: 20px 16px; background: var(--theme-bg); }
+.mobile-app .mobile-panel-title > span { font-size: 11px; }
+.mobile-app .mobile-flow-tools { padding: 4px; border: 1px solid var(--theme-border); border-radius: 10px; background: var(--theme-paper); }
+.mobile-app .mobile-flow-tools button { min-width: 48px; }
+.mobile-app .mobile-flow { border: 0; border-radius: 12px; background: var(--theme-paper); }
+.mobile-app .mobile-heading { margin: 6px 0; padding: 12px; border: 1px solid var(--theme-border); border-radius: 8px; background: var(--theme-paper); }
+.mobile-app .mobile-setting { font-size: 14px; }
+.mobile-app .mobile-setting :is(input[type=text],select) { min-height: 48px; border-radius: 8px; }
+.mobile-app .mobile-design-sample { border-radius: 10px; }
+.mobile-app .writing-notes-heading { background: var(--theme-panel); }
+.mobile-app .writing-notes-toolbar { min-height: 60px; background: var(--theme-panel); }
+.mobile-app .writing-notes-toolbar button { min-width: 48px; width: 48px; min-height: 48px; height: 48px; }
+.mobile-app.mobile-reading .editor-scroll { clip-path: inset(var(--mobile-switch-height, 64px) 0 0); }
+@media (min-width: 600px) {
+  .mobile-app .mobile-library { width: 100%; max-width: 760px; margin: 0 auto; padding: 32px; }
+  .mobile-app .mobile-home-actions { grid-template-columns: 1fr 1fr; }
+  .mobile-app .editor-scroll { padding-left: max(24px, calc((100vw - 720px) / 2)); padding-right: max(24px, calc((100vw - 720px) / 2)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-app .mobile-draft-surface { transition: none; }
+}
+.mobile-app .mobile-flow { height: clamp(220px, 32dvh, 320px); }
+.mobile-app .mobile-flow-scene-list { margin-top: 24px; }
+.mobile-app .mobile-flow-scene-list h2 { margin: 0 0 12px; color: var(--theme-text); }
+.mobile-app .mobile-flow-scene { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; padding: 12px 0; border-bottom: 1px solid var(--theme-border); }
+.mobile-app .mobile-flow-scene > div { flex: 1; min-width: 0; }
+.mobile-app .mobile-flow-scene strong { display: block; font-size: 14px; font-weight: 500; line-height: 1.7; overflow-wrap: anywhere; }
+.mobile-app .mobile-flow-scene small { display: block; font-size: 12px; margin-top: 4px; color: var(--theme-muted); }
+.mobile-app .mobile-flow-scene button { flex: none; min-height: 48px; padding: 8px 12px; font-size: 12px; color: var(--theme-accent); background: var(--theme-paper); }
+.mobile-app .mobile-drawer-close { min-width: 48px; width: 48px; min-height: 48px; height: 48px; }
+.mobile-app .mobile-save-state > button { min-height: 48px; }

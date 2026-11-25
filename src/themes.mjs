@@ -4,7 +4,31 @@ export const themes = [
   { id: 'tahoe-dark', name: 'Tahoe ダーク', description: 'macOS風の奥行きと、鮮やかな青のダークテーマ', colors: { bg: '#0b1119', paper: '#151d27', panel: '#111923dd', text: '#f2f5f8', muted: '#9aaabc', heading: '#70b7ff', subheading: '#c9a8ff', chapter: '#8bd8ee', accent: '#49a7ff', onAccent: '#061522', soft: '#223448', border: '#35485d', quote: '#1b2b3a', note: '#20303e', branch: '#4b402c', ending: '#393149' }, serif: false, glass: true },
   { id: 'parchment', name: '羊皮紙', description: '古い手記のような温かさ', colors: { bg: '#ede3d2', paper: '#fff6e5', panel: '#f0e5d2', text: '#4b392b', muted: '#8a735d', heading: '#365c68', subheading: '#805044', chapter: '#644b71', accent: '#946039', onAccent: '#ffffff', soft: '#eaddc6', border: '#d6c2a5', quote: '#f2e7d2', note: '#eee0c6', branch: '#f0dcb5', ending: '#e8dce2' }, serif: true },
   { id: 'midnight', name: 'ミッドナイト', description: '夜のセッションに、静かな紺', colors: { bg: '#121b25', paper: '#1c2936', panel: '#192431', text: '#e0e9ef', muted: '#a5b6c7', heading: '#dcc4ed', subheading: '#edca90', chapter: '#96d6dd', accent: '#a4cfae', onAccent: '#14251c', soft: '#2d4050', border: '#43586b', quote: '#253949', note: '#2b3d4b', branch: '#514632', ending: '#40394f' }, serif: true },
-  { id: 'mono', name: 'モノクロ', description: '文字を引き立てる、白と墨', colors: { bg: '#ededed', paper: '#ffffff', panel: '#f5f5f5', text: '#242424', muted: '#686868', heading: '#34455a', subheading: '#65545d', chapter: '#303d4b', accent: '#303030', onAccent: '#ffffff', soft: '#e5e5e5', border: '#cccccc', quote: '#f1f1f1', note: '#eaeaea', branch: '#e4e4e4', ending: '#e0e0e0' }, serif: false }
+  { id: 'mono', name: 'モノクロ', description: '文字を引き立てる、白と墨', colors: { bg: '#ededed', paper: '#ffffff', panel: '#f5f5f5', text: '#242424', muted: '#686868', heading: '#34455a', subheading: '#65545d', chapter: '#303d4b', accent: '#303030', onAccent: '#ffffff', soft: '#e5e5e5', border: '#cccccc', quote: '#f1f1f1', note: '#eaeaea', branch: '#e4e4e4', ending: '#e0e0e0' }, serif: false },
+  {
+    id: 'obsidian-gold', name: '黒金', description: '黒の背景と金のアクセント', serif: true,
+    colors: {
+      bg: '#10110f', paper: '#171816', panel: '#1d1f19', text: '#eae5d7', muted: '#b6ad98',
+      heading: '#e0c586', subheading: '#c6b58e', chapter: '#e0c586', accent: '#d8b66c', onAccent: '#171711',
+      soft: '#302c1f', border: '#494632', quote: '#22251b', note: '#2e2a1d', branch: '#342e1b', ending: '#292621'
+    }
+  },
+  {
+    id: 'sakura', name: '桜', description: '桜色の余白と、深いローズの見出し', serif: true,
+    colors: {
+      bg: '#f0e7e9', paper: '#fffafa', panel: '#f8f0f1', text: '#4a343c', muted: '#7e606b',
+      heading: '#8c405a', subheading: '#855e6e', chapter: '#8c405a', accent: '#9c455f', onAccent: '#ffffff',
+      soft: '#f0dce3', border: '#ddc8d0', quote: '#f7e9ed', note: '#f6eddc', branch: '#f3e2d2', ending: '#efe2ed'
+    }
+  },
+  {
+    id: 'ocean', name: '深海', description: '深い青緑と、淡いミントのアクセント', serif: false,
+    colors: {
+      bg: '#0d2026', paper: '#152a30', panel: '#11252c', text: '#dceef0', muted: '#a0bdc3',
+      heading: '#8fdad2', subheading: '#acd1dc', chapter: '#b3e2d4', accent: '#75c9c4', onAccent: '#103332',
+      soft: '#24414a', border: '#38545b', quote: '#1c353c', note: '#2a3a33', branch: '#3c3c2a', ending: '#2d3749'
+    }
+  }
 ];
 const customThemeKey = 'trpg-custom-themes-v1';
 const validColor = /^#[\da-f]{6}$/i;

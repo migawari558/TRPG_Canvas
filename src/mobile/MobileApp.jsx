@@ -1,13 +1,14 @@
+import { mobileTheme, mobileThemeVariables } from './mobile-themes.mjs';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { ArrowLeft, FileText, List, StickyNote, FolderOpen, Plus, Save, Settings2, ChevronDown, X } from 'lucide-react';
+import { ArrowLeft, FileText, List, StickyNote, FolderOpen, Plus, Save, Settings2, ChevronDown, X, Search } from 'lucide-react';
 import ScenarioEditor, { serializeEditorMarkdown } from '../Editor.jsx';
 import WritingNotes from '../WritingNotes.jsx';
 import SwipeDraft from './SwipeDraft.jsx';
 import MobileOutline from './MobileOutline.jsx';
 import { newDocument, outline } from '../model.mjs';
 import MobileFlow from './MobileFlow.jsx';
-import { themeVariables, getThemes, getTheme, readPreference, isDarkTheme } from '../themes.mjs';
+import { getThemes, getTheme, readPreference, isDarkTheme } from '../themes.mjs';
 import { ScenarioFiles, draftStore, parseScenario, scenarioFileName } from './files.mjs';
 import { synchronizeDraft } from './sync.mjs';
 
@@ -23,6 +24,8 @@ export default function MobileApp() {
   const syncRunning=useRef(null),syncTimer=useRef(null),lastEdit=useRef(0),syncRef=useRef(null);
   const [design, setDesign] = useState(() => { const value=readPreference('trpg-mobile-design',{}); return {theme:getTheme(value?.theme||'mono').id,fontSize:Math.max(10,Math.min(24,value?.defaultsVersion===2?(Number(value?.fontSize)||14):14))}; });
   const [deleteTarget,setDeleteTarget]=useState(null);
+  const [draftQuery,setDraftQuery]=useState('');
+  const filteredEntries=entries.filter(value=>[value.doc.title,value.doc.systemName,value.doc.subtitle].filter(Boolean).join(' ').toLocaleLowerCase().includes(draftQuery.trim().toLocaleLowerCase()));
   useEffect(()=>{try{localStorage.setItem('trpg-mobile-design',JSON.stringify({...design,defaultsVersion:2}));}catch{setMessage('表示設定を保存できませんでした');}},[design]);
   const [reading, setReading] = useState(false);
   const root=useRef(null),scrollFrame=useRef(null),scrollTarget=useRef(null),readingRef=useRef(false);
@@ -52,6 +55,7 @@ export default function MobileApp() {
     function measure(){
       const headerHeight=header?.offsetHeight||0,switchHeight=switchbar?.offsetHeight||0,stateHeight=state?.offsetHeight||0;
       element.style.setProperty('--mobile-header-height',`${headerHeight}px`);
+      element.style.setProperty('--mobile-switch-height',`${switchHeight}px`);
       element.style.setProperty('--mobile-meta-top',`${headerHeight+switchHeight}px`);
       element.style.setProperty('--mobile-content-top',`${headerHeight+switchHeight+stateHeight}px`);
     }
@@ -62,7 +66,7 @@ export default function MobileApp() {
   const [message, setMessage] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false), [headings, setHeadings] = useState([]);
   const current = useRef(null), editor = useRef(null), version = useRef(0), saved = useRef(0), timer = useRef(null), input = useRef(null), saving = useRef(Promise.resolve());
   const native = Capacitor.getPlatform() === 'android';
-  useEffect(()=>{if(native)ScenarioFiles.setSystemBars({color:getTheme(design.theme).colors.paper,dark:isDarkTheme(design.theme)}).catch(()=>{});},[design.theme,native]);
+  useEffect(()=>{if(native)ScenarioFiles.setSystemBars({color:mobileTheme(design.theme).colors.paper,dark:isDarkTheme(design.theme)}).catch(()=>{});},[design.theme,native]);
   const [viewportHeight, setViewportHeight] = useState(() => window.visualViewport?.height || window.innerHeight);
   useEffect(() => {
     const resize = () => setViewportHeight(window.visualViewport?.height || window.innerHeight);
@@ -184,7 +188,7 @@ export default function MobileApp() {
     requestAnimationFrame(() => { const instance=editor.current; if(!instance || instance.isDestroyed)return; const target=outline(instance.getJSON()).find(h=>h.id===item.id); if(!target)return; instance.commands.setTextSelection(target.pos+1); instance.view.dom.children[target.index]?.scrollIntoView({block:'start'}); });
   }
   const doc=entry?.doc;
-  return <div ref={root} className={`mobile-app ${entry&&tab==='editor'?'mobile-editor-open':''} ${reading && entry && tab==='editor' ? 'mobile-reading' : ''}`} data-theme={design.theme} style={{...themeVariables(design.theme),height:viewportHeight,'--editor-font-size':`${design.fontSize}px`,colorScheme:isDarkTheme(design.theme)?'dark':'light'}} onScrollCapture={trackScroll} onMouseDown={event=>{if(event.target.closest('.editor-toolbar button, .editor-toolbar summary'))event.preventDefault();}}>
+  return <div ref={root} className={`mobile-app ${!entry?'mobile-home':''} ${entry&&tab==='editor'?'mobile-editor-open':''} ${reading && entry && tab==='editor' ? 'mobile-reading' : ''}`} data-theme={design.theme} style={{...mobileThemeVariables(design.theme),height:viewportHeight,'--editor-font-size':`${design.fontSize}px`,colorScheme:isDarkTheme(design.theme)?'dark':'light'}} onScrollCapture={trackScroll} onMouseDown={event=>{if(event.target.closest('.editor-toolbar button, .editor-toolbar summary'))event.preventDefault();}}>
     <header className="mobile-header">
       {entry ? <>
         <button aria-label="シナリオ一覧へ戻る" disabled={busy} onClick={() => run(async () => { await flushCurrent(); current.current = null; editor.current = null; setEntry(null); await refresh(); })}><ArrowLeft size={20}/></button>
@@ -193,11 +197,11 @@ export default function MobileApp() {
         <button disabled={busy} aria-label="元ファイルに保存" onClick={() => run(saveFile)}><Save size={20}/></button>
       </> : <><FileText size={22}/><strong>マイシナリオ</strong><button className="mobile-settings-open" aria-label="スマホの設定" onClick={() => setSettingsOpen(true)}><Settings2 size={18}/><span>設定</span></button></>}
     </header>
-    {deleteTarget && <div className="mobile-drawer-shade" onClick={()=>setDeleteTarget(null)}><aside className="mobile-delete-dialog" role="dialog" aria-modal="true" aria-label="端末の下書きを削除" onClick={event=>event.stopPropagation()}><h2>下書きを削除しますか？</h2><p>「{deleteTarget.doc.title}」の端末内の下書きを削除します。Driveなどの元ファイルは削除しません。未反映の変更は失われます。</p><button disabled={busy} onClick={()=>setDeleteTarget(null)}>キャンセル</button><button disabled={busy} onClick={()=>run(async()=>{await syncRunning.current;await draftStore('delete',deleteTarget.key);setDeleteTarget(null);await refresh();})}>下書きを削除</button></aside></div>}
+    {deleteTarget && <div className="mobile-drawer-shade" onClick={()=>setDeleteTarget(null)}><aside className="mobile-delete-dialog" role="dialog" aria-modal="true" aria-label="端末の下書きを削除" onClick={event=>event.stopPropagation()}><h2>下書きを削除しますか？</h2><p>「{deleteTarget.doc.title}」の端末内の下書きを削除します。Driveなどの元ファイルは削除しません。未反映の変更は失われます。</p><button disabled={busy} onClick={()=>setDeleteTarget(null)}>キャンセル</button><button className="mobile-danger" disabled={busy} onClick={()=>run(async()=>{await syncRunning.current;await draftStore('delete',deleteTarget.key);setDeleteTarget(null);await refresh();setMessage('下書きを削除しました');})}>下書きを削除</button></aside></div>}
     {settingsOpen && <div className="mobile-drawer-shade" onClick={()=>setSettingsOpen(false)}><aside className="mobile-drawer notes mobile-settings" role="dialog" aria-modal="true" aria-label="スマホの設定" onClick={event=>event.stopPropagation()}><button className="mobile-drawer-close" aria-label="設定を閉じる" onClick={()=>setSettingsOpen(false)}><X size={20}/></button><section className="mobile-panel"><h1>設定</h1><h2>デザイン</h2><label className="mobile-setting">本文サイズ <output>{design.fontSize}px</output><input aria-label="スマホ本文サイズ" type="range" min="10" max="24" step="1" value={design.fontSize} onChange={event=>setDesign({...design,fontSize:Number(event.target.value)})}/></label><label className="mobile-setting">配色テーマ<select aria-label="スマホ配色テーマ" value={design.theme} onChange={event=>setDesign({...design,theme:event.target.value})}>{getThemes().map(theme=><option key={theme.id} value={theme.id}>{theme.name}</option>)}</select></label><div className="mobile-design-sample" style={{fontSize:design.fontSize}}>霧の向こうに、物語がある。<br/>探索者たちは灯台へ向かう。</div><h2>保存先</h2><p><strong>自動保存：この端末</strong><br/>本文・メモの下書きを端末内に保存します。</p><p><strong>ファイル保存：Drive・端末など</strong><br/>連携済みのファイルは入力後に自動保存し、保存時に競合を確認し、元ファイルの変更はシナリオを開き直した時に読み込みます。新規シナリオは右上のボタンで初回の保存先を選びます。</p><button className="mobile-primary" disabled={busy} onClick={()=>run(async()=>{setSettingsOpen(false);await pick();})}><FolderOpen size={17}/>保存先のファイルを開く</button><p>Driveアプリへログインし、ファイル選択画面でDriveを選んでください。固定の同期フォルダは使用しません。</p><button onClick={()=>setDesign({theme:'mono',fontSize:14})}>表示設定を初期値に戻す</button><h2>アプリの更新</h2><button className="mobile-primary" disabled={busy} onClick={()=>run(async()=>{if(!native){setUpdate({unreleased:true});return;}setUpdate(await ScenarioFiles.checkUpdate());})}>更新を確認</button>{update && <p>{update.unreleased?'Android正式版はまだ公開されていません。試作APKはGitHub Actionsから取得してください。':update.available?`新しいAndroid版 ${update.latest} があります。`:`現在のAndroid版 ${update.installed} は最新版です。`}</p>}{update?.available && <button className="mobile-primary" onClick={()=>run(()=>ScenarioFiles.openReleases())}>更新APKの配布ページを開く</button>}<p>正式版はAPKをダウンロード後、Androidの案内に従って上書きインストールします。</p></section></aside></div>}
     {entry && <div className="mobile-switchbar"><button className="mobile-pill" aria-label="目次を開く" aria-expanded={drawer==='outline'} onClick={()=>{if(editor.current)setHeadings(outline(editor.current.getJSON()));setDrawer(drawer==='outline'?null:'outline');}}><List size={18}/><span>目次</span></button><nav aria-label="スマホ編集モード">{[['editor','本文'],['flow','フロー']].map(([id,label])=><button key={id} aria-pressed={tab===id} onClick={()=>{setTab(id);setDrawer(null);}}>{label}</button>)}</nav><button className="mobile-pill" aria-label="執筆メモを開く" aria-expanded={drawer==='notes'} onClick={()=>setDrawer(drawer==='notes'?null:'notes')}><StickyNote size={18}/><span>メモ</span></button></div>}
     {message && <div className="mobile-message" role="status">{message}<button aria-label="通知を閉じる" onClick={()=>setMessage('')}><X size={16}/></button></div>}
-    {!entry ? <main className="mobile-library"><button className="mobile-primary" disabled={busy} onClick={()=>run(pick)}><FolderOpen size={19}/>ファイルを開く</button><button disabled={busy} onClick={()=>run(async()=>{const doc=newDocument(); const value={key:crypto.randomUUID(),doc};await draftStore('put',value);await open(value);})}><Plus size={18}/>新しいシナリオ</button><h2>端末の下書き</h2>{entries.map(value=><SwipeDraft key={value.key} value={value} onOpen={()=>run(()=>open(value))} onDelete={()=>setDeleteTarget(value)}/>)}{!entries.length&&<p>開いたシナリオは端末にも自動保存されます。</p>}<small>Drive・端末のファイルを開けます。保存の詳細は設定で確認できます。</small></main> : <>
+    {!entry ? <main className="mobile-library"><div className="mobile-home-actions"><button className="mobile-primary" disabled={busy} onClick={()=>run(pick)}><FolderOpen size={19}/>ファイルを開く</button><button className="mobile-secondary" disabled={busy} onClick={()=>run(async()=>{const doc=newDocument(); const value={key:crypto.randomUUID(),doc};await draftStore('put',value);await open(value);})}><Plus size={18}/>新しいシナリオ</button></div><div className="mobile-library-heading"><h2>端末の下書き</h2><span>{entries.length}</span></div>{!!entries.length&&<div className="mobile-draft-search"><Search size={18}/><input type="search" aria-label="下書きを検索" placeholder="シナリオを検索" value={draftQuery} onChange={event=>setDraftQuery(event.target.value)}/>{draftQuery&&<button aria-label="下書き検索をクリア" onClick={()=>setDraftQuery('')}><X size={18}/></button>}</div>}{filteredEntries.map(value=><SwipeDraft key={value.key} value={value} onOpen={()=>run(()=>open(value))} onDelete={()=>setDeleteTarget(value)}/>)}{!entries.length&&<div className="mobile-library-empty"><FileText size={32}/><p>まだ下書きはありません</p><small>ファイルを開くか、新しいシナリオを作成してください。</small></div>}{!!entries.length&&!filteredEntries.length&&<p role="status">一致する下書きがありません。</p>}</main> : <>
       <div className="mobile-save-state">
         <span>{dirty ? '端末に保存中…' : '端末に保存済み'}</span>
         <button aria-label="保存状況を表示" onClick={() => setSaveDetailsOpen(true)}>
