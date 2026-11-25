@@ -18,7 +18,8 @@ app.whenReady().then(async()=>{try{
  assert.equal(await js(`document.querySelectorAll('.tiptap .chapter-heading').length`),1);
  await delay(850);
  const {exportHtml}=await import('../src/export.mjs');const file=path.join(output,'chapters.html');await fs.writeFile(file,exportHtml(doc,{includeFlow:false}));await w.loadFile(file);
- assert.ok(await js(`[...document.querySelectorAll('.scenario-body :is(h1,h2,h3,h4,h5,h6)')].every(h=>{const s=getComputedStyle(h);return parseFloat(s.marginTop)>parseFloat(s.marginBottom)+parseFloat(s.paddingBottom)})`));assert.equal(await js(`getComputedStyle(document.querySelector('.chapter-heading')).textAlign`),'center');
+ assert.equal(await js(`getComputedStyle(document.querySelector('.scenario-body > .chapter-heading:first-child')).marginTop`),'0px');
+ assert.ok(await js(`[...document.querySelectorAll('.scenario-body :is(h1,h2,h3,h4,h5,h6):not(:first-child)')].every(h=>{const s=getComputedStyle(h);return parseFloat(s.marginTop)>parseFloat(s.marginBottom)+parseFloat(s.paddingBottom)})`));assert.equal(await js(`getComputedStyle(document.querySelector('.chapter-heading')).textAlign`),'center');
  await fs.writeFile(path.join(output,'export.png'),(await w.webContents.capturePage()).toPNG());await fs.writeFile(path.join(output,'chapters.pdf'),await w.webContents.printToPDF({pageSize:'A4',printBackground:true}));
  assert.deepEqual(errors,[]);console.log('PASS: chapter editing, section reorder/undo, Markdown persistence, hierarchy and export spacing');app.exit(0);
 }catch(e){console.error(e);app.exit(1);}});

@@ -1,4 +1,4 @@
-import appIcon from '../../assets/icon.svg';
+import ScenarioBrandMark from '../ScenarioBrandMark.jsx';
 import { mobileTheme, mobileThemeVariables } from './mobile-themes.mjs';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
@@ -146,7 +146,7 @@ export default function MobileApp() {
   async function run(action) { setBusy(true); setMessage(''); try { await action(); } catch(error) { setMessage(error.message); } finally { setBusy(false); } }
   async function open(value,fresh=false) {
     await flushCurrent();
-    if(!fresh)value=(await draftStore('list')).find(item=>item.key===value.key)||value;
+    if(!fresh)value=(await draftStore('get',value.key))||value;
     if(native&&value.uri){
       try{
         const result=await synchronizeDraft(value,{read:options=>ScenarioFiles.readFile(options),write:options=>ScenarioFiles.write(options),parse:parseScenario,mode:'open'});
@@ -196,7 +196,7 @@ export default function MobileApp() {
         <input className="mobile-title" aria-label="シナリオタイトル" value={doc.title} placeholder="無題のシナリオ" onChange={event => changed({ title: event.target.value })}/>
         <button aria-label="シナリオ情報を編集" title="シナリオ情報" onClick={() => setInfoOpen(true)}><Settings2 size={18}/></button>
         <button disabled={busy} aria-label="元ファイルに保存" onClick={() => run(saveFile)}><Save size={20}/></button>
-      </> : <><img className="mobile-brand-mark" src={appIcon} alt=""/><strong>マイシナリオ</strong><button className="mobile-settings-open" aria-label="スマホの設定" onClick={() => setSettingsOpen(true)}><Settings2 size={18}/><span>設定</span></button></>}
+      </> : <><ScenarioBrandMark className="mobile-brand-mark"/><strong>マイシナリオ</strong><button className="mobile-settings-open" aria-label="スマホの設定" onClick={() => setSettingsOpen(true)}><Settings2 size={18}/><span>設定</span></button></>}
     </header>
     {deleteTarget && <div className="mobile-drawer-shade" onClick={()=>setDeleteTarget(null)}><aside className="mobile-delete-dialog" role="dialog" aria-modal="true" aria-label="端末の下書きを削除" onClick={event=>event.stopPropagation()}><h2>下書きを削除しますか？</h2><p>「{deleteTarget.doc.title}」の端末内の下書きを削除します。Driveなどの元ファイルは削除しません。未反映の変更は失われます。</p><button disabled={busy} onClick={()=>setDeleteTarget(null)}>キャンセル</button><button className="mobile-danger" disabled={busy} onClick={()=>run(async()=>{await syncRunning.current;await draftStore('delete',deleteTarget.key);setDeleteTarget(null);await refresh();setMessage('下書きを削除しました');})}>下書きを削除</button></aside></div>}
     {settingsOpen && <div className="mobile-drawer-shade" onClick={()=>setSettingsOpen(false)}><aside className="mobile-drawer notes mobile-settings" role="dialog" aria-modal="true" aria-label="スマホの設定" onClick={event=>event.stopPropagation()}><button className="mobile-drawer-close" aria-label="設定を閉じる" onClick={()=>setSettingsOpen(false)}><X size={20}/></button><section className="mobile-panel"><h1>設定</h1><h2>デザイン</h2><label className="mobile-setting">本文サイズ <output>{design.fontSize}px</output><input aria-label="スマホ本文サイズ" type="range" min="10" max="24" step="1" value={design.fontSize} onChange={event=>setDesign({...design,fontSize:Number(event.target.value)})}/></label><label className="mobile-setting">配色テーマ<select aria-label="スマホ配色テーマ" value={design.theme} onChange={event=>setDesign({...design,theme:event.target.value})}>{getThemes().map(theme=><option key={theme.id} value={theme.id}>{theme.name}</option>)}</select></label><div className="mobile-design-sample" style={{fontSize:design.fontSize}}>霧の向こうに、物語がある。<br/>探索者たちは灯台へ向かう。</div><h2>保存先</h2><p><strong>自動保存：この端末</strong><br/>本文・メモの下書きを端末内に保存します。</p><p><strong>ファイル保存：Drive・端末など</strong><br/>連携済みのファイルは入力後に自動保存し、保存時に競合を確認し、元ファイルの変更はシナリオを開き直した時に読み込みます。新規シナリオは右上のボタンで初回の保存先を選びます。</p><button className="mobile-primary" disabled={busy} onClick={()=>run(async()=>{setSettingsOpen(false);await pick();})}><FolderOpen size={17}/>保存先のファイルを開く</button><p>Driveアプリへログインし、ファイル選択画面でDriveを選んでください。固定の同期フォルダは使用しません。</p><button onClick={()=>setDesign({theme:'mono',fontSize:14})}>表示設定を初期値に戻す</button><h2>アプリの更新</h2><button className="mobile-primary" disabled={busy} onClick={()=>run(async()=>{if(!native){setUpdate({unreleased:true});return;}setUpdate(await ScenarioFiles.checkUpdate());})}>更新を確認</button>{update && <p>{update.unreleased?'Android正式版はまだ公開されていません。試作APKはGitHub Actionsから取得してください。':update.available?`新しいAndroid版 ${update.latest} があります。`:`現在のAndroid版 ${update.installed} は最新版です。`}</p>}{update?.available && <button className="mobile-primary" onClick={()=>run(()=>ScenarioFiles.openReleases())}>更新APKの配布ページを開く</button>}<p>正式版はAPKをダウンロード後、Androidの案内に従って上書きインストールします。</p></section></aside></div>}

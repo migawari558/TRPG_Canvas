@@ -18,9 +18,18 @@ app.whenReady().then(async () => {
     await delay(1000); win.show(); win.focus();
 
     const topbarHeight = await js(`document.querySelector('.topbar').getBoundingClientRect().height`);
-    const toolbarHeight = await js(`document.querySelector('.editor-toolbar').getBoundingClientRect().height`);
+    const toolbar = await js(`(() => {
+      const el = document.querySelector('.editor-toolbar');
+      const last = el.querySelector('button:last-of-type');
+      const originalScroll = el.scrollLeft;
+      el.scrollLeft = el.scrollWidth;
+      const endReachable = last.getBoundingClientRect().right <= el.getBoundingClientRect().right + 1;
+      el.scrollLeft = originalScroll;
+      return { height: el.getBoundingClientRect().height, controlHeight: el.clientHeight, endReachable };
+    })()`);
     assert.ok(topbarHeight <= 44, `topbar is ${topbarHeight}px`);
-    assert.ok(toolbarHeight <= 40, `editor toolbar is ${toolbarHeight}px`);
+    assert.ok(toolbar.controlHeight <= 40 && toolbar.height <= 52, `editor toolbar is ${toolbar.height}px with ${toolbar.controlHeight}px for controls`);
+    assert.ok(toolbar.endReachable, 'The last formatting button must be reachable by horizontal scrolling');
     const expandedContentTop = await js(`document.querySelector('.work-area').getBoundingClientRect().top`);
     await js(`document.querySelector('[aria-label="上部UIを折りたたむ"]').click()`);
     assert.equal(await js(`document.querySelector('.app').classList.contains('top-ui-collapsed')`), true);
