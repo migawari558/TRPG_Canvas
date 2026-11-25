@@ -1,4 +1,6 @@
-# Android試作版（codex/android-editorブランチ）
+# Android版の開発・検証
+
+利用者向けのインストール・操作・同期の案内は[Android操作ガイド](wiki/Android.md)を参照してください。正式APKは[Androidリリース一覧](https://github.com/migawari558/TRPG_Canvas/releases?q=android-v&expanded=true)から取得できます。以下は開発者向けの手順です。
 
 本文のライブMarkdown編集を中心にしたAndroid版です。上部左の丸いボタンから目次、右から執筆メモが開きます。上部中央で本文／フローを切り替えます。フローのカードは閲覧専用です。修飾バーはキーボード直上に配置します。
 
