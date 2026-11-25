@@ -30,20 +30,20 @@ app.whenReady().then(async()=>{
    return {during,after:await rects()};
   }
   function contains(rects){for(const id of ['a','b']){assert.ok(rects[id].x>=rects.g.x,`${id} escapes left`);assert.ok(rects[id].y>=rects.g.y,`${id} escapes top`);assert.ok(rects[id].right<=rects.g.right+1,`${id} escapes right`);assert.ok(rects[id].bottom<=rects.g.bottom+1,`${id} escapes bottom`);}}
-  let before=await rects();let result=await drag('b',160,120);contains(result.during);contains(result.after);
+  let before=await rects();let result=await drag('b',160,30);contains(result.during);contains(result.after);
   assert.ok(result.after.g.width>before.g.width+100);assert.ok(Math.abs(result.after.a.x-before.a.x)<2,'stationary sibling must not move');
-  before=result.after;result=await drag('b',-160,-120);contains(result.during);contains(result.after);assert.ok(result.after.g.width<before.g.width-100,'group must shrink');
-  before=result.after;result=await drag('a',-100,-100);contains(result.during);contains(result.after);assert.ok(Math.abs(result.after.b.x-before.b.x)<2,'left/top growth must not move sibling');
+  before=result.after;result=await drag('b',-160,-30);contains(result.during);contains(result.after);assert.ok(result.after.g.width<before.g.width-100,'group must shrink');
+  before=result.after;result=await drag('a',-100,-70);contains(result.during);contains(result.after);assert.ok(Math.abs(result.after.b.x-before.b.x)<2,'left/top growth must not move sibling');
   assert.ok(Math.abs(result.after.a.x-(before.a.x-100))<22,'drag follows pointer across changing parent origin');
   await delay(800);const saved=await js(`JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))['drag-test'].doc.flow`);assert.ok(saved.nodes.every(n=>!n.dragging));
   before=await rects();result=await drag('b',Math.ceil((before.g.right+40-before.b.x)/20)*20,0);await delay(800);
   let state=await js(`JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))['drag-test'].doc.flow`);
   assert.ok(!state.nodes.find(n=>n.id==='b').parentId,JSON.stringify({before,result,state}));
-  assert.equal(state.nodes.find(n=>n.id==='g').style.width,300,'remaining group fits one card');
+  assert.equal(state.nodes.find(n=>n.id==='g').style.width,260,'remaining group fits one card');
   before=await rects();await drag('b',Math.round(before.g.x+40-before.b.x),Math.round(before.g.y+120-before.b.y));await delay(800);
   state=await js(`JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))['drag-test'].doc.flow`);assert.equal(state.nodes.find(n=>n.id==='b').parentId,'g','drop can rejoin');
   const field=async(label,value)=>{await js(`(()=>{const e=document.querySelector('[aria-label="${label}"]'),p=e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:e.tagName==='SELECT'?HTMLSelectElement.prototype:HTMLInputElement.prototype;Object.getOwnPropertyDescriptor(p,'value').set.call(e,${JSON.stringify(value)});e.dispatchEvent(new Event(e.tagName==='SELECT'?'change':'input',{bubbles:true}))})()`);await delay(100);};
-  const addInfo=async()=>{await js(`document.querySelector('.react-flow__node[data-id="a"] .scene-information').click()`);await delay(250);};
+  const addInfo=async()=>{await js(`document.querySelector('.react-flow__node[data-id="a"] .node-label').click();`);await delay(100);await js(`document.querySelector('.flow-inspector-actions .secondary-button').click()`);await delay(250);};
   await addInfo();await field('情報名','古い地図');await field('情報の内容','灯台へ続く地下道が記されている。');await field('情報の開示条件','目星に成功');await delay(800);
   await addInfo();await field('情報名','証言');await field('情報の内容','灯台守は昨日町を出た。');await delay(800);
   state=await js(`JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))['drag-test'].doc.flow`);
@@ -52,12 +52,12 @@ app.whenReady().then(async()=>{
   assert.ok(!(await js(`!!document.querySelector('.flow-inspector .existing-link')`)),'information cannot create manuscript headings');
   await field('情報を提示するシーン','b');await delay(800);
   state=await js(`JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))['drag-test'].doc.flow`);assert.equal(state.nodes.find(n=>n.data.label==='証言').data.sceneId,'b');
-  await js(`document.querySelector('[aria-label="図書館を編集"]').click()`);await delay(100);await js(`document.querySelector('[aria-label="カードの編集を完了"]').click()`);await delay(100);
+  await js(`document.querySelector('.react-flow__node[data-id="a"] .node-label').click()`);await delay(100);
   await js(`document.querySelector('.flow-view').dispatchEvent(new KeyboardEvent('keydown',{key:'c',bubbles:true}))`);await delay(100);
   await js(`document.querySelector('.react-flow__node[data-id="b"] .node-label').click()`);await delay(100);
   await js(`Array.from(document.querySelectorAll('.flow-actions button')).find(b=>b.textContent.includes('左→右に整列')).click()`);await delay(900);
   state=await js(`JSON.parse(localStorage.getItem('trpg-canvas-documents-v1'))['drag-test'].doc.flow`);
-  assert.ok(state.nodes.find(n=>n.id==='b').position.x>state.nodes.find(n=>n.id==='a').position.x+260);
+  assert.ok(state.nodes.find(n=>n.id==='b').position.x>state.nodes.find(n=>n.id==='a').position.x+220);
   assert.ok(await js(`!!document.querySelector('.react-flow__node[data-id="a"] .react-flow__handle-right.source')`));
   const {flowSvg}=await import('../src/export.mjs');const svg=flowSvg(state);assert.ok(svg.includes('情報：古い地図'));assert.ok(svg.includes('stroke-dasharray="5 4"'));
   win.webContents.reload();await delay(900);await js(`document.querySelectorAll('.mode-switch button')[1].click()`);await delay(400);

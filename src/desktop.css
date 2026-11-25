@@ -201,3 +201,161 @@
 @media (prefers-reduced-motion: reduce) {
   .app button { transition: none; }
 }
+
+/* Scenario graph: compact nodes, with editing docked beside the canvas. */
+.app .flow-workspace {
+  container-type: inline-size;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+.app .flow-workspace .flow-canvas { min-width: 0; }
+.app .flow-workspace .flow-inspector {
+  position: static;
+  flex: 0 0 280px;
+  max-height: none;
+  border: 0;
+  border-left: 1px solid var(--theme-border);
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--theme-panel);
+  scrollbar-gutter: stable;
+}
+.app .flow-inspector-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.app .flow-inspector-actions button { min-height: 34px; padding: 6px 9px; }
+.app .flow-node-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 220px;
+  height: 58px;
+  min-height: 0;
+  padding: 8px 12px;
+  background: var(--theme-paper);
+}
+.app .flow-node-card.information-node { border-style: dashed; }
+.app .flow-node-icon { flex: none; color: var(--theme-accent); }
+.app .flow-node-copy { flex: 1; min-width: 0; }
+.app .flow-node-card .node-label,
+.app .flow-node-meta,
+.app .flow-workspace .group-heading strong {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app .flow-node-card .node-label { padding: 0; font-size: calc(14px * var(--ui-scale, 1)); }
+.app .flow-node-meta { color: var(--theme-muted); font-size: calc(11px * var(--ui-scale, 1)); }
+.app .flow-workspace .group-heading { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 10px; }
+.app .flow-workspace .group-heading strong { flex: 1; font-size: 13px; }
+.app .flow-workspace .group-heading small { flex: none; color: var(--theme-muted); }
+.app .flow-workspace .group-heading .group-collapse { display: grid; place-items: center; width: 26px; height: 26px; }
+.app .flow-workspace .react-flow__pane.draggable { cursor: grab; }
+.app .flow-workspace .react-flow__pane.dragging { cursor: grabbing; }
+.app .flow-workspace .react-flow__background pattern circle { fill: var(--theme-border); }
+.app .flow-workspace .react-flow__minimap { background: var(--theme-panel); }
+@container (max-width: 640px) {
+  .app .flow-workspace .flow-inspector {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: min(280px, 75%);
+    box-shadow: var(--desktop-shadow);
+  }
+}
+.app .flow-more-panel {
+  position: absolute;
+  z-index: 12;
+  inset: calc(100% + 6px) 0 auto auto;
+  width: 240px;
+  padding: 8px;
+  border: 1px solid var(--theme-border);
+  border-radius: 8px;
+  background: var(--theme-paper);
+  box-shadow: var(--desktop-shadow);
+  color: var(--theme-text);
+}
+.app .flow-more-panel > button,
+.app .flow-more-panel summary { width: 100%; padding: 8px; text-align: left; }
+.app .flow-more-panel p { padding: 0 8px; font-size: 12px; line-height: 1.8; }
+@container (max-width: 640px) {
+  .app .flow-workspace:has(.flow-inspector) .flow-tip { display: none; }
+}
+.app .flow-relations:empty { display: none; }
+.app .flow-relations { border-block: 1px solid var(--theme-border); margin-bottom: 16px; }
+.app .flow-relation-section { padding: 10px 0; }
+.app .flow-relation-section + .flow-relation-section { border-top: 1px solid var(--theme-border); }
+.app .flow-relation-section h4 { margin: 0 0 5px; font-size: 12px; color: var(--theme-muted); }
+.app .flow-relation-section button {
+  display: grid;
+  width: 100%;
+  padding: 6px 7px;
+  gap: 3px;
+  text-align: left;
+  border-radius: 5px;
+  color: var(--theme-text);
+  overflow-wrap: anywhere;
+}
+.app .flow-relation-section button:hover { background: var(--theme-soft); }
+.app .flow-relation-section button strong { font-size: 13px; }
+.app .flow-relation-section button span,
+.app .flow-relation-section button p { font-size: 12px; color: var(--theme-text); }
+.app .flow-relation-section button p {
+  margin: 0;
+  white-space: pre-wrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.app .flow-node-card.has-memo { height: auto; min-height: 58px; align-items: flex-start; }
+.app .flow-node-card.has-memo .flow-node-icon { margin-top: 3px; }
+.app .flow-node-card .flow-node-memo {
+  margin: 5px 0 0;
+  color: var(--theme-text);
+  font-size: calc(12px * var(--ui-scale, 1));
+  line-height: 1.4;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.app .flow-toolbar { position: relative; z-index: 6; }
+.app .flow-workspace { isolation: isolate; }
+.app .flow-shortcuts summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--theme-border);
+  border-radius: 6px;
+  background: var(--theme-paper);
+  color: var(--theme-text);
+  font-size: calc(12px * var(--ui-scale, 1));
+  cursor: pointer;
+  list-style: none;
+}
+.app .flow-shortcuts summary::-webkit-details-marker { display: none; }
+.app .flow-shortcuts[open] summary { background: var(--theme-soft); }
+.app .flow-shortcut-list {
+  position: absolute;
+  inset: calc(100% + 4px) 8px auto auto;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 12px;
+  width: min(340px, calc(100% - 16px));
+  max-height: min(360px, 55vh);
+  overflow: auto;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--theme-border);
+  border-radius: 8px;
+  background: var(--theme-paper);
+  color: var(--theme-text);
+  box-shadow: var(--desktop-shadow);
+  font-size: 12px;
+}
+.app .flow-shortcut-list dd { margin: 0; }
