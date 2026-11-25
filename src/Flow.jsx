@@ -285,7 +285,7 @@ export default function Flow({ flow, headings, onChange: persistFlow, onNavigate
 
   return <div className="flow-view" tabIndex={0} onKeyDown={handleKeyDown} onPointerDown={event => { if (!event.target.closest('input,textarea,select,button,[contenteditable="true"]')) event.currentTarget.focus({ preventScroll: true }); }}>
     <div className="flow-toolbar">
-      <div><strong>フローチャート</strong><span>シーンをつなぎ、「本文を書く」から執筆。グループを選んで追加すると、その中に配置します。</span></div>
+      <div><strong>フローチャート</strong><span>{flow.nodes.filter(isSceneNode).length} シーン · {flow.nodes.filter(node => node.type === 'sceneGroup').length} グループ · {flow.edges.length} つながり</span></div>
       <div className="flow-actions">
         <button title="接続の順序に合わせて左から右に配置" disabled={!flow.nodes.length} onClick={() => { onChange(arrangeFlowLeftToRight(flow)); fit(); }}><AlignHorizontalJustifyStart size={16}/>左→右に整列</button>
         <button title="シーンを探す（P / /）" aria-expanded={searchOpen} onClick={() => setSearchOpen(value => !value)}><Search size={16}/>検索</button>

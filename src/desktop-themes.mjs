@@ -1,43 +1,53 @@
 import { getTheme, themeVariables } from './themes.mjs';
 
-// Desktop surfaces stay quiet so the manuscript carries the theme's character.
+// Paper and navigation have separate roles: the manuscript stays readable,
+// while the shell carries each theme's identity.
 const palettes = {
   forest: {
-    bg: '#eceee9', paper: '#fcfcf8', panel: '#f3f4ef', text: '#29332e',
-    muted: '#68736b', border: '#d6dcd3', soft: '#e5ebe2',
-    accent: '#3d6550', onAccent: '#ffffff', heading: '#315b46',
-    subheading: '#455b4b', chapter: '#315b46', quote: '#eef2e9', note: '#f1eee2'
+    bg: '#e6ebe6', paper: '#fcfdfb', panel: '#f0f4ef', text: '#243c33',
+    muted: '#526b5d', border: '#cbd7cd', soft: '#dae8dc',
+    accent: '#2d664e', onAccent: '#ffffff', heading: '#28543f',
+    subheading: '#3d6050', chapter: '#28543f', quote: '#eaf1e9', note: '#f1efdf'
   },
   'tahoe-light': {
-    bg: '#eceef0', paper: '#ffffff', panel: '#f4f5f6', text: '#29313a',
-    muted: '#66717c', border: '#d7dde2', soft: '#e7edf4',
-    accent: '#315f91', onAccent: '#ffffff', heading: '#315f91',
-    subheading: '#465b71', chapter: '#315f91', quote: '#edf1f5', note: '#f0f2ef'
+    bg: '#e6ecf2', paper: '#ffffff', panel: '#f0f4f8', text: '#263a50',
+    muted: '#566b80', border: '#cbd7e2', soft: '#dce8f4',
+    accent: '#315e8f', onAccent: '#ffffff', heading: '#2c517c',
+    subheading: '#4b6380', chapter: '#2c517c', quote: '#edf3f9', note: '#eef1e9'
   },
   'tahoe-dark': {
-    bg: '#171b20', paper: '#20252b', panel: '#1c2026', text: '#e5e9ee',
-    muted: '#a0aab6', border: '#353c46', soft: '#2c3540',
-    accent: '#9abfe5', onAccent: '#16232e', heading: '#adc7e2',
-    subheading: '#bbc7d4', chapter: '#adc7e2', quote: '#293039', note: '#30312d'
+    bg: '#131d2a', paper: '#1d2b3b', panel: '#172536', text: '#e5ecf4',
+    muted: '#a4b7cc', border: '#354b62', soft: '#2e4460',
+    accent: '#9ac4f5', onAccent: '#102b47', heading: '#bbd5f4',
+    subheading: '#b1c7df', chapter: '#bbd5f4', quote: '#26394e', note: '#343b3c'
   },
   parchment: {
-    bg: '#eae7e0', paper: '#fbf8f0', panel: '#f2efe8', text: '#38332c',
-    muted: '#746b5e', border: '#ddd6c8', soft: '#eee7dc',
-    accent: '#835536', onAccent: '#ffffff', heading: '#765035',
-    subheading: '#6d5b48', chapter: '#765035', quote: '#f1ede2', note: '#f1e9d6'
+    bg: '#e8e0d3', paper: '#fbf8f0', panel: '#f1eadf', text: '#493b31',
+    muted: '#705946', border: '#d8cbb8', soft: '#eaddc7',
+    accent: '#805433', onAccent: '#ffffff', heading: '#744c30',
+    subheading: '#6b5843', chapter: '#744c30', quote: '#f1eada', note: '#f0e5cb'
   },
   midnight: {
-    bg: '#171b1e', paper: '#23282b', panel: '#1d2225', text: '#e5e8e4',
-    muted: '#a4ada8', border: '#3b4441', soft: '#303c36',
-    accent: '#b3c9b8', onAccent: '#1c2c22', heading: '#b3c9b8',
-    subheading: '#c0c9c1', chapter: '#c9d4cb', quote: '#2b3530', note: '#34362e'
+    bg: '#211e29', paper: '#2c2835', panel: '#26222f', text: '#ece6ef',
+    muted: '#c1b1c8', border: '#51455c', soft: '#44364f',
+    accent: '#d4b5d6', onAccent: '#302038', heading: '#dfc5df',
+    subheading: '#cfbed4', chapter: '#dfc5df', quote: '#382e43', note: '#403735'
   },
   mono: {
-    bg: '#ebebea', paper: '#ffffff', panel: '#f4f4f3', text: '#292929',
-    muted: '#6b6b68', border: '#d9d9d6', soft: '#e9e9e6',
-    accent: '#353733', onAccent: '#ffffff', heading: '#343631',
-    subheading: '#4d5048', chapter: '#343631', quote: '#f2f2ef', note: '#eeeee8'
+    bg: '#e8e9e9', paper: '#ffffff', panel: '#f2f3f3', text: '#292c2d',
+    muted: '#606667', border: '#d0d4d4', soft: '#e0e4e4',
+    accent: '#303738', onAccent: '#ffffff', heading: '#292e2f',
+    subheading: '#4d5556', chapter: '#292e2f', quote: '#f0f2f2', note: '#ecefee'
   }
+};
+
+const chrome = {
+  forest: { rail: '#244b3c', onRail: '#f2f8f2', railMuted: '#b8cdbb', railActive: '#3c6651' },
+  'tahoe-light': { rail: '#294762', onRail: '#f1f7ff', railMuted: '#bed0e1', railActive: '#426583' },
+  'tahoe-dark': { rail: '#101a28', onRail: '#e5f0ff', railMuted: '#a4b9d1', railActive: '#2a4360' },
+  parchment: { rail: '#624a36', onRail: '#fff7ea', railMuted: '#e0cbb3', railActive: '#826248' },
+  midnight: { rail: '#1b1523', onRail: '#f3e7f6', railMuted: '#c6afcf', railActive: '#4b3656' },
+  mono: { rail: '#303738', onRail: '#ffffff', railMuted: '#c1caca', railActive: '#505d5e' }
 };
 
 export function documentTheme(id) {
@@ -47,8 +57,10 @@ export function documentTheme(id) {
 
 export function desktopThemeVariables(id, settings) {
   const palette = documentTheme(id).colors;
+  const navigation = chrome[id] || { rail: palette.panel, onRail: palette.text, railMuted: palette.muted, railActive: palette.soft };
   return {
     ...themeVariables(id, settings),
-    ...Object.fromEntries(Object.entries(palette).map(([key, value]) => [`--theme-${key}`, value]))
+    ...Object.fromEntries(Object.entries(palette).map(([key, value]) => [`--theme-${key}`, value])),
+    ...Object.fromEntries(Object.entries(navigation).map(([key, value]) => [`--theme-${key}`, value]))
   };
 }

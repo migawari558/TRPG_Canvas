@@ -180,7 +180,7 @@ export default function App() {
   return <div className={`app ${sidebar && screen === 'document' && doc ? '' : 'sidebar-hidden'} ${topUiCollapsed ? 'top-ui-collapsed' : ''}`} data-theme={appearance.theme} style={{ ...desktopThemeVariables(appearance.theme, appearance), colorScheme: isDarkTheme(appearance.theme) ? 'dark' : 'light', '--editor-font-size': `${appearance.fontSize}px`, '--ui-scale': appearance.uiScale / 100 }}>
     <nav className="app-rail" aria-label="アプリメニュー">
       <button className="brand" aria-label="ダッシュボードへ" title="TRPG Canvas · マイシナリオ" disabled={busy} onClick={() => run(showDashboard)}><div className="brand-mark"><BookOpen size={22}/></div></button>
-      <button className="rail-button" title="シナリオ一覧へ" aria-label="シナリオ一覧へ" disabled={busy} onClick={() => run(showDashboard)}><FolderOpen size={20}/></button>
+      <button className={`rail-button ${screen === 'dashboard' ? 'current' : ''}`} title="シナリオ一覧へ" aria-label="シナリオ一覧へ" aria-current={screen === 'dashboard' ? 'page' : undefined} disabled={busy} onClick={() => run(showDashboard)}><FolderOpen size={20}/></button>
       <button className="rail-button" title="Markdownを読み込む" aria-label="Markdownを読み込む" disabled={busy} onClick={() => run(importFile)}><Upload size={19}/></button>
       <div className="rail-spacer"/>
       <button className="rail-button" title="保存・同期" aria-label="保存・同期" onClick={() => setModal('settings')}><Settings2 size={20}/></button>
