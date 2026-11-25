@@ -191,8 +191,8 @@ button svg{flex-shrink:0}
 .scene-node>div{font-size:calc(15px * var(--ui-scale, 1));line-height:1.6;overflow-wrap:anywhere}
 .scene-node.selected{outline:2px solid #839c69;outline-offset:3px}
 .scene-node .react-flow__handle{background:var(--theme-soft, #94aa7d);border:2px solid var(--theme-border, #fffef8);width:10px;height:10px}
-.react-flow__edge-text{font-size:calc(13px * var(--ui-scale, 1));fill:var(--theme-muted, #7b8d69)}
-.react-flow__edge-textbg{fill:var(--theme-muted, #f6f8f0)}
+.react-flow__edge-text{font-size:calc(13px * var(--ui-scale, 1));fill:var(--theme-text, #34443b)}
+.react-flow__edge-textbg{fill:var(--theme-paper, #f6f8f0)}
 .react-flow__controls{box-shadow:0 2px 6px #38502415;border:1px solid var(--theme-border, #e0e7d7)}
 .react-flow__controls-button{background:var(--theme-paper, #fffef8);border-bottom-color:var(--theme-border, #e8edde);fill:var(--theme-muted, #8ca175)}
 .react-flow__minimap{width:140px;height:90px;background:var(--theme-paper, #fdfef8);border:1px solid var(--theme-border, #e0e7d8);border-radius:5px}

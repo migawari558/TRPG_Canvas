@@ -52,9 +52,10 @@ export function moveSection(content, index, direction) {
   const nextEnd = sectionRange(nodes, end)[1];
   return { ...content, content: [...nodes.slice(0, start), ...nodes.slice(end, nextEnd), ...nodes.slice(start, end), ...nodes.slice(nextEnd)] };
 }
-export function newDocument(title = '新しいシナリオ', markdown = '## 導入\n\nここから、物語をはじめましょう。\n\n## 探索\n\n\n## 結末\n\n') {
-  return { id: uid(), version: 1, title, systemName: '', subtitle: 'オリジナルシナリオ', markdown, updatedAt: new Date().toISOString(), flow: { nodes: [], edges: [] } };
+export function newDocument(title = '新しいシナリオ', markdown = '', info = {}) {
+  return { id: uid(), version: 1, title, systemName: typeof info.systemName === 'string' ? info.systemName.trim() : '', subtitle: typeof info.subtitle === 'string' ? info.subtitle.trim() : '', markdown, updatedAt: new Date().toISOString(), flow: { nodes: [], edges: [] } };
 }
+
 export function sampleDocument() {
   const doc = newDocument('霧の向こうの灯台', `## シナリオ概要
 
@@ -105,12 +106,12 @@ export function sampleDocument() {
   doc.subtitle = 'モダンホラー / 海辺の町';
   doc.systemName = 'オリジナルTRPG';
   doc.flow = { nodes: [
-    { id: 'intro', position: { x: 250, y: 30 }, data: { label: '届かなかった手紙' } },
-    { id: 'cafe', position: { x: 90, y: 180 }, data: { label: '喫茶店「凪」' } },
-    { id: 'lighthouse', position: { x: 410, y: 180 }, data: { label: '古い灯台' } },
-    { id: 'choice', position: { x: 250, y: 340 }, data: { label: '灯りを消す？' } },
-    { id: 'end1', position: { x: 90, y: 510 }, data: { label: '動き出す時間' } },
-    { id: 'end2', position: { x: 410, y: 510 }, data: { label: '霧の向こうの灯り' } }
+    { id: 'intro', position: { x: 40, y: 200 }, data: { label: '届かなかった手紙' } },
+    { id: 'cafe', position: { x: 400, y: 60 }, data: { label: '喫茶店「凪」' } },
+    { id: 'lighthouse', position: { x: 400, y: 360 }, data: { label: '古い灯台' } },
+    { id: 'choice', position: { x: 760, y: 200 }, data: { label: '灯りを消す？' } },
+    { id: 'end1', position: { x: 1120, y: 60 }, data: { label: '動き出す時間' } },
+    { id: 'end2', position: { x: 1120, y: 360 }, data: { label: '霧の向こうの灯り' } }
   ], edges: [
     { id: 'e1', source: 'intro', target: 'cafe' }, { id: 'e2', source: 'intro', target: 'lighthouse' },
     { id: 'e3', source: 'cafe', target: 'choice' }, { id: 'e4', source: 'lighthouse', target: 'choice' },

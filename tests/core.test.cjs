@@ -27,7 +27,7 @@ test('storage roundtrip, conflict preservation, list and path validation', async
   const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'trpg-test-'));
   try {
     const { newDocument } = await import('../src/model.mjs');
-    const doc = newDocument('Test');
+    const doc = newDocument('Test', '', { systemName: 'テストTRPG' });
     doc.content = { type: 'doc', content: [paragraph('本文'), { type: 'image', attrs: { src: `data:image/png;base64,${'A'.repeat(100000)}`, alt: 'large' } }] };
     doc.markdown = `本文\n\n![large](data:image/png;base64,${'A'.repeat(100000)})`;
     const initial = await storage.save(folder, doc, null);
@@ -40,6 +40,7 @@ test('storage roundtrip, conflict preservation, list and path validation', async
     assert.equal((await storage.read(folder, conflict.doc.id)).doc.title, 'Local（競合コピー）');
     const listed = (await storage.list(folder)).documents;
     assert.equal(listed.length, 2);
+    assert.ok(listed.every(item => item.systemName === 'テストTRPG'));
     assert.ok(listed.every(item => item.characterCount === 2), 'character count must not scan or count embedded image data');
     assert.throws(() => storage.filePath(folder, '../escape'));
     assert.throws(() => storage.validate({ ...doc, flow: { nodes: [{ id: 'bad', position: { x: '<script>', y: 0 }, data: { label: 'bad' } }], edges: [] } }));

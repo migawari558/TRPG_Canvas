@@ -17,7 +17,7 @@ export const api = window.canvas || {
   // Renderer smoke tests use isolated browser storage. This branch is unavailable
   // in normal browsers and is not a supported web application runtime.
   info: async () => ({ folder: 'テスト用ストレージ' }),
-  list: async () => ({ documents: Object.values(read()).map(x => ({ id: x.doc.id, title: x.doc.title, subtitle: x.doc.subtitle || '', updatedAt: x.doc.updatedAt, characterCount: characterCount(x.doc), sceneCount: x.doc.flow.nodes.length })), errors: [] }),
+  list: async () => ({ documents: Object.values(read()).map(x => ({ id: x.doc.id, title: x.doc.title, systemName: x.doc.systemName || '', subtitle: x.doc.subtitle || '', updatedAt: x.doc.updatedAt, characterCount: characterCount(x.doc), sceneCount: x.doc.flow.nodes.filter(node => node.type !== 'sceneGroup' && node.type !== 'sceneInfo').length })), errors: [] }),
   load: async id => { const result = read()[id]; if (!result) throw new Error('シナリオが見つかりません'); return result; },
   remove: async (id, revision) => {
     const data = read();

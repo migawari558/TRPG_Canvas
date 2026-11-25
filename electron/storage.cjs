@@ -80,7 +80,7 @@ async function list(folder) {
   for (const name of names.filter(n => n.endsWith('.trpg.json'))) {
     try {
       const result = await read(folder, name.slice(0, -10));
-      documents.push({ id: result.doc.id, title: result.doc.title, subtitle: result.doc.subtitle || '', updatedAt: result.doc.updatedAt, characterCount: characterCount(result.doc), sceneCount: result.doc.flow.nodes.length });
+      documents.push({ id: result.doc.id, title: result.doc.title, systemName: result.doc.systemName || '', subtitle: result.doc.subtitle || '', updatedAt: result.doc.updatedAt, characterCount: characterCount(result.doc), sceneCount: result.doc.flow.nodes.filter(node => node.type !== 'sceneGroup' && node.type !== 'sceneInfo').length });
     } catch { errors.push(name); }
   }
   return { documents: documents.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')), errors };

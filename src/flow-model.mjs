@@ -1,10 +1,153 @@
 import { uid } from './model.mjs';
 import { outline } from './model.mjs';
 
+export const FLOW_GRID = 20;
+export const snapFlowPosition = position => ({ x: Math.round(position.x / FLOW_GRID) * FLOW_GRID, y: Math.round(position.y / FLOW_GRID) * FLOW_GRID });
+
+export function flowTags(node) {
+  return Array.isArray(node.data?.tags) ? node.data.tags.filter(tag => typeof tag === 'string') : [];
+}
+
+export function isSceneNode(node) { return !!node && node.type !== 'sceneGroup' && node.type !== 'sceneInfo'; }
+
+export function addSceneInformation(flow, sceneId) {
+  const scene = flow.nodes.find(node => node.id === sceneId);
+  if (!isSceneNode(scene)) return flow;
+  const existing = flow.nodes.filter(node => node.type === 'sceneInfo' && node.data.sceneId === sceneId);
+  const position = absolutePosition(scene, flow.nodes);
+  const y = Math.max(position.y + nodeSize(scene).height + 60, ...existing.map(node => absolutePosition(node, flow.nodes).y + nodeSize(node).height + 40));
+  const origin = scene.parentId ? absolutePosition(flow.nodes.find(node => node.id === scene.parentId), flow.nodes) : { x: 0, y: 0 };
+  const snapped = snapFlowPosition({ x: position.x, y });
+  return { ...flow, nodes: [...flow.nodes, { id: uid(), type: 'sceneInfo', ...(scene.parentId ? { parentId: scene.parentId } : {}), position: { x: snapped.x - origin.x, y: snapped.y - origin.y }, data: { label: '新しい情報', memo: '', condition: '', sceneId } }] };
+}
+
+export function informationEdges(flow) {
+  return flow.nodes.filter(node => node.type === 'sceneInfo' && flow.nodes.some(scene => scene.id === node.data.sceneId && isSceneNode(scene)))
+    .map(node => ({ id: `information:${node.id}`, source: node.data.sceneId, target: node.id, sourceHandle: 'information', type: 'informationLink', data: { informationId: node.id }, deletable: false }));
+}
+
+// Arrange each group independently. Edges crossing a group boundary contribute
+// to the order of the corresponding group, while cycles retain a stable order.
+export function arrangeFlowLeftToRight(flow) {
+  const nodes = flow.nodes.map(node => ({ ...node, position: { ...node.position } }));
+  const visited = new Set();
+  function layout(parentId) {
+    const children = nodes.filter(node => (node.parentId || null) === parentId);
+    const attached = node => node.type === 'sceneInfo' && children.some(scene => scene.id === node.data.sceneId && isSceneNode(scene));
+    const cards = children.filter(node => !attached(node));
+    for (const node of cards) if (node.type === 'sceneGroup' && !visited.has(node.id)) { visited.add(node.id); layout(node.id); }
+    const ids = new Set(cards.map(node => node.id));
+    function sibling(id) {
+      let node = nodes.find(item => item.id === id);
+      const seen = new Set();
+      while (node && !seen.has(node.id)) { if (ids.has(node.id)) return node.id; seen.add(node.id); node = nodes.find(item => item.id === node.parentId); }
+      return null;
+    }
+    const links = flow.edges.map(edge => [sibling(edge.source), sibling(edge.target)]).filter(([a, b]) => a && b && a !== b);
+    const rank = new Map(cards.map(node => [node.id, 0])), done = new Set();
+    while (done.size < cards.length) {
+      const ready = cards.filter(node => !done.has(node.id) && links.every(([a, b]) => b !== node.id || done.has(a)));
+      if (!ready.length) ready.push(cards.find(node => !done.has(node.id)));
+      for (const node of ready) {
+        rank.set(node.id, Math.max(0, ...links.filter(([a, b]) => b === node.id && done.has(a)).map(([a]) => rank.get(a) + 1)));
+        done.add(node.id);
+      }
+    }
+    let x = parentId ? 20 : 40;
+    for (let column = 0; column <= Math.max(0, ...rank.values()); column++) {
+      const entries = cards.filter(node => rank.get(node.id) === column);
+      let y = parentId ? 100 : 40, width = 0;
+      for (const node of entries) {
+        node.position = snapFlowPosition({ x, y });
+        let bottom = node.position.y + nodeSize(node).height;
+        width = Math.max(width, nodeSize(node).width);
+        for (const info of children.filter(info => attached(info) && info.data.sceneId === node.id)) {
+          info.position = snapFlowPosition({ x, y: bottom + 60 });
+          bottom = info.position.y + nodeSize(info).height; width = Math.max(width, nodeSize(info).width);
+        }
+        y = Math.ceil((bottom + 80) / FLOW_GRID) * FLOW_GRID;
+      }
+      x += Math.ceil((width + 100) / FLOW_GRID) * FLOW_GRID;
+    }
+    if (parentId && children.length) {
+      const parent = nodes.find(node => node.id === parentId);
+      parent.style = { ...parent.style, width: Math.ceil(Math.max(...children.map(node => node.position.x + nodeSize(node).width + 20)) / FLOW_GRID) * FLOW_GRID, height: Math.ceil(Math.max(...children.map(node => node.position.y + nodeSize(node).height + 20)) / FLOW_GRID) * FLOW_GRID };
+    }
+  }
+  layout(null);
+  return fitFlowGroups({ ...flow, nodes });
+}
+
+export function searchFlowNodes(flow, query = '', tag = '') {
+  const terms = query.normalize('NFKC').toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
+  return flow.nodes.filter(node => {
+    const tags = flowTags(node);
+    const text = [node.data.label, node.data.memo, node.data.condition, ...tags].filter(Boolean).join(' ').normalize('NFKC').toLocaleLowerCase();
+    return (!tag || tags.includes(tag)) && terms.every(term => text.includes(term));
+  });
+}
+
+// Collapse is a view projection: saved endpoints and expanded geometry remain
+// intact, including separate branches which happen to share a visible endpoint.
+export function projectFlowGroups(flow) {
+  const byId = new Map(flow.nodes.map(node => [node.id, node]));
+  function representative(id) {
+    let node = byId.get(id), result = id;
+    const seen = new Set([id]);
+    while (node?.parentId && !seen.has(node.parentId)) {
+      seen.add(node.parentId); node = byId.get(node.parentId);
+      if (node?.type === 'sceneGroup' && node.data?.collapsed) result = node.id;
+    }
+    return result;
+  }
+  const edges = flow.edges.map(edge => {
+    const source = representative(edge.source), target = representative(edge.target);
+    return { ...edge, source, target, ...(source !== edge.source ? { sourceHandle: null } : {}), hidden: source === target && (source !== edge.source || target !== edge.target) };
+  });
+  const bundles = new Map();
+  edges.filter(edge => !edge.hidden).forEach(edge => {
+    const key = JSON.stringify([edge.source, edge.target]);
+    if (!bundles.has(key)) bundles.set(key, []);
+    bundles.get(key).push(edge);
+  });
+  bundles.forEach(bundle => {
+    if (bundle.length < 2) return;
+    bundle.forEach((edge, index) => { edge.type = 'parallelBranch'; edge.data = { ...edge.data, offset: (index - (bundle.length - 1) / 2) * 160 }; });
+  });
+  return {
+    ...flow,
+    nodes: flow.nodes.map(node => ({ ...node, hidden: representative(node.id) !== node.id,
+      ...(node.type === 'sceneGroup' && node.data?.collapsed ? { style: { ...node.style, width: 320, height: 120 } } : {}) })),
+    edges
+  };
+}
+
+// Work from the deepest group outward. Moving the frame must never move its
+// contents on the canvas; grid-sized offsets also preserve child alignment.
+export function fitFlowGroups(flow) {
+  const nodes = flow.nodes.map(node => ({ ...node, position: { ...node.position } }));
+  const groups = nodes.filter(node => node.type === 'sceneGroup').sort((a, b) => groupDepth(b, nodes) - groupDepth(a, nodes));
+  for (const group of groups) {
+    const children = nodes.filter(node => node.parentId === group.id);
+    let width = 320, height = 200;
+    if (children.length) {
+      width = 0; height = 0;
+      const dx = Math.floor((Math.min(...children.map(n => n.position.x)) - 20) / FLOW_GRID) * FLOW_GRID;
+      const dy = Math.floor((Math.min(...children.map(n => n.position.y)) - 100) / FLOW_GRID) * FLOW_GRID;
+      group.position.x += dx; group.position.y += dy;
+      children.forEach(node => { node.position.x -= dx; node.position.y -= dy; });
+      width = Math.max(width, ...children.map(n => n.position.x + nodeSize(n).width + 20));
+      height = Math.max(height, ...children.map(n => n.position.y + nodeSize(n).height + 20));
+    }
+    group.style = { ...group.style, width: Math.ceil(width / FLOW_GRID) * FLOW_GRID, height: Math.ceil(height / FLOW_GRID) * FLOW_GRID };
+  }
+  return { ...flow, nodes: nodes.map(({ extent, expandParent, ...node }) => node) };
+}
+
 // Flow groups organize planning independently of manuscript heading levels.
 export function writeFlowScene(content, flow, nodeId) {
   const node = flow.nodes.find(item => item.id === nodeId);
-  if (!node || node.type === 'sceneGroup') return null;
+  if (!isSceneNode(node)) return null;
   const existing = outline(content).find(heading => heading.id && heading.id === node.data.headingId);
   if (existing) return { content, flow, headingId: existing.id, created: false };
   const headingId = uid();
@@ -34,7 +177,7 @@ export function moveToGroup(flow, nodeId, groupId) {
   if (!node) return flow;
   const position = absolutePosition(node, flow.nodes);
   const { parentId, extent, expandParent, ...rest } = node;
-  const moved = parent ? { ...rest, parentId: parent.id, expandParent: true, position: { x: 30, y: Math.max(90, ...flow.nodes.filter(item => item.parentId === groupId && item.id !== nodeId).map(item => item.position.y + (item.style?.height || item.measured?.height || 150) + 30)) } } : { ...rest, position };
+  const moved = parent ? { ...rest, parentId: parent.id, expandParent: true, position: { x: Math.ceil(Math.max(20, ...flow.nodes.filter(item => item.parentId === groupId && item.id !== nodeId).map(item => item.position.x + nodeSize(item).width + 100)) / FLOW_GRID) * FLOW_GRID, y: 100 } } : { ...rest, position };
   const nodes = flow.nodes.map(item => item.id === nodeId ? moved : item.id === groupId ? { ...item } : item);
   if (parent) {
     const p = nodes.find(item => item.id === parent.id);
@@ -79,19 +222,19 @@ function groupDepth(node, nodes) {
 
 // Attach a dragged node to the deepest group under its center without moving it
 // away from the place where the user dropped it.
-export function dropIntoGroup(flow, nodeId) {
+export function dropIntoGroup(flow, nodeId, boundsFlow = flow, excludedGroupId = null) {
   const node = flow.nodes.find(item => item.id === nodeId);
   if (!node) return flow;
   const absolute = absolutePosition(node, flow.nodes), size = nodeSize(node);
   const center = { x: absolute.x + size.width / 2, y: absolute.y + size.height / 2 };
-  const candidates = flow.nodes.filter(group => {
-    if (group.type !== 'sceneGroup' || !canJoinGroup(flow, nodeId, group.id)) return false;
-    const position = absolutePosition(group, flow.nodes), groupSize = nodeSize(group);
+  const candidates = projectFlowGroups(boundsFlow).nodes.filter(group => {
+    if (group.id === excludedGroupId || group.hidden || group.type !== 'sceneGroup' || !canJoinGroup(flow, nodeId, group.id)) return false;
+    const position = absolutePosition(group, boundsFlow.nodes), groupSize = nodeSize(group);
     return center.x >= position.x && center.x <= position.x + groupSize.width && center.y >= position.y && center.y <= position.y + groupSize.height;
   }).sort((a, b) => groupDepth(b, flow.nodes) - groupDepth(a, flow.nodes) || nodeSize(a).width * nodeSize(a).height - nodeSize(b).width * nodeSize(b).height);
   const parent = candidates[0];
   if (!parent || parent.id === node.parentId) return flow;
-  const parentPosition = absolutePosition(parent, flow.nodes);
+  const parentPosition = absolutePosition(flow.nodes.find(item => item.id === parent.id), flow.nodes);
   const { parentId, extent, ...rest } = node;
   const moved = { ...rest, parentId: parent.id, expandParent: true, position: { x: absolute.x - parentPosition.x, y: absolute.y - parentPosition.y } };
   const nodes = flow.nodes.map(item => item.id === nodeId ? moved : item);
@@ -100,6 +243,37 @@ export function dropIntoGroup(flow, nodeId) {
   function visit(item) { if (visited.has(item.id)) return; visited.add(item.id); const ancestor = nodes.find(candidate => candidate.id === item.parentId); if (ancestor) visit(ancestor); sorted.push(item); }
   nodes.forEach(visit);
   return { ...flow, nodes: sorted };
+}
+
+// Compare with the frame at drag start: live fitting otherwise makes it
+// impossible to leave a group. Partial overlap retains membership.
+export function finishFlowDrag(flow, nodeIds, startFlow) {
+  const moved = new Set(nodeIds);
+  let next = { ...flow, nodes: flow.nodes.map(node => ({ ...node, dragging: false })) };
+  for (const id of moved) {
+    const node = next.nodes.find(item => item.id === id);
+    if (!node) continue;
+    let ancestor = node, parentMoved = false;
+    const seen = new Set([id]);
+    while (ancestor.parentId && !seen.has(ancestor.parentId)) {
+      seen.add(ancestor.parentId);
+      if (moved.has(ancestor.parentId)) { parentMoved = true; break; }
+      ancestor = next.nodes.find(item => item.id === ancestor.parentId);
+      if (!ancestor) break;
+    }
+    if (parentMoved) continue;
+    const parent = startFlow.nodes.find(item => item.id === node.parentId);
+    if (parent) {
+      const point = absolutePosition(node, next.nodes), size = nodeSize(node);
+      const frame = absolutePosition(parent, startFlow.nodes), frameSize = nodeSize(parent);
+      const overlaps = point.x < frame.x + frameSize.width && point.x + size.width > frame.x && point.y < frame.y + frameSize.height && point.y + size.height > frame.y;
+      if (overlaps) continue;
+      const { parentId, extent, expandParent, ...rest } = node;
+      next = { ...next, nodes: next.nodes.map(item => item.id === id ? { ...rest, position: point } : item) };
+    }
+    next = dropIntoGroup(next, id, startFlow, parent?.id);
+  }
+  return fitFlowGroups(next);
 }
 
 export function absolutePosition(node, nodes) {
@@ -117,7 +291,7 @@ export function absolutePosition(node, nodes) {
 
 function standalone(node, nodes) {
   const { parentId, extent, expandParent, measured, width, height, style, selected, dragging, ...rest } = node;
-  return { ...rest, type: 'scene', position: absolutePosition(node, nodes) };
+  return { ...rest, type: node.type === 'sceneInfo' ? 'sceneInfo' : 'scene', position: absolutePosition(node, nodes) };
 }
 
 export function ungroupFlow(flow) {
@@ -181,18 +355,10 @@ export function removeFlowSelection(flow, nodeIds, edgeIds = []) {
     if (!removed.has(node.parentId)) return node;
     const { parentId, extent, expandParent, ...rest } = node;
     return { ...rest, position: absolutePosition(node, flow.nodes) };
-  }), edges: flow.edges.filter(e => !removedEdges.has(e.id) && !removed.has(e.source) && !removed.has(e.target)) };
+  }).map(node => node.type === 'sceneInfo' && removed.has(node.data.sceneId) ? { ...node, data: { ...node.data, sceneId: null } } : node), edges: flow.edges.filter(e => !removedEdges.has(e.id) && !removed.has(e.source) && !removed.has(e.target)) };
 }
 
 export function removeFlowNode(flow, id) {
-  // Deleting a group releases its immediate children instead of deleting content.
-  return {
-    ...flow,
-    nodes: flow.nodes.filter(node => node.id !== id).map(node => {
-      if (node.parentId !== id) return node;
-      const { parentId, extent, ...rest } = node;
-      return { ...rest, position: absolutePosition(node, flow.nodes) };
-    }),
-    edges: flow.edges.filter(edge => edge.source !== id && edge.target !== id)
-  };
+  // Group removal releases children; scene removal keeps its information cards.
+  return removeFlowSelection(flow, [id]);
 }

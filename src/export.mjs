@@ -3,7 +3,7 @@ import { exportStyle } from './export-style.mjs';
 import { getTheme } from './themes.mjs';
 import { documentTheme } from './desktop-themes.mjs';
 import MarkdownIt from 'markdown-it';
-import { absolutePosition } from './flow-model.mjs';
+import { absolutePosition, informationEdges } from './flow-model.mjs';
 import { outline } from './model.mjs';
 import { gmNotePlugin } from './gm-markdown.mjs';
 import { taskListPlugin } from './task-markdown.mjs';
@@ -22,7 +22,7 @@ export function flowSvg(flow, headings = [], theme = 'forest', colors = getTheme
   const nodes = flow.nodes.map(node => {
     const heading = byHeading.get(node.data.headingId);
     const group = node.type === 'sceneGroup';
-    const lines = wrap(group && heading ? heading.text : node.data.label);
+    const lines = wrap(group && heading ? heading.text : node.type === 'sceneInfo' ? `情報：${node.data.label}` : node.data.label);
     return { ...node, position: absolutePosition(node, flow.nodes), group, heading, lines,
       boxWidth: group && Number.isFinite(node.style?.width) ? node.style.width : 260,
       boxHeight: group && Number.isFinite(node.style?.height) ? node.style.height : Math.max(110, lines.length * 21 + 50)
@@ -32,10 +32,14 @@ export function flowSvg(flow, headings = [], theme = 'forest', colors = getTheme
   const minX = Math.min(...nodes.map(node => node.position.x)) - 30, minY = Math.min(...nodes.map(node => node.position.y)) - 30;
   const width = Math.max(...nodes.map(node => node.position.x + node.boxWidth)) - minX + 30;
   const height = Math.max(...nodes.map(node => node.position.y + node.boxHeight)) - minY + 30;
-  const paths = flow.edges.map(edge => {
+  const paths = [...flow.edges, ...informationEdges(flow)].map(edge => {
     const a = map.get(edge.source), b = map.get(edge.target); if (!a || !b) return '';
-    const x1 = a.position.x + a.boxWidth / 2, y1 = a.position.y + a.boxHeight, x2 = b.position.x + b.boxWidth / 2, y2 = b.position.y;
-    return `<path d="M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2}" fill="none" stroke="${c.muted}" stroke-width="2" marker-end="url(#arrow)"/><text x="${(x1 + x2) / 2 + 9}" y="${(y1 + y2) / 2}" font-size="14" fill="${c.text}">${escapeHtml(edge.label || '')}</text>`;
+    const information = !!edge.data?.informationId;
+    const x1 = a.position.x + (information ? a.boxWidth / 2 : a.boxWidth), y1 = a.position.y + (information ? a.boxHeight : a.boxHeight / 2);
+    const x2 = b.position.x, y2 = b.position.y + b.boxHeight / 2;
+    const spine = Math.min(a.position.x, x2) - 10;
+    const path = information ? `M ${x1} ${y1} L ${x1} ${y1 + 20} L ${spine} ${y1 + 20} L ${spine} ${y2} L ${x2} ${y2}` : `M ${x1} ${y1} C ${(x1 + x2) / 2} ${y1}, ${(x1 + x2) / 2} ${y2}, ${x2} ${y2}`;
+    return `<path d="${path}" fill="none" stroke="${c.muted}" stroke-width="2" ${information ? 'stroke-dasharray="5 4"' : 'marker-end="url(#arrow)"'}/><text x="${(x1 + x2) / 2 + 9}" y="${(y1 + y2) / 2}" font-size="14" fill="${c.text}">${escapeHtml(edge.label || '')}</text>`;
   }).join('');
   function box(node) {
     const color = node.group ? c.panel : c.soft;
