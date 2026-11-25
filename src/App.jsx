@@ -1,10 +1,11 @@
+import appIcon from '../assets/icon.svg';
 import { desktopThemeVariables } from './desktop-themes.mjs';
 import Appearance from './Appearance.jsx';
 import { writeFlowScene, isSceneNode } from './flow-model.mjs';
 import ExportDialog from './ExportDialog.jsx';
 import { defaultAppearance, normalizeAppearance, normalizeDesign, readPreference, isDarkTheme } from './themes.mjs';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { BookOpen, Plus, Search, FileText, Network, Download, Settings2, ChevronDown, ChevronUp, ArrowUp, ArrowDown, CircleHelp, X, Check, FolderOpen, Upload, RefreshCw, Cloud, HardDrive, Copy, Quote, Feather, PanelLeftClose, PanelLeftOpen, LoaderCircle, AlertCircle, StickyNote } from 'lucide-react';
+import { Plus, Search, FileText, Network, Download, Settings2, ChevronDown, ChevronUp, ArrowUp, ArrowDown, CircleHelp, X, Check, FolderOpen, Upload, RefreshCw, Cloud, HardDrive, Copy, Quote, Feather, PanelLeftClose, PanelLeftOpen, LoaderCircle, AlertCircle, StickyNote } from 'lucide-react';
 import ScenarioEditor from './Editor.jsx';
 import Flow from './Flow.jsx';
 import Outline from './Outline.jsx';
@@ -179,7 +180,7 @@ export default function App() {
   const documentHeader = doc && (<section className="document-header"><input className="title-input" aria-label="シナリオタイトル" value={doc.title} placeholder="無題のシナリオ" onChange={e => updateDoc({ title: e.target.value })}/><div className="document-subline"><input className="system-name-input" aria-label="システム名" value={doc.systemName || ''} maxLength={80} placeholder="使用システム…" onChange={e => updateDoc({ systemName: e.target.value })}/><span>·</span><input className="subtitle-input" aria-label="シナリオの説明" value={doc.subtitle || ''} placeholder="ジャンルや舞台を追加…" onChange={e => updateDoc({ subtitle: e.target.value })}/><span>{wordCount.toLocaleString()} 文字</span><span>·</span><span>{headings.length} 見出し</span></div></section>);
   return <div className={`app ${sidebar && screen === 'document' && doc ? '' : 'sidebar-hidden'} ${topUiCollapsed ? 'top-ui-collapsed' : ''}`} data-theme={appearance.theme} style={{ ...desktopThemeVariables(appearance.theme, appearance), colorScheme: isDarkTheme(appearance.theme) ? 'dark' : 'light', '--editor-font-size': `${appearance.fontSize}px`, '--ui-scale': appearance.uiScale / 100 }}>
     <nav className="app-rail" aria-label="アプリメニュー">
-      <button className="brand" aria-label="ダッシュボードへ" title="TRPG Canvas · マイシナリオ" disabled={busy} onClick={() => run(showDashboard)}><div className="brand-mark"><BookOpen size={22}/></div></button>
+      <button className="brand" aria-label="ダッシュボードへ" title="TRPG Canvas · マイシナリオ" disabled={busy} onClick={() => run(showDashboard)}><img className="brand-mark" src={appIcon} alt=""/></button>
       <button className={`rail-button ${screen === 'dashboard' ? 'current' : ''}`} title="シナリオ一覧へ" aria-label="シナリオ一覧へ" aria-current={screen === 'dashboard' ? 'page' : undefined} disabled={busy} onClick={() => run(showDashboard)}><FolderOpen size={20}/></button>
       <button className="rail-button" title="Markdownを読み込む" aria-label="Markdownを読み込む" disabled={busy} onClick={() => run(importFile)}><Upload size={19}/></button>
       <div className="rail-spacer"/>
