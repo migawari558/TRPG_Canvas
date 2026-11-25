@@ -27,6 +27,12 @@ git push -u origin main
 
 ## 次のバージョン
 
+リリースごとに `docs/wiki/` の関連ページを見直し、今回変更した機能・操作・制約を更新してください。PC・Androidの両方が対象です。説明文は履歴ファイル全体ではなく、`node scripts/release-notes.cjs <タグ> release-notes.md` で対象バージョンだけを抽出します。見出しに対象バージョンがない場合は処理を停止します。
+
+リリース公開後、`Update user guide Wiki` がmain上のガイドをGitHub Wikiへ反映します。公開後にActionsの成功とWikiの表示を確認してください。Wikiは最初にGitHubの画面でHomeを一度作成しておく必要があります。初回反映・修正の再反映は同ワークフローの `Run workflow` で実行できます。Actionsのトークンでリリース公開した場合は後続イベントが発火しないため、Wikiのワークフローも明示的に実行してください。
+
+Wiki本文は `docs/wiki/` が原稿です。Wiki側だけの編集は次の反映で上書きされます。文書内リンクは公開用スクリプトでWiki形式へ変換します。
+
 ```powershell
 npm version patch
 git push origin main

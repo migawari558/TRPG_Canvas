@@ -86,6 +86,7 @@ jobs:
             test "$(git rev-parse "v$VERSION^{commit}")" = "$GITHUB_SHA" || { echo "Version tag points to a different commit"; exit 1; }
           fi
           echo "RELEASE_TAG=v$VERSION" >> "$GITHUB_ENV"
+          node scripts/release-notes.cjs "v$VERSION" release-notes.md
           cd release-assets
           sha256sum *.exe *.dmg *.zip > SHA256SUMS.txt
       - name: Create draft release
@@ -100,6 +101,6 @@ jobs:
               exit 1
             fi
           else
-            gh release create "$RELEASE_TAG" --draft --target "$GITHUB_SHA" --title "TRPG Canvas $RELEASE_TAG" --notes-file docs/RELEASE-NOTES.md
+            gh release create "$RELEASE_TAG" --draft --target "$GITHUB_SHA" --title "TRPG Canvas $RELEASE_TAG" --notes-file release-notes.md
           fi
           gh release upload "$RELEASE_TAG" release-assets/* --clobber
