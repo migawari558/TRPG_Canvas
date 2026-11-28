@@ -76,6 +76,6 @@ npm run dev
 
 `npm run build` でビルド、`npm start` でビルド済みPCアプリを起動します。Android画面の確認は `npm run dev:mobile` を使います。これは開発用プレビューで、ブラウザ版の配布は行っていません。
 
-React / Tiptap / React Flow / Electron / Capacitorを使用しています。変更に関連するテストを実行してください。Androidの開発は `codex/android-*` ブランチで行います。
+React / Tiptap / React Flow / Electron / Capacitorを使用しています。変更に関連するテストを実行してください。Androidの開発は `claude/android-*` ブランチで行います。
 
 [配布・リリース手順](docs/DISTRIBUTION.md) · [Android開発・検証](docs/ANDROID.md) · [PC更新履歴](docs/RELEASE-NOTES.md) · [Android更新履歴](docs/ANDROID-RELEASE-NOTES.md)

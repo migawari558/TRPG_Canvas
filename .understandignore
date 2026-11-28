@@ -1,0 +1,16 @@
+# Local tools, generated artifacts, credentials, and scenario data
+.tools/
+.agents/
+.ua/
+.signing/
+.git/
+node_modules/
+dist/
+release/
+.test-output/
+.env
+.env.*
+*.trpg.json
+android/.gradle/
+android/build/
+android/app/build/

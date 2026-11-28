@@ -5,6 +5,11 @@ release/
 .test-output/
 .signing/
 
+# Local Understand-Anything installation and analysis data
+.tools/understand-anything/
+.agents/skills/understand*/
+.ua/
+
 # Local settings and scenario data
 .env
 .env.*
